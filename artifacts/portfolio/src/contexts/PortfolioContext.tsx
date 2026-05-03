@@ -114,212 +114,121 @@ type PortfolioContextType = {
 };
 
 const defaultPersonalInfo: PersonalInfo = {
-  name: "Ahmad-Alhariri",
+  name: "Ahmad Alhariri",
   nameAr: "أحمد الحريري",
-  bio: "Creative full-stack developer crafting cinematic digital experiences with 5+ years of building products that people love.",
-  bioAr: "مطور مبدع متكامل يصنع تجارب رقمية سينمائية بخبرة تزيد على 5 سنوات في بناء منتجات يحبها الناس.",
-  email: "hello@alex.dev",
-  location: "San Francisco, CA",
-  locationAr: "سان فرانسيسكو، كاليفورنيا",
-  github: "https://github.com",
-  linkedin: "https://linkedin.com",
-  twitter: "https://twitter.com",
-  telegram: "https://t.me",
-  whatsapp: "https://wa.me",
-  instagram: "https://instagram.com",
-  facebook: "https://facebook.com",
+  bio: "Motivated Software Engineer with over four years of experience in mobile application development using Flutter. Skilled in designing, building, and optimizing cross-platform applications.",
+  bioAr: "مهندس برمجيات طموح لديه أكثر من أربع سنوات من الخبرة في تطوير تطبيقات الموبايل باستخدام Flutter. ماهر في تصميم وبناء وتحسين التطبيقات.",
+  email: "",
+  location: "",
+  locationAr: "",
+  github: "",
+  linkedin: "https://www.linkedin.com/in/ahmadhariri",
+  twitter: "https://x.com/AhmadAl45892861",
+  telegram: "https://t.me/Ahmad_Alhariri",
+  whatsapp: "https://wa.me/+963954872922",
+  instagram: "https://www.instagram.com/dev.ahm",
+  facebook: "https://www.facebook.com/ahmad.alhariri.56027",
   cvUrl: "#",
-  avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&auto=format&fit=crop&q=60",
-  floatingSkills: ["React", "Flutter", "TypeScript", "Node.js", "Figma", "Next.js"]
+  avatarUrl: "/avatar.jpg",
+  floatingSkills: ["Flutter", "Dart", "C++", "Firebase", "Git"],
 };
 
 const defaultProjects: Project[] = [
   {
     id: "1",
-    title: "Cinematic E-Commerce",
-    titleAr: "متجر إلكتروني سينمائي",
-    description: "A high-end fashion e-commerce platform with WebGL product showcases and immersive 3D product previews that increased conversion by 40%.",
-    descriptionAr: "منصة تجارة إلكترونية للأزياء الراقية مع عروض منتجات بتقنية WebGL ومعاينات ثلاثية الأبعاد أدت إلى زيادة التحويل بنسبة 40٪.",
-    category: "Web",
-    tags: ["React", "Three.js", "Tailwind", "Stripe"],
-    imageUrl: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&auto=format&fit=crop&q=60",
-    images: [
-      "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&auto=format&fit=crop&q=60",
-    ],
-    liveUrl: "#",
-    githubUrl: "#"
+    title: "Tigre",
+    titleAr: "تيغري",
+    description: "Ultimate destination for food enthusiasts and restaurant discovery.",
+    descriptionAr: "الوجهة النهائية لعشاق الطعام واكتشاف المطاعم.",
+    category: "Mobile",
+    tags: ["Flutter", "Dart", "Firebase"],
+    imageUrl: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&auto=format&fit=crop&q=60",
   },
   {
     id: "2",
-    title: "Fintech Dashboard",
-    titleAr: "لوحة تحكم مالية",
-    description: "Data-dense analytics platform for modern trading firms with real-time charts, portfolio tracking, and AI-powered insights.",
-    descriptionAr: "منصة تحليلات كثيفة البيانات لشركات التداول الحديثة مع رسوم بيانية فورية وتتبع المحافظ ورؤى مدعومة بالذكاء الاصطناعي.",
-    category: "Web",
-    tags: ["Next.js", "D3.js", "TypeScript", "PostgreSQL"],
-    imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=60",
-    images: [
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1642790551116-18e150f248e3?w=800&auto=format&fit=crop&q=60",
-    ],
-    liveUrl: "#",
-    githubUrl: "#"
+    title: "Vivafone",
+    titleAr: "فيفافون",
+    description: "An app for selling eSIM cards with a seamless user experience.",
+    descriptionAr: "تطبيق لبيع بطاقات eSIM مع تجربة مستخدم سلسة.",
+    category: "Mobile",
+    tags: ["Flutter", "Dart", "REST API"],
+    imageUrl: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&auto=format&fit=crop&q=60",
   },
   {
     id: "3",
-    title: "Nomad Travel App",
-    titleAr: "تطبيق السفر البدوي",
-    description: "Mobile companion for digital nomads featuring offline maps, localized tips, visa tracking, and a community of 50k+ travelers.",
-    descriptionAr: "رفيق محمول للرحّل الرقميين يتميز بخرائط غير متصلة ونصائح محلية وتتبع التأشيرات ومجتمع يضم أكثر من 50 ألف مسافر.",
+    title: "Enjaz",
+    titleAr: "إنجاز",
+    description: "Tracking and managing university projects with supervisor support.",
+    descriptionAr: "تتبع وإدارة المشاريع الجامعية مع دعم المشرفين.",
     category: "Mobile",
-    tags: ["Flutter", "Dart", "Firebase", "Mapbox"],
-    imageUrl: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&auto=format&fit=crop&q=60",
-    images: [
-      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&auto=format&fit=crop&q=60",
-    ],
-    githubUrl: "#",
-    liveUrl: "#"
+    tags: ["Flutter", "Dart", "Firebase"],
+    imageUrl: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&auto=format&fit=crop&q=60",
   },
   {
     id: "4",
-    title: "Brand Identity System",
-    titleAr: "نظام هوية العلامة التجارية",
-    description: "Complete visual language for a sustainable energy startup — logo, typography, color system, and motion guidelines.",
-    descriptionAr: "لغة بصرية كاملة لشركة طاقة مستدامة ناشئة — شعار وطباعة ونظام ألوان وإرشادات حركة.",
-    category: "Design",
-    tags: ["Figma", "Illustrator", "After Effects"],
-    imageUrl: "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&auto=format&fit=crop&q=60",
-    images: [
-      "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800&auto=format&fit=crop&q=60",
-    ],
-    liveUrl: "#"
-  },
-  {
-    id: "5",
-    title: "AI Writing Assistant",
-    titleAr: "مساعد الكتابة بالذكاء الاصطناعي",
-    description: "SaaS platform that helps writers overcome blocks with AI suggestions, tone adjustments, and collaborative editing rooms.",
-    descriptionAr: "منصة SaaS تساعد الكتّاب على التغلب على الأزمات الإبداعية باقتراحات الذكاء الاصطناعي وضبط النبرة وغرف التحرير التعاوني.",
-    category: "Web",
-    tags: ["React", "OpenAI", "Node.js", "Socket.io"],
+    title: "Mardod App",
+    titleAr: "تطبيق مردود",
+    description: "AI-powered app exploring Saudi Arabia through chat.",
+    descriptionAr: "تطبيق مدعوم بالذكاء الاصطناعي لاستكشاف السعودية عبر الدردشة.",
+    category: "Mobile",
+    tags: ["Flutter", "Dart", "AI"],
     imageUrl: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=800&auto=format&fit=crop&q=60",
-    images: [
-      "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1655720828018-edd2daec9349?w=800&auto=format&fit=crop&q=60",
-    ],
-    liveUrl: "#",
-    githubUrl: "#"
-  }
+  },
 ];
 
 const defaultExperience: Experience[] = [
   {
     id: "1",
-    company: "Acme Corp",
-    role: "Lead Frontend Engineer",
-    roleAr: "كبير مهندسي الواجهة الأمامية",
-    period: "2022 – Present",
-    description: "Architected the core design system used by 30+ products. Led a team of 6 developers and drove a 60% improvement in page performance scores.",
-    descriptionAr: "صمم نظام التصميم الأساسي المستخدم في أكثر من 30 منتجاً. قاد فريقاً من 6 مطورين وحقق تحسناً بنسبة 60٪ في أداء الصفحات."
+    company: "York British Academy",
+    role: "Mobile Developer",
+    roleAr: "مطور موبايل",
+    period: "2023 - Present",
+    description: "Developed government-level mobile applications using Flutter.",
+    descriptionAr: "تطوير تطبيقات موبايل على مستوى حكومي باستخدام Flutter.",
   },
   {
     id: "2",
-    company: "Startup Inc.",
-    role: "UI/UX Designer & Developer",
-    roleAr: "مصمم ومطور واجهة المستخدم",
-    period: "2020 – 2022",
-    description: "Designed and built the entire MVP from scratch. The product raised $2M in seed funding and reached 10k users within 3 months of launch.",
-    descriptionAr: "صمم وبنى المنتج الأولي بالكامل من الصفر. جمع المنتج 2 مليون دولار كتمويل تأسيسي وبلغ 10 آلاف مستخدم خلال 3 أشهر من الإطلاق."
+    company: "Future X",
+    role: "Mobile Developer",
+    roleAr: "مطور موبايل",
+    period: "2023 - Present",
+    description: "Built food delivery and social media management applications.",
+    descriptionAr: "بناء تطبيقات توصيل طعام وإدارة وسائل التواصل الاجتماعي.",
   },
   {
     id: "3",
-    company: "Freelance",
-    role: "Full Stack Developer",
-    roleAr: "مطور متكامل مستقل",
-    period: "2018 – 2020",
-    description: "Built 20+ client websites and web applications spanning e-commerce, SaaS, and media. Maintained long-term relationships with 8 recurring clients.",
-    descriptionAr: "بنى أكثر من 20 موقعاً وتطبيقاً لعملاء في مجالات التجارة الإلكترونية وSaaS والإعلام."
-  }
+    company: "Smart Life",
+    role: "Mobile Developer",
+    roleAr: "مطور موبايل",
+    period: "2023",
+    description: "Restructured and optimized CRM applications.",
+    descriptionAr: "إعادة هيكلة وتحسين تطبيقات إدارة علاقات العملاء (CRM).",
+  },
 ];
 
 const defaultEducation: Education[] = [
   {
     id: "1",
-    institution: "Stanford University",
-    institutionAr: "جامعة ستانفورد",
-    degree: "Bachelor of Science",
-    degreeAr: "بكالوريوس العلوم",
-    field: "Computer Science",
-    fieldAr: "علوم الحاسب",
-    period: "2014 – 2018",
-    gpa: "3.8",
-    description: "Focused on Human-Computer Interaction and Computer Graphics. Senior thesis on procedural animation systems.",
-    descriptionAr: "تخصص في تفاعل الإنسان والحاسوب والرسومات الحاسوبية."
+    institution: "Damascus University",
+    institutionAr: "جامعة دمشق",
+    degree: "Bachelor's of Software Engineering",
+    degreeAr: "بكالوريوس في هندسة البرمجيات",
+    field: "Software Engineering",
+    fieldAr: "هندسة البرمجيات",
+    period: "2018 - 2023",
+    gpa: "Good",
+    description: "Studied software engineering fundamentals, system analysis, algorithms, and mobile application development.",
+    descriptionAr: "دراسة أساسيات هندسة البرمجيات وتحليل الأنظمة والخوارزميات وتطوير تطبيقات الموبايل.",
   },
-  {
-    id: "2",
-    institution: "Interaction Design Foundation",
-    institutionAr: "مؤسسة تصميم التفاعل",
-    degree: "Professional Certificate",
-    degreeAr: "شهادة مهنية",
-    field: "UX Design",
-    fieldAr: "تصميم تجربة المستخدم",
-    period: "2019",
-    description: "Advanced UX research methods, usability testing, and design thinking applied to complex digital products.",
-    descriptionAr: "مناهج بحث UX المتقدمة واختبار قابلية الاستخدام والتفكير التصميمي."
-  }
 ];
 
 const defaultCertificates: Certificate[] = [
-  { id: "1", title: "AWS Solutions Architect", titleAr: "مهندس حلول AWS", issuer: "Amazon Web Services", issuerAr: "أمازون ويب سيرفيسز", date: "2023", credentialUrl: "#", badgeColor: "#FF9900" },
-  { id: "2", title: "Meta React Developer", titleAr: "مطور React من Meta", issuer: "Meta", issuerAr: "ميتا", date: "2022", credentialUrl: "#", badgeColor: "#0866FF" },
-  { id: "3", title: "Google UX Design", titleAr: "تصميم UX من Google", issuer: "Google", issuerAr: "جوجل", date: "2021", credentialUrl: "#", badgeColor: "#4285F4" },
-  { id: "4", title: "MongoDB Developer", titleAr: "مطور MongoDB", issuer: "MongoDB University", issuerAr: "جامعة MongoDB", date: "2021", credentialUrl: "#", badgeColor: "#00ED64" },
-  { id: "5", title: "Figma Advanced Design", titleAr: "التصميم المتقدم في Figma", issuer: "Figma", issuerAr: "فيغما", date: "2022", credentialUrl: "#", badgeColor: "#A259FF" },
+  { id: "1", title: "Agile Project Management", titleAr: "إدارة المشاريع Agile", issuer: "HP LIFE", issuerAr: "HP LIFE", date: "2023", credentialUrl: "#", badgeColor: "#0096D6" },
+  { id: "2", title: "Fundamentals of Technical Project Management", titleAr: "أساسيات إدارة المشاريع التقنية", issuer: "PMI", issuerAr: "PMI", date: "2023", credentialUrl: "#", badgeColor: "#E4002B" },
+  { id: "3", title: "Volunteer Certificate", titleAr: "شهادة تطوع", issuer: "RBCs Team", issuerAr: "فريق RBCs", date: "2023", credentialUrl: "#", badgeColor: "#00897B" },
 ];
 
-const defaultTestimonials: Testimonial[] = [
-  {
-    id: "1",
-    name: "Sarah Johnson",
-    nameAr: "سارة جونسون",
-    role: "CEO, TechStartup Inc",
-    roleAr: "الرئيس التنفيذي، TechStartup Inc",
-    text: "Ahmad delivered an outstanding e-commerce platform that increased our conversion by 45%. His attention to detail and creative problem-solving made the entire experience seamless.",
-    textAr: "أحمد قدم منصة تجارة إلكترونية متميزة زادت معدل التحويل لدينا بنسبة 45%. اهتمامه بالتفاصيل والحلول الإبداعية جعلت التجربة سلسة تماماً.",
-    rating: 5,
-    imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop&q=60"
-  },
-  {
-    id: "2",
-    name: "Marcus Chen",
-    nameAr: "ماركوس تشن",
-    role: "Product Manager, DesignCo",
-    roleAr: "مدير المنتج، DesignCo",
-    text: "Working with Ahmad was a game-changer. He combines technical excellence with beautiful UI design. Highly recommended for any complex project.",
-    textAr: "العمل مع أحمد كان نقطة تحول. يجمع بين التميز التقني وتصميم واجهات جميلة. مستحسن بشدة لأي مشروع معقد.",
-    rating: 5,
-    imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=60"
-  },
-  {
-    id: "3",
-    name: "Emily Rodriguez",
-    nameAr: "إميلي رودريغيز",
-    role: "Founder, CreativeStudio",
-    roleAr: "المؤسسة، CreativeStudio",
-    text: "Ahmad's mobile app development skills are impeccable. He delivered 2 weeks ahead of schedule with zero bugs. A true professional!",
-    textAr: "مهارات تطوير التطبيقات الجوالة لأحمد لا تشوبها شائبة. قدمها قبل الموعد بأسبوعين بدون أي أخطاء. متخصص حقيقي!",
-    rating: 5,
-    imageUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&auto=format&fit=crop&q=60"
-  }
-];
+const defaultTestimonials: Testimonial[] = [];
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
 

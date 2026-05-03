@@ -192,7 +192,7 @@ function SkillIcon({ icon: Icon, label, color, index }: { icon: any; label: stri
 export default function About() {
   const { language, personalInfo } = usePortfolio();
   const t = translations[language];
-  const bio = language === "ar" ? personalInfo.bioAr : personalInfo.bio;
+  const bio = t.about.description;
 
   return (
     <section id="about" className="py-28 relative overflow-hidden">
@@ -215,9 +215,9 @@ export default function About() {
 
             {/* Animated stat counters */}
             <div className="grid grid-cols-3 gap-3 w-full max-w-sm">
-              <StatCard to={5}  suffix="+" label={t.about.yearsExp}      delay={0.1} />
-              <StatCard to={50} suffix="+" label={t.about.projectsDone}  delay={0.2} />
-              <StatCard to={30} suffix="+" label={t.about.happyClients}  delay={0.3} />
+              <StatCard to={4}  suffix="+" label={t.about.yearsExp}      delay={0.1} />
+              <StatCard to={20} suffix="+" label={t.about.projectsDone}  delay={0.2} />
+              <StatCard to={15} suffix="+" label={t.about.happyClients}  delay={0.3} />
             </div>
           </motion.div>
 
