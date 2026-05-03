@@ -1,7 +1,7 @@
 {
-  "installCommand": "npm install -g pnpm@9 && pnpm install --no-frozen-lockfile --filter @workspace/portfolio",
-  "buildCommand": "cd artifacts/portfolio && pnpm run build:deploy",
-  "outputDirectory": "artifacts/portfolio/dist",
+  "rootDirectory": "artifacts/portfolio",
+  "buildCommand": "npm install && npm run build:deploy",
+  "outputDirectory": "dist",
   "framework": null,
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
