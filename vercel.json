@@ -1,5 +1,5 @@
 {
-  "installCommand": "npm install -g pnpm@9 && pnpm install --no-frozen-lockfile --filter @workspace/portfolio",
+  "installCommand": "npm install -g pnpm@10 && pnpm install --no-frozen-lockfile --filter @workspace/portfolio",
   "buildCommand": "cd artifacts/portfolio && pnpm exec vite build --config vite.config.deploy.ts",
   "outputDirectory": "artifacts/portfolio/dist",
   "framework": null,
