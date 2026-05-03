@@ -1,9 +1,7 @@
 {
-  "installCommand": "npm install -g pnpm@10 && pnpm install --no-frozen-lockfile --filter @workspace/portfolio",
-  "buildCommand": "cd artifacts/portfolio && pnpm exec vite build --config vite.config.deploy.ts",
-  "outputDirectory": "artifacts/portfolio/dist",
-  "framework": null,
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  "rootDirectory": "artifacts/portfolio",
+  "buildCommand": "pnpm exec vite build --config vite.config.deploy.ts",
+  "installCommand": "corepack enable && pnpm install --no-frozen-lockfile",
+  "outputDirectory": "dist",
+  "framework": "vite"
 }
