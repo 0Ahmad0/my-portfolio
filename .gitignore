@@ -57,3 +57,4 @@ artifacts/*/.replit-artifact
 .env.local
 .env.production
 .vercel
+/DEPLOY_VERCEL.md
