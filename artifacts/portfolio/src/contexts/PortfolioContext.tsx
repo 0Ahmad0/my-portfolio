@@ -121,7 +121,7 @@ const defaultPersonalInfo: PersonalInfo = {
   email: "mr.ahmed.alhariri@gmail.com",
   location: "Syria - Daraa",
   locationAr: "سوريا - درعا",
-  github: "",
+  github: "https://github.com/0Ahmad0",
   linkedin: "https://www.linkedin.com/in/ahmadhariri",
   twitter: "https://x.com/AhmadAl45892861",
   telegram: "https://t.me/Ahmad_Alhariri",
@@ -230,7 +230,7 @@ const defaultCertificates: Certificate[] = [
 
 const defaultTestimonials: Testimonial[] = [];
 
-const STORAGE_VERSION = "v3";
+const STORAGE_VERSION = "v4";
 
 function clearStaleStorage() {
   try {
