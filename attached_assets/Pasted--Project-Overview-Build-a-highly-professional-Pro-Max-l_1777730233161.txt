@@ -1,0 +1,50 @@
+
+Project Overview:
+
+Build a highly professional, "Pro Max" level Personal Portfolio website and a simplified dynamic Dashboard to manage the content. The site must be ultra-modern, featuring elite UI/UX principles, and built using React (Next.js preferred), Tailwind CSS, and Framer Motion.
+
+Core Technical Requirements:
+
+Tech Stack: Use React, Tailwind CSS, and framer-motion for fluid animations. Integrate components inspired by 21st.dev for a cutting-edge aesthetic.
+
+Dual Language Support (i18n): Full support for English (LTR) and Arabic (RTL). Include a seamless toggle switch to change languages without reloading the page.
+
+Theme Management: Implementation of Dark and Light modes with a smooth, animated transition.
+
+Responsiveness: 100% responsive design, optimized for mobile, tablet, and ultra-wide desktop screens.
+
+Portfolio Sections:
+
+Hero Section: High-impact entrance with complex Framer Motion text and image reveals.
+
+About Me: Elegant layout with a professional bio and skills visualization.
+
+Projects Gallery: A grid of projects featuring hover effects, filtering, and a "21st.dev" style glassmorphism card design.
+
+Experience Timeline: An interactive vertical or horizontal timeline.
+
+Contact Form: A functional-looking, validated form with micro-interactions.
+
+Management Dashboard:
+
+Create a protected route /dashboard with a simple, clean UI.
+
+The dashboard should allow me to dynamically update project details (Title, Image URL, Description) and personal info.
+
+Use a local state management or a simple mock-backend (like a JSON file or Supabase if available) to ensure the portfolio updates dynamically.
+
+Design Aesthetic (UI/UX PRO MAX):
+
+Use sophisticated typography, generous white space, and subtle backdrop blurs (Glassmorphism).
+
+Incorporate "Magnetic" buttons and scroll-triggered animations using Framer Motion.
+
+Ensure the transitions between Arabic and English adjust the layout direction (RTL/LTR) perfectly.
+
+Instructions for Replit Agent:
+
+Please run npm install framer-motion lucide-react to start.
+
+Ensure all components are modular and well-commented.
+
+Focus on "Micro-moments" (small animations when clicking, hovering, or switching tabs).
