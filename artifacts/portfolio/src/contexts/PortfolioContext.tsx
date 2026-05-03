@@ -118,9 +118,9 @@ const defaultPersonalInfo: PersonalInfo = {
   nameAr: "أحمد الحريري",
   bio: "Motivated Software Engineer with over four years of experience in mobile application development using Flutter. Skilled in designing, building, and optimizing cross-platform applications.",
   bioAr: "مهندس برمجيات طموح لديه أكثر من أربع سنوات من الخبرة في تطوير تطبيقات الموبايل باستخدام Flutter. ماهر في تصميم وبناء وتحسين التطبيقات.",
-  email: "",
-  location: "",
-  locationAr: "",
+  email: "mr.ahmed.alhariri@gmail.com",
+  location: "Syria - Daraa",
+  locationAr: "سوريا - درعا",
   github: "",
   linkedin: "https://www.linkedin.com/in/ahmadhariri",
   twitter: "https://x.com/AhmadAl45892861",
@@ -230,9 +230,23 @@ const defaultCertificates: Certificate[] = [
 
 const defaultTestimonials: Testimonial[] = [];
 
+const STORAGE_VERSION = "v3";
+
+function clearStaleStorage() {
+  try {
+    if (localStorage.getItem("portfolio_version") !== STORAGE_VERSION) {
+      ["portfolio_info", "portfolio_projects", "portfolio_experience",
+       "portfolio_education", "portfolio_certs", "portfolio_testimonials"].forEach(k => localStorage.removeItem(k));
+      localStorage.setItem("portfolio_version", STORAGE_VERSION);
+    }
+  } catch { /* ignore */ }
+}
+
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
 
 export function PortfolioProvider({ children }: { children: ReactNode }) {
+  clearStaleStorage();
+
   const [language, setLanguageState] = useState<"en" | "ar">(() => {
     try { return (localStorage.getItem("portfolio_lang") as "en" | "ar") || "en"; } catch { return "en"; }
   });

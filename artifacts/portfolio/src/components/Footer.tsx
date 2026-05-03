@@ -13,7 +13,7 @@ export default function Footer() {
           
           <div className="text-center md:text-left">
             <h2 className="text-2xl font-bold tracking-tighter mb-2">
-              ALEX<span className="text-primary">.DEV</span>
+              AHMAD<span className="text-primary">.DEV</span>
             </h2>
             <p className="text-sm text-muted-foreground">
               © {year} {language === "ar" ? personalInfo.nameAr : personalInfo.name}. All rights reserved.

@@ -48,7 +48,7 @@ export default function Navbar() {
           className="text-xl font-bold tracking-tighter hover:opacity-80 transition-opacity"
           data-testid="link-home"
         >
-          ALEX<span className="text-primary">.DEV</span>
+          AHMAD<span className="text-primary">.DEV</span>
         </button>
 
         {/* Desktop Nav */}
