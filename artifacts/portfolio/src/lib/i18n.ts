@@ -10,71 +10,72 @@ export const translations = {
       dashboard: "Dashboard"
     },
     hero: {
+      name: "Ahmad Alhariri", //[cite: 1]
+      profileImage: "my-portfolio/images/ahmadalhariri.jpg",
       viewWork: "Explore My Work",
-      roles: ["Full Stack Developer", "UI/UX Designer", "Creative Coder", "Problem Solver"]
+      roles: ["Software Engineer", "Mobile Application Developer", "Flutter Expert", "Problem Solver"] //[cite: 1]
     },
     about: {
-      title: "Crafting digital experiences.",
+      title: "Crafting High-Performance Mobile Experiences.",
+      description: "Motivated Software Engineer with over four years of experience in mobile application development using Flutter. Skilled in designing, building, and optimizing cross-platform applications with a focus on performance and user experience.", //[cite: 1]
       skills: "Core Skills",
       skillList: [
-        "React & Next.js", "TypeScript", "Node.js", "Python",
-        "UI/UX Design", "Figma", "WebGL / Three.js", "Framer Motion",
-        "PostgreSQL", "MongoDB", "AWS", "Docker"
-      ],
-      yearsExp: "Years Exp.",
-      projectsDone: "Projects Done",
-      happyClients: "Happy Clients"
+        "Flutter & Dart", "Java", "C++", "C#", "SQL",
+        "RESTful APIs", "Firebase", "Agile Methodologies",
+        "CI/CD Pipelines", "System Analysis", "GIT & GitHub", "UI/UX Enhancements"
+      ], //[cite: 1]
+      yearsExp: "4+ Years Exp.", //[cite: 1]
+      projectsDone: "20+ Projects", //[cite: 1]
+      happyClients: "15+ Clients"
     },
     projects: {
       title: "Selected Works",
       filterAll: "All",
-      filterWeb: "Web",
       filterMobile: "Mobile",
-      filterDesign: "Design",
-      viewLive: "Live Site",
-      viewGithub: "Source Code"
+      filterWeb: "Web",
+      viewLive: "Live Demo",
+      viewGithub: "Source Code",
+      list: [
+        { name: "Tigre", desc: "Ultimate destination for food enthusiasts and restaurant discovery." }, //[cite: 1]
+        { name: "Vivafone", desc: "An app for selling eSIM cards with a seamless user experience." }, //[cite: 1]
+        { name: "Enjaz", desc: "Tracking and managing university projects with supervisor support." }, //[cite: 1]
+        { name: "Mardod App", desc: "AI-powered app exploring Saudi Arabia through chat." } //[cite: 1]
+      ]
     },
     experience: {
-      title: "Work Experience"
+      title: "Work Experience",
+      items: [
+        { role: "Mobile Developer", company: "York British Academy", period: "2023 - Present", desc: "Developed government-level mobile applications using Flutter." }, //[cite: 1]
+        { role: "Mobile Developer", company: "Future X", period: "2023 - Present", desc: "Built food delivery and social media management applications." }, //[cite: 1]
+        { role: "Mobile Developer", company: "Smart Life", period: "2023", desc: "Restructured and optimized CRM applications." } //[cite: 1]
+      ]
     },
     education: {
       title: "Education",
-      gpa: "GPA"
+      degree: "Bachelor's of Software Engineering", //[cite: 1]
+      university: "Damascus University", //[cite: 1]
+      year: "2018 - 2023" //[cite: 1]
     },
     certificates: {
       title: "Certifications",
+      list: ["Agile Project Management (HP LIFE)", "Fundamentals of Technical Project Management", "Volunteer Certificate (RBCs Team)"], //[cite: 1]
       verify: "Verify Credential"
-    },
-    testimonials: {
-      title: "Client Testimonials",
-      subtitle: "What my clients say about working with me"
     },
     contact: {
       title: "Let's Talk",
-      subtitle: "Have a project in mind or just want to say hi? I'm always open to a good conversation.",
+      subtitle: "Open for innovative software projects and mobile application development opportunities.",
       name: "Name",
       email: "Email",
       message: "Message",
       send: "Send Message",
-      success: "Message sent!",
-      error: "Something went wrong. Please try again.",
-      socialLinks: "Connect on Social",
-      downloadCV: "Download CV"
-    },
-    dashboard: {
-      login: "Restricted Access",
-      password: "Password",
-      enter: "Enter",
-      logout: "Logout",
-      projects: "Projects",
-      personalInfo: "Personal Info",
-      experience: "Experience",
-      education: "Education",
-      certificates: "Certificates",
-      save: "Save Changes",
-      addNew: "Add New",
-      delete: "Delete",
-      edit: "Edit"
+      links: {
+        instagram: "https://www.instagram.com/dev.ahm",
+        x: "https://x.com/AhmadAl45892861",
+        linkedin: "https://www.linkedin.com/in/ahmadhariri",
+        telegram: "https://t.me/Ahmad_Alhariri",
+        facebook: "https://www.facebook.com/ahmad.alhariri.56027",
+        whatsapp: "https://wa.me/+963954872922"
+      }
     }
   },
   ar: {
@@ -88,71 +89,72 @@ export const translations = {
       dashboard: "لوحة التحكم"
     },
     hero: {
+      name: "أحمد الحريري", //[cite: 1]
+      profileImage: "my-portfolio/images/ahmadalhariri.jpg",
       viewWork: "استكشف أعمالي",
-      roles: ["مطور ويب شامل", "مصمم واجهات", "مطور مبدع", "حل المشكلات"]
+      roles: ["مهندس برمجيات", "مطور تطبيقات موبايل", "خبير فلاتر", "حل المشكلات"] //[cite: 1]
     },
     about: {
-      title: "أصنع تجارب رقمية.",
+      title: "صناعة تجارب موبايل عالية الأداء.",
+      description: "مهندس برمجيات طموح لديه أكثر من أربع سنوات من الخبرة في تطوير تطبيقات الموبايل باستخدام Flutter. ماهر في تصميم وبناء وتحسين التطبيقات عابرة المنصات مع التركيز على الأداء وتجربة المستخدم.", //[cite: 1]
       skills: "المهارات الأساسية",
       skillList: [
-        "React & Next.js", "TypeScript", "Node.js", "Python",
-        "UI/UX Design", "Figma", "WebGL / Three.js", "Framer Motion",
-        "PostgreSQL", "MongoDB", "AWS", "Docker"
-      ],
-      yearsExp: "سنوات خبرة",
-      projectsDone: "مشاريع منجزة",
-      happyClients: "عملاء سعداء"
+        "Flutter & Dart", "Java", "C++", "C#", "SQL",
+        "RESTful APIs", "Firebase", "Agile Methodologies",
+        "CI/CD Pipelines", "System Analysis", "GIT & GitHub", "تحسين واجهات المستخدم"
+      ], //[cite: 1]
+      yearsExp: "أكثر من 4 سنوات خبرة", //[cite: 1]
+      projectsDone: "أكثر من 20 مشروع", //[cite: 1]
+      happyClients: "أكثر من 15 عميل"
     },
     projects: {
       title: "أعمال مختارة",
       filterAll: "الكل",
-      filterWeb: "ويب",
       filterMobile: "تطبيقات",
-      filterDesign: "تصميم",
-      viewLive: "الموقع المباشر",
-      viewGithub: "كود المصدر"
+      filterWeb: "ويب",
+      viewLive: "العرض المباشر",
+      viewGithub: "كود المصدر",
+      list: [
+        { name: "Tigre", desc: "الوجهة النهائية لعشاق الطعام واكتشاف المطاعم." }, //[cite: 1]
+        { name: "Vivafone", desc: "تطبيق لبيع بطاقات eSIM مع تجربة مستخدم سلسة." }, //[cite: 1]
+        { name: "Enjaz", desc: "تتبع وإدارة المشاريع الجامعية مع دعم المشرفين." }, //[cite: 1]
+        { name: "Mardod App", desc: "تطبيق مدعوم بالذكاء الاصطناعي لاستكشاف السعودية عبر الدردشة." } //[cite: 1]
+      ]
     },
     experience: {
-      title: "الخبرة المهنية"
+      title: "الخبرة المهنية",
+      items: [
+        { role: "مطور موبايل", company: "أكاديمية يورك البريطانية", period: "2023 - الآن", desc: "تطوير تطبيقات موبايل على مستوى حكومي باستخدام Flutter." }, //[cite: 1]
+        { role: "مطور موبايل", company: "Future X", period: "2023 - الآن", desc: "بناء تطبيقات توصيل طعام وإدارة وسائل التواصل الاجتماعي." }, //[cite: 1]
+        { role: "مطور موبايل", company: "Smart Life", period: "2023", desc: "إعادة هيكلة وتحسين تطبيقات إدارة علاقات العملاء (CRM)." } //[cite: 1]
+      ]
     },
     education: {
       title: "التعليم",
-      gpa: "المعدل التراكمي"
+      degree: "بكالوريوس في هندسة البرمجيات", //[cite: 1]
+      university: "جامعة دمشق", //[cite: 1]
+      year: "2018 - 2023" //[cite: 1]
     },
     certificates: {
-      title: "الشهادات والاعتمادات",
+      title: "الشهادات",
+      list: ["إدارة المشاريع Agile (HP LIFE)", "أساسيات إدارة المشاريع التقنية", "شهادة تطوع (فريق RBCs)"], //[cite: 1]
       verify: "تحقق من الشهادة"
-    },
-    testimonials: {
-      title: "تقييمات العملاء",
-      subtitle: "ماذا يقول عملائي عن العمل معي"
     },
     contact: {
       title: "لنتحدث",
-      subtitle: "هل لديك مشروع في ذهنك أو تريد إلقاء التحية؟ أنا دائماً منفتح على محادثة جيدة.",
+      subtitle: "متاح لمشاريع البرمجيات المبتكرة وفرص تطوير تطبيقات الموبايل.",
       name: "الاسم",
       email: "البريد الإلكتروني",
       message: "الرسالة",
       send: "إرسال الرسالة",
-      success: "تم الإرسال!",
-      error: "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
-      socialLinks: "تابعني على وسائل التواصل",
-      downloadCV: "تحميل السيرة الذاتية"
-    },
-    dashboard: {
-      login: "دخول مقيد",
-      password: "كلمة المرور",
-      enter: "دخول",
-      logout: "تسجيل خروج",
-      projects: "المشاريع",
-      personalInfo: "المعلومات الشخصية",
-      experience: "الخبرات",
-      education: "التعليم",
-      certificates: "الشهادات",
-      save: "حفظ التغييرات",
-      addNew: "إضافة جديد",
-      delete: "حذف",
-      edit: "تعديل"
+      links: {
+        instagram: "https://www.instagram.com/dev.ahm",
+        x: "https://x.com/AhmadAl45892861",
+        linkedin: "https://www.linkedin.com/in/ahmadhariri",
+        telegram: "https://t.me/Ahmad_Alhariri",
+        facebook: "https://www.facebook.com/ahmad.alhariri.56027",
+        whatsapp: "https://wa.me/+963954872922"
+      }
     }
   }
 };
