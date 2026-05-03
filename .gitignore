@@ -56,3 +56,4 @@ artifacts/*/.replit-artifact
 .env
 .env.local
 .env.production
+.vercel
