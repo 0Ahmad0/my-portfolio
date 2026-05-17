@@ -174,7 +174,9 @@ export const translations = {
                 cancel: "Cancel",
                 confirm: "Confirm",
                 saved: "Saved!",
-                saveChanges: "Save Changes"
+                saveChanges: "Save Changes",
+                deleted: "Deleted!",
+                error: "Error"
             },
             categories: {
                 web: "Web",
@@ -508,7 +510,9 @@ export const translations = {
                 cancel: "إلغاء",
                 confirm: "تأكيد",
                 saved: "تم الحفظ!",
-                saveChanges: "حفظ التغييرات"
+                saveChanges: "حفظ التغييرات",
+                deleted: "تم الحذف!",
+                error: "خطأ"
             },
             categories: {
                 web: "ويب",

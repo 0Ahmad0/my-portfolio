@@ -23,6 +23,7 @@ import {
   Dialog, DialogContent, DialogDescription, DialogFooter,
   DialogHeader, DialogTitle
 } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
 
 /* ─── helpers ─────────────────────────────────────────── */
 function FieldRow({ children }: { children: React.ReactNode }) {
@@ -139,11 +140,13 @@ function ProjectDialog({ open, initial, onSave, onClose }: {
   const d = translations[language].dashboard;
   const labels = d.dialogs.project;
   const [local, setLocal] = useState<Omit<Project, "id">>(initial ?? blankProject());
+  const [saving, setSaving] = useState(false);
   const [imgText, setImgText] = useState((initial?.images?.length ? initial.images : initial?.imageUrl ? [initial.imageUrl] : []).join("\n"));
 
   useEffect(() => {
     setLocal(initial ?? blankProject());
     setImgText((initial?.images?.length ? initial.images : initial?.imageUrl ? [initial.imageUrl] : []).join("\n"));
+    setSaving(false);
   }, [open, initial]);
 
   const handleImgChange = (val: string) => {
@@ -158,7 +161,7 @@ function ProjectDialog({ open, initial, onSave, onClose }: {
 
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -234,9 +237,9 @@ function ProjectDialog({ open, initial, onSave, onClose }: {
         </div>
 
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose}>{d.actions.cancel}</Button>
-          <Button onClick={async () => { await onSave(local); onClose(); }} disabled={!isValid} className="gap-2">
-            <CheckCircle2 className="w-4 h-4" /> {initial ? d.actions.saveChanges : d.sections.projects.add}
+          <Button variant="outline" onClick={onClose} disabled={saving}>{d.actions.cancel}</Button>
+          <Button onClick={async () => { setSaving(true); try { await onSave(local); onClose(); } catch { setSaving(false); } }} disabled={!isValid || saving} className="gap-2">
+            {saving ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" /> : <CheckCircle2 className="w-4 h-4" />} {initial ? d.actions.saveChanges : d.sections.projects.add}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -255,11 +258,12 @@ function ExperienceDialog({ open, initial, onSave, onClose }: {
   const d = translations[language].dashboard;
   const labels = d.dialogs.experience;
   const [local, setLocal] = useState<Omit<Experience, "id">>(initial ?? blankExp());
-  useEffect(() => { setLocal(initial ?? blankExp()); }, [open, initial]);
+  const [saving, setSaving] = useState(false);
+  useEffect(() => { setLocal(initial ?? blankExp()); setSaving(false); }, [open, initial]);
   const isValid = local.company.trim() && local.role.trim() && local.period.trim();
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
-      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-xl max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
@@ -294,9 +298,9 @@ function ExperienceDialog({ open, initial, onSave, onClose }: {
           </Field>
         </div>
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose}>{d.actions.cancel}</Button>
-          <Button onClick={async () => { await onSave(local); onClose(); }} disabled={!isValid} className="gap-2">
-            <CheckCircle2 className="w-4 h-4" /> {initial ? d.actions.saveChanges : d.sections.experience.add}
+          <Button variant="outline" onClick={onClose} disabled={saving}>{d.actions.cancel}</Button>
+          <Button onClick={async () => { setSaving(true); try { await onSave(local); onClose(); } catch { setSaving(false); } }} disabled={!isValid || saving} className="gap-2">
+            {saving ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" /> : <CheckCircle2 className="w-4 h-4" />} {initial ? d.actions.saveChanges : d.sections.experience.add}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -316,11 +320,12 @@ function EducationDialog({ open, initial, onSave, onClose }: {
   const d = translations[language].dashboard;
   const labels = d.dialogs.education;
   const [local, setLocal] = useState<Omit<Education, "id">>(initial ?? blankEdu());
-  useEffect(() => { setLocal(initial ?? blankEdu()); }, [open, initial]);
+  const [saving, setSaving] = useState(false);
+  useEffect(() => { setLocal(initial ?? blankEdu()); setSaving(false); }, [open, initial]);
   const isValid = local.institution.trim() && local.degree.trim() && local.field.trim() && local.period.trim();
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
-      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-xl max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
@@ -371,9 +376,9 @@ function EducationDialog({ open, initial, onSave, onClose }: {
           </Field>
         </div>
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose}>{d.actions.cancel}</Button>
-          <Button onClick={async () => { await onSave(local); onClose(); }} disabled={!isValid} className="gap-2">
-            <CheckCircle2 className="w-4 h-4" /> {initial ? d.actions.saveChanges : d.sections.education.add}
+          <Button variant="outline" onClick={onClose} disabled={saving}>{d.actions.cancel}</Button>
+          <Button onClick={async () => { setSaving(true); try { await onSave(local); onClose(); } catch { setSaving(false); } }} disabled={!isValid || saving} className="gap-2">
+            {saving ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" /> : <CheckCircle2 className="w-4 h-4" />} {initial ? d.actions.saveChanges : d.sections.education.add}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -397,11 +402,12 @@ function TestimonialDialog({ open, initial, onSave, onClose }: {
   const d = translations[language].dashboard;
   const labels = d.dialogs.testimonial;
   const [local, setLocal] = useState<Omit<Testimonial, "id">>(initial ?? blankTestimonial());
-  useEffect(() => { setLocal(initial ?? blankTestimonial()); }, [open, initial]);
+  const [saving, setSaving] = useState(false);
+  useEffect(() => { setLocal(initial ?? blankTestimonial()); setSaving(false); }, [open, initial]);
   const isValid = local.name.trim() && local.role.trim() && local.text.trim() && local.imageUrl.trim();
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
-      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-xl max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
@@ -458,9 +464,9 @@ function TestimonialDialog({ open, initial, onSave, onClose }: {
           </FieldRow>
         </div>
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose}>{d.actions.cancel}</Button>
-          <Button onClick={async () => { await onSave(local); onClose(); }} disabled={!isValid} className="gap-2">
-            <CheckCircle2 className="w-4 h-4" /> {initial ? d.actions.saveChanges : d.sections.testimonials.add}
+          <Button variant="outline" onClick={onClose} disabled={saving}>{d.actions.cancel}</Button>
+          <Button onClick={async () => { setSaving(true); try { await onSave(local); onClose(); } catch { setSaving(false); } }} disabled={!isValid || saving} className="gap-2">
+            {saving ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" /> : <CheckCircle2 className="w-4 h-4" />} {initial ? d.actions.saveChanges : d.sections.testimonials.add}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -475,12 +481,13 @@ function CertificateDialog({ open, initial, onSave, onClose }: {
   const d = translations[language].dashboard;
   const labels = d.dialogs.certificate;
   const [local, setLocal] = useState<Omit<Certificate, "id">>(initial ?? blankCert());
-  useEffect(() => { setLocal(initial ?? blankCert()); }, [open, initial]);
+  const [saving, setSaving] = useState(false);
+  useEffect(() => { setLocal(initial ?? blankCert()); setSaving(false); }, [open, initial]);
   const isValid = local.title.trim() && local.issuer.trim() && local.date.trim();
   const PRESET_COLORS = ["#6C63FF", "#FF9900", "#0866FF", "#4285F4", "#00ED64", "#A259FF", "#F24E1E", "#06B6D4", "#3DDC84", "#FA7343"];
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
-      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-xl max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
@@ -539,9 +546,9 @@ function CertificateDialog({ open, initial, onSave, onClose }: {
           </Field>
         </div>
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose}>{d.actions.cancel}</Button>
-          <Button onClick={async () => { await onSave(local); onClose(); }} disabled={!isValid} className="gap-2">
-            <CheckCircle2 className="w-4 h-4" /> {initial ? d.actions.saveChanges : d.sections.certificates.add}
+          <Button variant="outline" onClick={onClose} disabled={saving}>{d.actions.cancel}</Button>
+          <Button onClick={async () => { setSaving(true); try { await onSave(local); onClose(); } catch { setSaving(false); } }} disabled={!isValid || saving} className="gap-2">
+            {saving ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" /> : <CheckCircle2 className="w-4 h-4" />} {initial ? d.actions.saveChanges : d.sections.certificates.add}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -554,6 +561,7 @@ function ItemCard({ children, onEdit, onDelete, index }: {
   children: React.ReactNode; onEdit: () => void; onDelete: () => Promise<void>; index: number;
 }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const { language } = usePortfolio();
   const d = translations[language].dashboard;
   return (
@@ -574,13 +582,20 @@ function ItemCard({ children, onEdit, onDelete, index }: {
                 <Button
                   variant="destructive"
                   size="sm"
+                  disabled={deleting}
                   onClick={async () => {
-                    await onDelete();
-                    setConfirmDelete(false);
+                    setDeleting(true);
+                    try {
+                      await onDelete();
+                    } catch {
+                    } finally {
+                      setDeleting(false);
+                      setConfirmDelete(false);
+                    }
                   }}
                   className="gap-1.5"
                 >
-                  <Trash2 className="h-3.5 w-3.5" /> {d.actions.confirm}
+                  {deleting ? <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" /> : <Trash2 className="h-3.5 w-3.5" />} {d.actions.confirm}
                 </Button>
               </>
             ) : (
@@ -604,15 +619,28 @@ function ItemCard({ children, onEdit, onDelete, index }: {
 function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSave: (i: PersonalInfo) => Promise<void> }) {
   const [local, setLocal] = useState({ ...info, floatingSkills: info.floatingSkills || ["React", "Flutter", "TypeScript", "Node.js", "Figma", "Next.js"] });
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const { language } = usePortfolio();
   const d = translations[language].dashboard;
+  const { toast } = useToast();
   const labels = d.dialogs.personalInfo;
   useEffect(() => { setLocal({ ...info, floatingSkills: info.floatingSkills || ["React", "Flutter", "TypeScript", "Node.js", "Figma", "Next.js"] }); }, [info]);
 
   const handleSave = async () => {
-    await onSave(local);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    setSaving(true);
+    setSaveError("");
+    try {
+      await onSave(local);
+      setSaved(true);
+      toast({ title: d.actions.saved });
+      setTimeout(() => setSaved(false), 2000);
+    } catch (err: any) {
+      setSaveError(err.message || "Failed to save");
+      toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -692,9 +720,10 @@ function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSave: (i: 
           </Field>
         </div>
         <div className="flex justify-end pt-2">
-          <Button onClick={handleSave} className="gap-2 min-w-[140px]">
-            {saved ? <><CheckCircle2 className="w-4 h-4" /> {d.actions.saved}</> : d.actions.saveChanges}
+          <Button onClick={handleSave} disabled={saving} className="gap-2 min-w-[140px]">
+            {saving ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" /> : saved ? <><CheckCircle2 className="w-4 h-4" /> {d.actions.saved}</> : d.actions.saveChanges}
           </Button>
+          {saveError && <p className="text-sm text-destructive mt-2 text-right w-full">{saveError}</p>}
         </div>
       </CardContent>
     </Card>
@@ -726,6 +755,7 @@ export default function Dashboard() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const { toast } = useToast();
 
   const {
     isLoading,
@@ -937,7 +967,7 @@ export default function Dashboard() {
                     <ItemCard
                       key={p.id} index={i}
                       onEdit={() => setProjectDialog({ open: true, item: p })}
-                      onDelete={() => deleteProject(p.id)}
+                      onDelete={async () => { try { await deleteProject(p.id); toast({ title: d.actions.deleted }); } catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); } }}
                     >
                       <div className="flex items-center gap-3">
                         <img
@@ -997,7 +1027,7 @@ export default function Dashboard() {
                     <ItemCard
                       key={e.id} index={i}
                       onEdit={() => setExpDialog({ open: true, item: e })}
-                      onDelete={() => deleteExperience(e.id)}
+                      onDelete={async () => { try { await deleteExperience(e.id); toast({ title: d.actions.deleted }); } catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); } }}
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
@@ -1038,7 +1068,7 @@ export default function Dashboard() {
                     <ItemCard
                       key={e.id} index={i}
                       onEdit={() => setEduDialog({ open: true, item: e })}
-                      onDelete={() => deleteEducation(e.id)}
+                      onDelete={async () => { try { await deleteEducation(e.id); toast({ title: d.actions.deleted }); } catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); } }}
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0">
@@ -1086,7 +1116,7 @@ export default function Dashboard() {
                     <ItemCard
                       key={c.id} index={i}
                       onEdit={() => setCertDialog({ open: true, item: c })}
-                      onDelete={() => deleteCertificate(c.id)}
+                      onDelete={async () => { try { await deleteCertificate(c.id); toast({ title: d.actions.deleted }); } catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); } }}
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center" style={{ background: `${c.badgeColor}20`, border: `1px solid ${c.badgeColor}40` }}>
@@ -1136,7 +1166,7 @@ export default function Dashboard() {
                     <ItemCard
                       key={t.id} index={i}
                       onEdit={() => setTestDialog({ open: true, item: t })}
-                      onDelete={() => deleteTestimonial(t.id)}
+                      onDelete={async () => { try { await deleteTestimonial(t.id); toast({ title: d.actions.deleted }); } catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); } }}
                     >
                       <div className="flex items-start gap-3">
                         <img src={t.imageUrl} alt={t.name} className="w-10 h-10 rounded-full object-cover border border-border shrink-0" />
@@ -1169,10 +1199,17 @@ export default function Dashboard() {
         open={projectDialog.open}
         initial={projectDialog.item}
         onSave={async (data) => {
-          if (projectDialog.item) {
-            await updateProject(projectDialog.item.id, data);
-          } else {
-            await addProject(data);
+          try {
+            if (projectDialog.item) {
+              await updateProject(projectDialog.item.id, data);
+              toast({ title: d.actions.saved });
+            } else {
+              await addProject(data);
+              toast({ title: d.actions.saved });
+            }
+          } catch (err: any) {
+            toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" });
+            throw err;
           }
         }}
         onClose={() => setProjectDialog({ open: false })}
@@ -1181,8 +1218,18 @@ export default function Dashboard() {
         open={expDialog.open}
         initial={expDialog.item}
         onSave={async (data) => {
-          if (expDialog.item) await updateExperience(expDialog.item.id, data);
-          else await addExperience(data);
+          try {
+            if (expDialog.item) {
+              await updateExperience(expDialog.item.id, data);
+              toast({ title: d.actions.saved });
+            } else {
+              await addExperience(data);
+              toast({ title: d.actions.saved });
+            }
+          } catch (err: any) {
+            toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" });
+            throw err;
+          }
         }}
         onClose={() => setExpDialog({ open: false })}
       />
@@ -1190,8 +1237,18 @@ export default function Dashboard() {
         open={eduDialog.open}
         initial={eduDialog.item}
         onSave={async (data) => {
-          if (eduDialog.item) await updateEducation(eduDialog.item.id, data);
-          else await addEducation(data);
+          try {
+            if (eduDialog.item) {
+              await updateEducation(eduDialog.item.id, data);
+              toast({ title: d.actions.saved });
+            } else {
+              await addEducation(data);
+              toast({ title: d.actions.saved });
+            }
+          } catch (err: any) {
+            toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" });
+            throw err;
+          }
         }}
         onClose={() => setEduDialog({ open: false })}
       />
@@ -1199,8 +1256,18 @@ export default function Dashboard() {
         open={certDialog.open}
         initial={certDialog.item}
         onSave={async (data) => {
-          if (certDialog.item) await updateCertificate(certDialog.item.id, data);
-          else await addCertificate(data);
+          try {
+            if (certDialog.item) {
+              await updateCertificate(certDialog.item.id, data);
+              toast({ title: d.actions.saved });
+            } else {
+              await addCertificate(data);
+              toast({ title: d.actions.saved });
+            }
+          } catch (err: any) {
+            toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" });
+            throw err;
+          }
         }}
         onClose={() => setCertDialog({ open: false })}
       />
@@ -1208,8 +1275,18 @@ export default function Dashboard() {
         open={testDialog.open}
         initial={testDialog.item}
         onSave={async (data) => {
-          if (testDialog.item) await updateTestimonial(testDialog.item.id, data);
-          else await addTestimonial(data);
+          try {
+            if (testDialog.item) {
+              await updateTestimonial(testDialog.item.id, data);
+              toast({ title: d.actions.saved });
+            } else {
+              await addTestimonial(data);
+              toast({ title: d.actions.saved });
+            }
+          } catch (err: any) {
+            toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" });
+            throw err;
+          }
         }}
         onClose={() => setTestDialog({ open: false })}
       />

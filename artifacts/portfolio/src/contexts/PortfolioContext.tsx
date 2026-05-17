@@ -413,10 +413,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
         .select()
         .single();
 
-      if (error) {
-        console.error("Failed to update personal info", error);
-        return;
-      }
+      if (error) throw new Error(error.message);
 
       setPersonalInfoState({
         name: data.name ?? "",
@@ -465,10 +462,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
       .select()
       .single();
 
-    if (error) {
-      console.error("Failed to insert personal info", error);
-      return;
-    }
+    if (error) throw new Error(error.message);
 
     setPersonalInfoId(data.id);
     setPersonalInfoState({
@@ -492,7 +486,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const addProject = async (p: Omit<Project, "id">) => {
+const addProject = async (p: Omit<Project, "id">) => {
     const { data, error } = await supabase
       .from("portfolio_projects")
       .insert({
@@ -509,10 +503,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
       })
       .select()
       .single();
-    if (error) {
-      console.error("Failed to add project", error);
-      return;
-    }
+    if (error) throw new Error(error.message);
     setProjects((prev) => [...prev, {
       id: data.id,
       title: data.title ?? "",
@@ -546,10 +537,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
       .eq("id", id)
       .select()
       .single();
-    if (error) {
-      console.error("Failed to update project", error);
-      return;
-    }
+    if (error) throw new Error(error.message);
     setProjects((prev) => prev.map((item) => item.id === id ? {
       id: data.id,
       title: data.title ?? "",
@@ -567,10 +555,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
 
   const deleteProject = async (id: string) => {
     const { error } = await supabase.from("portfolio_projects").delete().eq("id", id);
-    if (error) {
-      console.error("Failed to delete project", error);
-      return;
-    }
+    if (error) throw new Error(error.message);
     setProjects((prev) => prev.filter((p) => p.id !== id));
   };
 
@@ -587,10 +572,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
       })
       .select()
       .single();
-    if (error) {
-      console.error("Failed to add experience", error);
-      return;
-    }
+    if (error) throw new Error(error.message);
     setExperience((prev) => [...prev, {
       id: data.id,
       company: data.company ?? "",
@@ -616,10 +598,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
       .eq("id", id)
       .select()
       .single();
-    if (error) {
-      console.error("Failed to update experience", error);
-      return;
-    }
+    if (error) throw new Error(error.message);
     setExperience((prev) => prev.map((item) => item.id === id ? {
       id: data.id,
       company: data.company ?? "",
@@ -633,10 +612,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
 
   const deleteExperience = async (id: string) => {
     const { error } = await supabase.from("portfolio_experience").delete().eq("id", id);
-    if (error) {
-      console.error("Failed to delete experience", error);
-      return;
-    }
+    if (error) throw new Error(error.message);
     setExperience((prev) => prev.filter((e) => e.id !== id));
   };
 
@@ -657,10 +633,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
       })
       .select()
       .single();
-    if (error) {
-      console.error("Failed to add education", error);
-      return;
-    }
+    if (error) throw new Error(error.message);
     setEducation((prev) => [...prev, {
       id: data.id,
       institution: data.institution ?? "",
@@ -694,10 +667,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
       .eq("id", id)
       .select()
       .single();
-    if (error) {
-      console.error("Failed to update education", error);
-      return;
-    }
+    if (error) throw new Error(error.message);
     setEducation((prev) => prev.map((item) => item.id === id ? {
       id: data.id,
       institution: data.institution ?? "",
@@ -715,10 +685,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
 
   const deleteEducation = async (id: string) => {
     const { error } = await supabase.from("portfolio_education").delete().eq("id", id);
-    if (error) {
-      console.error("Failed to delete education", error);
-      return;
-    }
+    if (error) throw new Error(error.message);
     setEducation((prev) => prev.filter((e) => e.id !== id));
   };
 
@@ -736,10 +703,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
       })
       .select()
       .single();
-    if (error) {
-      console.error("Failed to add certificate", error);
-      return;
-    }
+    if (error) throw new Error(error.message);
     setCertificates((prev) => [...prev, {
       id: data.id,
       title: data.title ?? "",
@@ -767,10 +731,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
       .eq("id", id)
       .select()
       .single();
-    if (error) {
-      console.error("Failed to update certificate", error);
-      return;
-    }
+    if (error) throw new Error(error.message);
     setCertificates((prev) => prev.map((item) => item.id === id ? {
       id: data.id,
       title: data.title ?? "",
@@ -785,10 +746,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
 
   const deleteCertificate = async (id: string) => {
     const { error } = await supabase.from("portfolio_certificates").delete().eq("id", id);
-    if (error) {
-      console.error("Failed to delete certificate", error);
-      return;
-    }
+    if (error) throw new Error(error.message);
     setCertificates((prev) => prev.filter((c) => c.id !== id));
   };
 
@@ -807,10 +765,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
       })
       .select()
       .single();
-    if (error) {
-      console.error("Failed to add testimonial", error);
-      return;
-    }
+    if (error) throw new Error(error.message);
     setTestimonials((prev) => [...prev, {
       id: data.id,
       name: data.name ?? "",
@@ -840,10 +795,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
       .eq("id", id)
       .select()
       .single();
-    if (error) {
-      console.error("Failed to update testimonial", error);
-      return;
-    }
+    if (error) throw new Error(error.message);
     setTestimonials((prev) => prev.map((item) => item.id === id ? {
       id: data.id,
       name: data.name ?? "",
@@ -859,10 +811,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
 
   const deleteTestimonial = async (id: string) => {
     const { error } = await supabase.from("portfolio_testimonials").delete().eq("id", id);
-    if (error) {
-      console.error("Failed to delete testimonial", error);
-      return;
-    }
+    if (error) throw new Error(error.message);
     setTestimonials((prev) => prev.filter((t) => t.id !== id));
   };
 
