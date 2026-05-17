@@ -180,55 +180,71 @@ alter table portfolio_testimonials enable row level security;
 alter table contact_messages enable row level security;
 
 -- Admins: allow admin to read own row
+drop policy if exists "admins can read own row" on portfolio_admins;
 create policy "admins can read own row"
   on portfolio_admins for select
   using (user_id = auth.uid());
 
 -- Public read policies
+drop policy if exists "public read personal info" on portfolio_personal_info;
 create policy "public read personal info" on portfolio_personal_info
   for select using (true);
+drop policy if exists "public read projects" on portfolio_projects;
 create policy "public read projects" on portfolio_projects
   for select using (true);
+drop policy if exists "public read experience" on portfolio_experience;
 create policy "public read experience" on portfolio_experience
   for select using (true);
+drop policy if exists "public read education" on portfolio_education;
 create policy "public read education" on portfolio_education
   for select using (true);
+drop policy if exists "public read certificates" on portfolio_certificates;
 create policy "public read certificates" on portfolio_certificates
   for select using (true);
+drop policy if exists "public read testimonials" on portfolio_testimonials;
 create policy "public read testimonials" on portfolio_testimonials
   for select using (true);
 
 -- Admin write policies
+drop policy if exists "admin write personal info" on portfolio_personal_info;
 create policy "admin write personal info" on portfolio_personal_info
   for all using (exists (select 1 from portfolio_admins where user_id = auth.uid()))
   with check (exists (select 1 from portfolio_admins where user_id = auth.uid()));
 
+drop policy if exists "admin write projects" on portfolio_projects;
 create policy "admin write projects" on portfolio_projects
   for all using (exists (select 1 from portfolio_admins where user_id = auth.uid()))
   with check (exists (select 1 from portfolio_admins where user_id = auth.uid()));
 
+drop policy if exists "admin write experience" on portfolio_experience;
 create policy "admin write experience" on portfolio_experience
   for all using (exists (select 1 from portfolio_admins where user_id = auth.uid()))
   with check (exists (select 1 from portfolio_admins where user_id = auth.uid()));
 
+drop policy if exists "admin write education" on portfolio_education;
 create policy "admin write education" on portfolio_education
   for all using (exists (select 1 from portfolio_admins where user_id = auth.uid()))
   with check (exists (select 1 from portfolio_admins where user_id = auth.uid()));
 
+drop policy if exists "admin write certificates" on portfolio_certificates;
 create policy "admin write certificates" on portfolio_certificates
   for all using (exists (select 1 from portfolio_admins where user_id = auth.uid()))
   with check (exists (select 1 from portfolio_admins where user_id = auth.uid()));
 
+drop policy if exists "admin write testimonials" on portfolio_testimonials;
 create policy "admin write testimonials" on portfolio_testimonials
   for all using (exists (select 1 from portfolio_admins where user_id = auth.uid()))
   with check (exists (select 1 from portfolio_admins where user_id = auth.uid()));
 
 -- Contact messages: public insert, admin read/update
+drop policy if exists "public create contact messages" on contact_messages;
 create policy "public create contact messages" on contact_messages
   for insert with check (true);
 
+drop policy if exists "admin manage contact messages" on contact_messages;
 create policy "admin manage contact messages" on contact_messages
   for select using (exists (select 1 from portfolio_admins where user_id = auth.uid()));
+drop policy if exists "admin update contact messages" on contact_messages;
 create policy "admin update contact messages" on contact_messages
   for update using (exists (select 1 from portfolio_admins where user_id = auth.uid()))
   with check (exists (select 1 from portfolio_admins where user_id = auth.uid()));
