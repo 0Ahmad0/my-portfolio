@@ -223,6 +223,10 @@ html[dir="rtl"] {
 }
 
 @layer utilities {
+  @keyframes slide {
+    0% { transform: translateX(-250%); }
+    100% { transform: translateX(350%); }
+  }
   input[type="search"]::-webkit-search-cancel-button {
     @apply hidden;
   }

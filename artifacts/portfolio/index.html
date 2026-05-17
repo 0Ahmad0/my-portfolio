@@ -1,16 +1,158 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>Personal Portfolio</title>
+    <title>Ahmad Alhariri — Portfolio</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      body {
+        margin: 0;
+        background: #0a0a12;
+        overflow: hidden;
+      }
+      #root:empty {
+        display: block;
+      }
+      .loader-wrapper {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        background: #0a0a12;
+        z-index: 99999;
+      }
+      .loader-logo {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        margin-bottom: 32px;
+      }
+      .loader-logo-ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: #8b5cf6;
+        animation: loader-spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+      }
+      .loader-logo-ring:nth-child(2) {
+        inset: 8px;
+        border-top-color: #a78bfa;
+        animation-delay: -0.15s;
+        animation-duration: 1.6s;
+      }
+      .loader-logo-ring:nth-child(3) {
+        inset: 16px;
+        border-top-color: #c4b5fd;
+        animation-delay: -0.3s;
+        animation-duration: 2s;
+      }
+      .loader-logo-dot {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 10px;
+        height: 10px;
+        background: #8b5cf6;
+        border-radius: 50%;
+        animation: loader-pulse 1.5s ease-in-out infinite;
+        box-shadow: 0 0 20px #8b5cf6, 0 0 40px rgba(139, 92, 246, 0.3);
+      }
+      .loader-text {
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.5);
+        animation: loader-text-fade 2s ease-in-out infinite;
+      }
+      .loader-bar {
+        margin-top: 24px;
+        width: 120px;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .loader-bar-fill {
+        height: 100%;
+        width: 40%;
+        background: linear-gradient(90deg, transparent, #8b5cf6, transparent);
+        border-radius: 2px;
+        animation: loader-slide 1.5s ease-in-out infinite;
+      }
+      .loader-orb {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.15;
+        pointer-events: none;
+      }
+      .loader-orb-1 {
+        width: 300px;
+        height: 300px;
+        background: #8b5cf6;
+        top: 20%;
+        left: 10%;
+        animation: loader-float 8s ease-in-out infinite;
+      }
+      .loader-orb-2 {
+        width: 250px;
+        height: 250px;
+        background: #6d28d9;
+        bottom: 20%;
+        right: 10%;
+        animation: loader-float 10s ease-in-out infinite reverse;
+      }
+      @keyframes loader-spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes loader-pulse {
+        0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        50% { transform: translate(-50%, -50%) scale(1.8); opacity: 0.4; }
+      }
+      @keyframes loader-text-fade {
+        0%, 100% { opacity: 0.4; }
+        50% { opacity: 1; }
+      }
+      @keyframes loader-slide {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(350%); }
+      }
+      @keyframes loader-float {
+        0%, 100% { transform: translate(0, 0); }
+        25% { transform: translate(30px, -20px); }
+        50% { transform: translate(-20px, 30px); }
+        75% { transform: translate(20px, 20px); }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="loader-wrapper">
+        <div class="loader-orb loader-orb-1"></div>
+        <div class="loader-orb loader-orb-2"></div>
+        <div class="loader-logo">
+          <div class="loader-logo-ring"></div>
+          <div class="loader-logo-ring"></div>
+          <div class="loader-logo-ring"></div>
+          <div class="loader-logo-dot"></div>
+        </div>
+        <div class="loader-text">Loading</div>
+        <div class="loader-bar">
+          <div class="loader-bar-fill"></div>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
