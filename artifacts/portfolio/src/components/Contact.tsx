@@ -10,13 +10,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/utils/supabase";
 import { Send, Mail, MapPin, Download, Github, Linkedin, Twitter, Phone, Instagram, Facebook } from "lucide-react";
 
-const formSchema = z.object({
-  name: z.string().min(2, { message: "Name is required" }),
-  email: z.string().email({ message: "Invalid email address" }),
-  message: z.string().min(10, { message: "Message is too short" }),
-});
+  const formSchema = z.object({
+    name: z.string().min(2, { message: "Name is required" }),
+    email: z.string().email({ message: "Invalid email address" }),
+    message: z.string().min(10, { message: "Message is too short" }),
+  });
 
 export default function Contact() {
   const { language, personalInfo } = usePortfolio();
@@ -29,13 +30,20 @@ export default function Contact() {
     defaultValues: { name: "", email: "", message: "" },
   });
 
-  function onSubmit(_values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      toast({ title: t.contact.success, description: "I'll get back to you soon." });
-      form.reset();
-    }, 1500);
+    const { error } = await supabase.from("contact_messages").insert({
+      name: values.name,
+      email: values.email,
+      message: values.message,
+    });
+    setIsSubmitting(false);
+    if (error) {
+      toast({ title: t.contact.error, description: error.message });
+      return;
+    }
+    toast({ title: t.contact.success, description: t.contact.successDescription });
+    form.reset();
   }
 
   return (
@@ -76,7 +84,7 @@ export default function Contact() {
                 <Mail className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Email</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">{t.contact.emailLabel}</p>
                 <a
                   href={`mailto:${personalInfo.email}`}
                   className="font-medium hover:text-primary transition-colors break-all"
@@ -92,7 +100,7 @@ export default function Contact() {
                 <MapPin className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Location</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">{t.contact.locationLabel}</p>
                 <p className="font-medium">
                   {language === "ar" ? personalInfo.locationAr : personalInfo.location}
                 </p>
@@ -227,7 +235,7 @@ export default function Contact() {
                     <FormItem>
                       <FormLabel>{t.contact.name}</FormLabel>
                       <FormControl>
-                        <Input placeholder="John Doe" {...field} className="bg-background/50 h-12" data-testid="input-contact-name" />
+                        <Input placeholder={t.contact.namePlaceholder} {...field} className="bg-background/50 h-12" data-testid="input-contact-name" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -240,7 +248,7 @@ export default function Contact() {
                     <FormItem>
                       <FormLabel>{t.contact.email}</FormLabel>
                       <FormControl>
-                        <Input placeholder="john@example.com" type="email" {...field} className="bg-background/50 h-12" data-testid="input-contact-email" />
+                        <Input placeholder={t.contact.emailPlaceholder} type="email" {...field} className="bg-background/50 h-12" data-testid="input-contact-email" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -254,7 +262,7 @@ export default function Contact() {
                       <FormLabel>{t.contact.message}</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder={language === "ar" ? "كيف يمكنني مساعدتك؟" : "How can I help you?"}
+                          placeholder={t.contact.messagePlaceholder}
                           className="min-h-[140px] resize-none bg-background/50"
                           {...field}
                           data-testid="input-contact-message"

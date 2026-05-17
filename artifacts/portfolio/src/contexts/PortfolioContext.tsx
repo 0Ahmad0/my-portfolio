@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { supabase } from "@/utils/supabase";
 
 export type Project = {
   id: string;
@@ -82,35 +83,36 @@ export type PersonalInfo = {
 };
 
 type PortfolioContextType = {
+  isLoading: boolean;
   language: "en" | "ar";
   setLanguage: (lang: "en" | "ar") => void;
   personalInfo: PersonalInfo;
-  setPersonalInfo: (info: PersonalInfo) => void;
+  setPersonalInfo: (info: PersonalInfo) => Promise<void>;
   projects: Project[];
   setProjects: (projects: Project[]) => void;
-  addProject: (p: Project) => void;
-  updateProject: (id: string, p: Partial<Project>) => void;
-  deleteProject: (id: string) => void;
+  addProject: (p: Omit<Project, "id">) => Promise<void>;
+  updateProject: (id: string, p: Partial<Project>) => Promise<void>;
+  deleteProject: (id: string) => Promise<void>;
   experience: Experience[];
   setExperience: (exp: Experience[]) => void;
-  addExperience: (e: Experience) => void;
-  updateExperience: (id: string, e: Partial<Experience>) => void;
-  deleteExperience: (id: string) => void;
+  addExperience: (e: Omit<Experience, "id">) => Promise<void>;
+  updateExperience: (id: string, e: Partial<Experience>) => Promise<void>;
+  deleteExperience: (id: string) => Promise<void>;
   education: Education[];
   setEducation: (edu: Education[]) => void;
-  addEducation: (e: Education) => void;
-  updateEducation: (id: string, e: Partial<Education>) => void;
-  deleteEducation: (id: string) => void;
+  addEducation: (e: Omit<Education, "id">) => Promise<void>;
+  updateEducation: (id: string, e: Partial<Education>) => Promise<void>;
+  deleteEducation: (id: string) => Promise<void>;
   certificates: Certificate[];
   setCertificates: (certs: Certificate[]) => void;
-  addCertificate: (c: Certificate) => void;
-  updateCertificate: (id: string, c: Partial<Certificate>) => void;
-  deleteCertificate: (id: string) => void;
+  addCertificate: (c: Omit<Certificate, "id">) => Promise<void>;
+  updateCertificate: (id: string, c: Partial<Certificate>) => Promise<void>;
+  deleteCertificate: (id: string) => Promise<void>;
   testimonials: Testimonial[];
   setTestimonials: (test: Testimonial[]) => void;
-  addTestimonial: (t: Testimonial) => void;
-  updateTestimonial: (id: string, t: Partial<Testimonial>) => void;
-  deleteTestimonial: (id: string) => void;
+  addTestimonial: (t: Omit<Testimonial, "id">) => Promise<void>;
+  updateTestimonial: (id: string, t: Partial<Testimonial>) => Promise<void>;
+  deleteTestimonial: (id: string) => Promise<void>;
 };
 
 const defaultPersonalInfo: PersonalInfo = {
@@ -230,44 +232,20 @@ const defaultCertificates: Certificate[] = [
 
 const defaultTestimonials: Testimonial[] = [];
 
-const STORAGE_VERSION = "v4";
-
-function clearStaleStorage() {
-  try {
-    if (localStorage.getItem("portfolio_version") !== STORAGE_VERSION) {
-      ["portfolio_info", "portfolio_projects", "portfolio_experience",
-       "portfolio_education", "portfolio_certs", "portfolio_testimonials"].forEach(k => localStorage.removeItem(k));
-      localStorage.setItem("portfolio_version", STORAGE_VERSION);
-    }
-  } catch { /* ignore */ }
-}
-
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
 
 export function PortfolioProvider({ children }: { children: ReactNode }) {
-  clearStaleStorage();
-
+  const [isLoading, setIsLoading] = useState(true);
   const [language, setLanguageState] = useState<"en" | "ar">(() => {
     try { return (localStorage.getItem("portfolio_lang") as "en" | "ar") || "en"; } catch { return "en"; }
   });
-  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>(() => {
-    try { const s = localStorage.getItem("portfolio_info"); return s ? JSON.parse(s) : defaultPersonalInfo; } catch { return defaultPersonalInfo; }
-  });
-  const [projects, setProjects] = useState<Project[]>(() => {
-    try { const s = localStorage.getItem("portfolio_projects"); return s ? JSON.parse(s) : defaultProjects; } catch { return defaultProjects; }
-  });
-  const [experience, setExperience] = useState<Experience[]>(() => {
-    try { const s = localStorage.getItem("portfolio_experience"); return s ? JSON.parse(s) : defaultExperience; } catch { return defaultExperience; }
-  });
-  const [education, setEducation] = useState<Education[]>(() => {
-    try { const s = localStorage.getItem("portfolio_education"); return s ? JSON.parse(s) : defaultEducation; } catch { return defaultEducation; }
-  });
-  const [certificates, setCertificates] = useState<Certificate[]>(() => {
-    try { const s = localStorage.getItem("portfolio_certs"); return s ? JSON.parse(s) : defaultCertificates; } catch { return defaultCertificates; }
-  });
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(() => {
-    try { const s = localStorage.getItem("portfolio_testimonials"); return s ? JSON.parse(s) : defaultTestimonials; } catch { return defaultTestimonials; }
-  });
+  const [personalInfoId, setPersonalInfoId] = useState<string | null>(null);
+  const [personalInfo, setPersonalInfoState] = useState<PersonalInfo>(defaultPersonalInfo);
+  const [projects, setProjects] = useState<Project[]>(defaultProjects);
+  const [experience, setExperience] = useState<Experience[]>(defaultExperience);
+  const [education, setEducation] = useState<Education[]>(defaultEducation);
+  const [certificates, setCertificates] = useState<Certificate[]>(defaultCertificates);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonials);
 
   useEffect(() => {
     localStorage.setItem("portfolio_lang", language);
@@ -275,32 +253,622 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = language;
   }, [language]);
 
-  useEffect(() => { localStorage.setItem("portfolio_info", JSON.stringify(personalInfo)); }, [personalInfo]);
-  useEffect(() => { localStorage.setItem("portfolio_projects", JSON.stringify(projects)); }, [projects]);
-  useEffect(() => { localStorage.setItem("portfolio_experience", JSON.stringify(experience)); }, [experience]);
-  useEffect(() => { localStorage.setItem("portfolio_education", JSON.stringify(education)); }, [education]);
-  useEffect(() => { localStorage.setItem("portfolio_certs", JSON.stringify(certificates)); }, [certificates]);
-  useEffect(() => { localStorage.setItem("portfolio_testimonials", JSON.stringify(testimonials)); }, [testimonials]);
+  useEffect(() => {
+    let isMounted = true;
+    async function loadPortfolio() {
+      setIsLoading(true);
+      const [
+        personalRes,
+        projectsRes,
+        expRes,
+        eduRes,
+        certRes,
+        testRes,
+      ] = await Promise.all([
+        supabase.from("portfolio_personal_info").select("*").eq("is_primary", true).limit(1),
+        supabase.from("portfolio_projects").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+        supabase.from("portfolio_experience").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+        supabase.from("portfolio_education").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+        supabase.from("portfolio_certificates").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+        supabase.from("portfolio_testimonials").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+      ]);
+
+      if (!isMounted) return;
+
+      if (personalRes.error) console.error("Failed to load personal info", personalRes.error);
+      if (projectsRes.error) console.error("Failed to load projects", projectsRes.error);
+      if (expRes.error) console.error("Failed to load experience", expRes.error);
+      if (eduRes.error) console.error("Failed to load education", eduRes.error);
+      if (certRes.error) console.error("Failed to load certificates", certRes.error);
+      if (testRes.error) console.error("Failed to load testimonials", testRes.error);
+
+      const infoRow = personalRes.data?.[0];
+      if (infoRow) {
+        setPersonalInfoId(infoRow.id);
+        setPersonalInfoState({
+          name: infoRow.name ?? "",
+          nameAr: infoRow.name_ar ?? "",
+          bio: infoRow.bio ?? "",
+          bioAr: infoRow.bio_ar ?? "",
+          email: infoRow.email ?? "",
+          location: infoRow.location ?? "",
+          locationAr: infoRow.location_ar ?? "",
+          github: infoRow.github ?? "",
+          linkedin: infoRow.linkedin ?? "",
+          twitter: infoRow.twitter ?? "",
+          telegram: infoRow.telegram ?? "",
+          whatsapp: infoRow.whatsapp ?? "",
+          instagram: infoRow.instagram ?? "",
+          facebook: infoRow.facebook ?? "",
+          cvUrl: infoRow.cv_url ?? "",
+          avatarUrl: infoRow.avatar_url ?? "",
+          floatingSkills: infoRow.floating_skills ?? [],
+        });
+      }
+
+      if (projectsRes.data) {
+        setProjects(projectsRes.data.map((row) => ({
+          id: row.id,
+          title: row.title ?? "",
+          titleAr: row.title_ar ?? "",
+          description: row.description ?? "",
+          descriptionAr: row.description_ar ?? "",
+          category: row.category ?? "Web",
+          tags: row.tags ?? [],
+          imageUrl: row.image_url ?? "",
+          images: row.images ?? [],
+          githubUrl: row.github_url ?? "",
+          liveUrl: row.live_url ?? "",
+        })));
+      }
+
+      if (expRes.data) {
+        setExperience(expRes.data.map((row) => ({
+          id: row.id,
+          company: row.company ?? "",
+          role: row.role ?? "",
+          roleAr: row.role_ar ?? "",
+          period: row.period ?? "",
+          description: row.description ?? "",
+          descriptionAr: row.description_ar ?? "",
+        })));
+      }
+
+      if (eduRes.data) {
+        setEducation(eduRes.data.map((row) => ({
+          id: row.id,
+          institution: row.institution ?? "",
+          institutionAr: row.institution_ar ?? "",
+          degree: row.degree ?? "",
+          degreeAr: row.degree_ar ?? "",
+          field: row.field ?? "",
+          fieldAr: row.field_ar ?? "",
+          period: row.period ?? "",
+          gpa: row.gpa ?? "",
+          description: row.description ?? "",
+          descriptionAr: row.description_ar ?? "",
+        })));
+      }
+
+      if (certRes.data) {
+        setCertificates(certRes.data.map((row) => ({
+          id: row.id,
+          title: row.title ?? "",
+          titleAr: row.title_ar ?? "",
+          issuer: row.issuer ?? "",
+          issuerAr: row.issuer_ar ?? "",
+          date: row.date ?? "",
+          credentialUrl: row.credential_url ?? "",
+          badgeColor: row.badge_color ?? "#6C63FF",
+        })));
+      }
+
+      if (testRes.data) {
+        setTestimonials(testRes.data.map((row) => ({
+          id: row.id,
+          name: row.name ?? "",
+          nameAr: row.name_ar ?? "",
+          role: row.role ?? "",
+          roleAr: row.role_ar ?? "",
+          text: row.text ?? "",
+          textAr: row.text_ar ?? "",
+          rating: row.rating ?? 5,
+          imageUrl: row.image_url ?? "",
+        })));
+      }
+
+      setIsLoading(false);
+    }
+
+    loadPortfolio();
+    return () => { isMounted = false; };
+  }, []);
 
   const setLanguage = (lang: "en" | "ar") => setLanguageState(lang);
-  const addProject = (p: Project) => setProjects(prev => [...prev, p]);
-  const updateProject = (id: string, p: Partial<Project>) => setProjects(prev => prev.map(x => x.id === id ? { ...x, ...p } : x));
-  const deleteProject = (id: string) => setProjects(prev => prev.filter(p => p.id !== id));
-  const addExperience = (e: Experience) => setExperience(prev => [...prev, e]);
-  const updateExperience = (id: string, e: Partial<Experience>) => setExperience(prev => prev.map(x => x.id === id ? { ...x, ...e } : x));
-  const deleteExperience = (id: string) => setExperience(prev => prev.filter(e => e.id !== id));
-  const addEducation = (e: Education) => setEducation(prev => [...prev, e]);
-  const updateEducation = (id: string, e: Partial<Education>) => setEducation(prev => prev.map(x => x.id === id ? { ...x, ...e } : x));
-  const deleteEducation = (id: string) => setEducation(prev => prev.filter(e => e.id !== id));
-  const addCertificate = (c: Certificate) => setCertificates(prev => [...prev, c]);
-  const updateCertificate = (id: string, c: Partial<Certificate>) => setCertificates(prev => prev.map(x => x.id === id ? { ...x, ...c } : x));
-  const deleteCertificate = (id: string) => setCertificates(prev => prev.filter(c => c.id !== id));
-  const addTestimonial = (t: Testimonial) => setTestimonials(prev => [...prev, t]);
-  const updateTestimonial = (id: string, t: Partial<Testimonial>) => setTestimonials(prev => prev.map(x => x.id === id ? { ...x, ...t } : x));
-  const deleteTestimonial = (id: string) => setTestimonials(prev => prev.filter(t => t.id !== id));
+
+  const setPersonalInfo = async (info: PersonalInfo) => {
+    if (personalInfoId) {
+      const { data, error } = await supabase
+        .from("portfolio_personal_info")
+        .update({
+          name: info.name,
+          name_ar: info.nameAr,
+          bio: info.bio,
+          bio_ar: info.bioAr,
+          email: info.email,
+          location: info.location,
+          location_ar: info.locationAr,
+          github: info.github,
+          linkedin: info.linkedin,
+          twitter: info.twitter,
+          telegram: info.telegram,
+          whatsapp: info.whatsapp,
+          instagram: info.instagram,
+          facebook: info.facebook,
+          cv_url: info.cvUrl,
+          avatar_url: info.avatarUrl,
+          floating_skills: info.floatingSkills,
+        })
+        .eq("id", personalInfoId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Failed to update personal info", error);
+        return;
+      }
+
+      setPersonalInfoState({
+        name: data.name ?? "",
+        nameAr: data.name_ar ?? "",
+        bio: data.bio ?? "",
+        bioAr: data.bio_ar ?? "",
+        email: data.email ?? "",
+        location: data.location ?? "",
+        locationAr: data.location_ar ?? "",
+        github: data.github ?? "",
+        linkedin: data.linkedin ?? "",
+        twitter: data.twitter ?? "",
+        telegram: data.telegram ?? "",
+        whatsapp: data.whatsapp ?? "",
+        instagram: data.instagram ?? "",
+        facebook: data.facebook ?? "",
+        cvUrl: data.cv_url ?? "",
+        avatarUrl: data.avatar_url ?? "",
+        floatingSkills: data.floating_skills ?? [],
+      });
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("portfolio_personal_info")
+      .insert({
+        is_primary: true,
+        name: info.name,
+        name_ar: info.nameAr,
+        bio: info.bio,
+        bio_ar: info.bioAr,
+        email: info.email,
+        location: info.location,
+        location_ar: info.locationAr,
+        github: info.github,
+        linkedin: info.linkedin,
+        twitter: info.twitter,
+        telegram: info.telegram,
+        whatsapp: info.whatsapp,
+        instagram: info.instagram,
+        facebook: info.facebook,
+        cv_url: info.cvUrl,
+        avatar_url: info.avatarUrl,
+        floating_skills: info.floatingSkills,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Failed to insert personal info", error);
+      return;
+    }
+
+    setPersonalInfoId(data.id);
+    setPersonalInfoState({
+      name: data.name ?? "",
+      nameAr: data.name_ar ?? "",
+      bio: data.bio ?? "",
+      bioAr: data.bio_ar ?? "",
+      email: data.email ?? "",
+      location: data.location ?? "",
+      locationAr: data.location_ar ?? "",
+      github: data.github ?? "",
+      linkedin: data.linkedin ?? "",
+      twitter: data.twitter ?? "",
+      telegram: data.telegram ?? "",
+      whatsapp: data.whatsapp ?? "",
+      instagram: data.instagram ?? "",
+      facebook: data.facebook ?? "",
+      cvUrl: data.cv_url ?? "",
+      avatarUrl: data.avatar_url ?? "",
+      floatingSkills: data.floating_skills ?? [],
+    });
+  };
+
+  const addProject = async (p: Omit<Project, "id">) => {
+    const { data, error } = await supabase
+      .from("portfolio_projects")
+      .insert({
+        title: p.title,
+        title_ar: p.titleAr,
+        description: p.description,
+        description_ar: p.descriptionAr,
+        category: p.category,
+        tags: p.tags,
+        image_url: p.imageUrl,
+        images: p.images ?? [],
+        live_url: p.liveUrl,
+        github_url: p.githubUrl,
+      })
+      .select()
+      .single();
+    if (error) {
+      console.error("Failed to add project", error);
+      return;
+    }
+    setProjects((prev) => [...prev, {
+      id: data.id,
+      title: data.title ?? "",
+      titleAr: data.title_ar ?? "",
+      description: data.description ?? "",
+      descriptionAr: data.description_ar ?? "",
+      category: data.category ?? "Web",
+      tags: data.tags ?? [],
+      imageUrl: data.image_url ?? "",
+      images: data.images ?? [],
+      githubUrl: data.github_url ?? "",
+      liveUrl: data.live_url ?? "",
+    }]);
+  };
+
+  const updateProject = async (id: string, p: Partial<Project>) => {
+    const { data, error } = await supabase
+      .from("portfolio_projects")
+      .update({
+        title: p.title,
+        title_ar: p.titleAr,
+        description: p.description,
+        description_ar: p.descriptionAr,
+        category: p.category,
+        tags: p.tags,
+        image_url: p.imageUrl,
+        images: p.images,
+        live_url: p.liveUrl,
+        github_url: p.githubUrl,
+      })
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) {
+      console.error("Failed to update project", error);
+      return;
+    }
+    setProjects((prev) => prev.map((item) => item.id === id ? {
+      id: data.id,
+      title: data.title ?? "",
+      titleAr: data.title_ar ?? "",
+      description: data.description ?? "",
+      descriptionAr: data.description_ar ?? "",
+      category: data.category ?? "Web",
+      tags: data.tags ?? [],
+      imageUrl: data.image_url ?? "",
+      images: data.images ?? [],
+      githubUrl: data.github_url ?? "",
+      liveUrl: data.live_url ?? "",
+    } : item));
+  };
+
+  const deleteProject = async (id: string) => {
+    const { error } = await supabase.from("portfolio_projects").delete().eq("id", id);
+    if (error) {
+      console.error("Failed to delete project", error);
+      return;
+    }
+    setProjects((prev) => prev.filter((p) => p.id !== id));
+  };
+
+  const addExperience = async (e: Omit<Experience, "id">) => {
+    const { data, error } = await supabase
+      .from("portfolio_experience")
+      .insert({
+        company: e.company,
+        role: e.role,
+        role_ar: e.roleAr,
+        period: e.period,
+        description: e.description,
+        description_ar: e.descriptionAr,
+      })
+      .select()
+      .single();
+    if (error) {
+      console.error("Failed to add experience", error);
+      return;
+    }
+    setExperience((prev) => [...prev, {
+      id: data.id,
+      company: data.company ?? "",
+      role: data.role ?? "",
+      roleAr: data.role_ar ?? "",
+      period: data.period ?? "",
+      description: data.description ?? "",
+      descriptionAr: data.description_ar ?? "",
+    }]);
+  };
+
+  const updateExperience = async (id: string, e: Partial<Experience>) => {
+    const { data, error } = await supabase
+      .from("portfolio_experience")
+      .update({
+        company: e.company,
+        role: e.role,
+        role_ar: e.roleAr,
+        period: e.period,
+        description: e.description,
+        description_ar: e.descriptionAr,
+      })
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) {
+      console.error("Failed to update experience", error);
+      return;
+    }
+    setExperience((prev) => prev.map((item) => item.id === id ? {
+      id: data.id,
+      company: data.company ?? "",
+      role: data.role ?? "",
+      roleAr: data.role_ar ?? "",
+      period: data.period ?? "",
+      description: data.description ?? "",
+      descriptionAr: data.description_ar ?? "",
+    } : item));
+  };
+
+  const deleteExperience = async (id: string) => {
+    const { error } = await supabase.from("portfolio_experience").delete().eq("id", id);
+    if (error) {
+      console.error("Failed to delete experience", error);
+      return;
+    }
+    setExperience((prev) => prev.filter((e) => e.id !== id));
+  };
+
+  const addEducation = async (e: Omit<Education, "id">) => {
+    const { data, error } = await supabase
+      .from("portfolio_education")
+      .insert({
+        institution: e.institution,
+        institution_ar: e.institutionAr,
+        degree: e.degree,
+        degree_ar: e.degreeAr,
+        field: e.field,
+        field_ar: e.fieldAr,
+        period: e.period,
+        gpa: e.gpa,
+        description: e.description,
+        description_ar: e.descriptionAr,
+      })
+      .select()
+      .single();
+    if (error) {
+      console.error("Failed to add education", error);
+      return;
+    }
+    setEducation((prev) => [...prev, {
+      id: data.id,
+      institution: data.institution ?? "",
+      institutionAr: data.institution_ar ?? "",
+      degree: data.degree ?? "",
+      degreeAr: data.degree_ar ?? "",
+      field: data.field ?? "",
+      fieldAr: data.field_ar ?? "",
+      period: data.period ?? "",
+      gpa: data.gpa ?? "",
+      description: data.description ?? "",
+      descriptionAr: data.description_ar ?? "",
+    }]);
+  };
+
+  const updateEducation = async (id: string, e: Partial<Education>) => {
+    const { data, error } = await supabase
+      .from("portfolio_education")
+      .update({
+        institution: e.institution,
+        institution_ar: e.institutionAr,
+        degree: e.degree,
+        degree_ar: e.degreeAr,
+        field: e.field,
+        field_ar: e.fieldAr,
+        period: e.period,
+        gpa: e.gpa,
+        description: e.description,
+        description_ar: e.descriptionAr,
+      })
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) {
+      console.error("Failed to update education", error);
+      return;
+    }
+    setEducation((prev) => prev.map((item) => item.id === id ? {
+      id: data.id,
+      institution: data.institution ?? "",
+      institutionAr: data.institution_ar ?? "",
+      degree: data.degree ?? "",
+      degreeAr: data.degree_ar ?? "",
+      field: data.field ?? "",
+      fieldAr: data.field_ar ?? "",
+      period: data.period ?? "",
+      gpa: data.gpa ?? "",
+      description: data.description ?? "",
+      descriptionAr: data.description_ar ?? "",
+    } : item));
+  };
+
+  const deleteEducation = async (id: string) => {
+    const { error } = await supabase.from("portfolio_education").delete().eq("id", id);
+    if (error) {
+      console.error("Failed to delete education", error);
+      return;
+    }
+    setEducation((prev) => prev.filter((e) => e.id !== id));
+  };
+
+  const addCertificate = async (c: Omit<Certificate, "id">) => {
+    const { data, error } = await supabase
+      .from("portfolio_certificates")
+      .insert({
+        title: c.title,
+        title_ar: c.titleAr,
+        issuer: c.issuer,
+        issuer_ar: c.issuerAr,
+        date: c.date,
+        credential_url: c.credentialUrl,
+        badge_color: c.badgeColor,
+      })
+      .select()
+      .single();
+    if (error) {
+      console.error("Failed to add certificate", error);
+      return;
+    }
+    setCertificates((prev) => [...prev, {
+      id: data.id,
+      title: data.title ?? "",
+      titleAr: data.title_ar ?? "",
+      issuer: data.issuer ?? "",
+      issuerAr: data.issuer_ar ?? "",
+      date: data.date ?? "",
+      credentialUrl: data.credential_url ?? "",
+      badgeColor: data.badge_color ?? "#6C63FF",
+    }]);
+  };
+
+  const updateCertificate = async (id: string, c: Partial<Certificate>) => {
+    const { data, error } = await supabase
+      .from("portfolio_certificates")
+      .update({
+        title: c.title,
+        title_ar: c.titleAr,
+        issuer: c.issuer,
+        issuer_ar: c.issuerAr,
+        date: c.date,
+        credential_url: c.credentialUrl,
+        badge_color: c.badgeColor,
+      })
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) {
+      console.error("Failed to update certificate", error);
+      return;
+    }
+    setCertificates((prev) => prev.map((item) => item.id === id ? {
+      id: data.id,
+      title: data.title ?? "",
+      titleAr: data.title_ar ?? "",
+      issuer: data.issuer ?? "",
+      issuerAr: data.issuer_ar ?? "",
+      date: data.date ?? "",
+      credentialUrl: data.credential_url ?? "",
+      badgeColor: data.badge_color ?? "#6C63FF",
+    } : item));
+  };
+
+  const deleteCertificate = async (id: string) => {
+    const { error } = await supabase.from("portfolio_certificates").delete().eq("id", id);
+    if (error) {
+      console.error("Failed to delete certificate", error);
+      return;
+    }
+    setCertificates((prev) => prev.filter((c) => c.id !== id));
+  };
+
+  const addTestimonial = async (t: Omit<Testimonial, "id">) => {
+    const { data, error } = await supabase
+      .from("portfolio_testimonials")
+      .insert({
+        name: t.name,
+        name_ar: t.nameAr,
+        role: t.role,
+        role_ar: t.roleAr,
+        text: t.text,
+        text_ar: t.textAr,
+        rating: t.rating,
+        image_url: t.imageUrl,
+      })
+      .select()
+      .single();
+    if (error) {
+      console.error("Failed to add testimonial", error);
+      return;
+    }
+    setTestimonials((prev) => [...prev, {
+      id: data.id,
+      name: data.name ?? "",
+      nameAr: data.name_ar ?? "",
+      role: data.role ?? "",
+      roleAr: data.role_ar ?? "",
+      text: data.text ?? "",
+      textAr: data.text_ar ?? "",
+      rating: data.rating ?? 5,
+      imageUrl: data.image_url ?? "",
+    }]);
+  };
+
+  const updateTestimonial = async (id: string, t: Partial<Testimonial>) => {
+    const { data, error } = await supabase
+      .from("portfolio_testimonials")
+      .update({
+        name: t.name,
+        name_ar: t.nameAr,
+        role: t.role,
+        role_ar: t.roleAr,
+        text: t.text,
+        text_ar: t.textAr,
+        rating: t.rating,
+        image_url: t.imageUrl,
+      })
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) {
+      console.error("Failed to update testimonial", error);
+      return;
+    }
+    setTestimonials((prev) => prev.map((item) => item.id === id ? {
+      id: data.id,
+      name: data.name ?? "",
+      nameAr: data.name_ar ?? "",
+      role: data.role ?? "",
+      roleAr: data.role_ar ?? "",
+      text: data.text ?? "",
+      textAr: data.text_ar ?? "",
+      rating: data.rating ?? 5,
+      imageUrl: data.image_url ?? "",
+    } : item));
+  };
+
+  const deleteTestimonial = async (id: string) => {
+    const { error } = await supabase.from("portfolio_testimonials").delete().eq("id", id);
+    if (error) {
+      console.error("Failed to delete testimonial", error);
+      return;
+    }
+    setTestimonials((prev) => prev.filter((t) => t.id !== id));
+  };
 
   return (
     <PortfolioContext.Provider value={{
+      isLoading,
       language, setLanguage,
       personalInfo, setPersonalInfo,
       projects, setProjects, addProject, updateProject, deleteProject,

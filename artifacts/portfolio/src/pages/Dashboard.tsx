@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   usePortfolio, Project, Experience, Education, Certificate, PersonalInfo, Testimonial
 } from "@/contexts/PortfolioContext";
+import { supabase } from "@/utils/supabase";
 import { translations } from "@/lib/i18n";
 import {
   ArrowLeft, Plus, Trash2, Edit2, LayoutDashboard, FolderOpen,
@@ -38,9 +39,9 @@ function Field({ label, children, required }: { label: string; children: React.R
   );
 }
 function SectionHeader({
-  icon: Icon, title, count, color, onAdd, addLabel
+  icon: Icon, title, count, color, onAdd, addLabel, itemLabel
 }: {
-  icon: any; title: string; count: number; color: string; onAdd: () => void; addLabel: string;
+  icon: any; title: string; count: number; color: string; onAdd: () => void; addLabel: string; itemLabel: string;
 }) {
   return (
     <div className="flex items-center justify-between mb-6">
@@ -50,7 +51,7 @@ function SectionHeader({
         </div>
         <div>
           <h2 className="text-lg font-bold leading-none">{title}</h2>
-          <p className="text-xs text-muted-foreground mt-0.5">{count} item{count !== 1 ? "s" : ""}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{count} {itemLabel}</p>
         </div>
       </div>
       <Button onClick={onAdd} className="gap-2 rounded-xl shadow-lg shadow-primary/20">
@@ -131,9 +132,12 @@ const blankProject = (): Omit<Project, "id"> => ({
 function ProjectDialog({ open, initial, onSave, onClose }: {
   open: boolean;
   initial?: Project;
-  onSave: (p: Omit<Project, "id">) => void;
+  onSave: (p: Omit<Project, "id">) => Promise<void>;
   onClose: () => void;
 }) {
+  const { language } = usePortfolio();
+  const d = translations[language].dashboard;
+  const labels = d.dialogs.project;
   const [local, setLocal] = useState<Omit<Project, "id">>(initial ?? blankProject());
   const [imgText, setImgText] = useState((initial?.images?.length ? initial.images : initial?.imageUrl ? [initial.imageUrl] : []).join("\n"));
 
@@ -160,53 +164,53 @@ function ProjectDialog({ open, initial, onSave, onClose }: {
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <Code2 className="w-4 h-4 text-primary" />
             </div>
-            {initial ? "Edit Project" : "Add New Project"}
+            {initial ? labels.titleEdit : labels.titleAdd}
           </DialogTitle>
-          <DialogDescription>Fill in the project details. All changes appear live on your portfolio.</DialogDescription>
+          <DialogDescription>{labels.description}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
           <FieldRow>
-            <Field label="Title (English)" required>
-              <Input value={local.title} onChange={e => setLocal(l => ({ ...l, title: e.target.value }))} placeholder="My Awesome Project" />
+            <Field label={labels.titleEn} required>
+              <Input value={local.title} onChange={e => setLocal(l => ({ ...l, title: e.target.value }))} placeholder={labels.placeholderTitleEn} />
             </Field>
-            <Field label="Title (Arabic)">
-              <Input value={local.titleAr} onChange={e => setLocal(l => ({ ...l, titleAr: e.target.value }))} dir="rtl" placeholder="مشروعي الرائع" />
+            <Field label={labels.titleAr}>
+              <Input value={local.titleAr} onChange={e => setLocal(l => ({ ...l, titleAr: e.target.value }))} dir="rtl" placeholder={labels.placeholderTitleAr} />
             </Field>
           </FieldRow>
           <FieldRow>
-            <Field label="Category" required>
+            <Field label={labels.category} required>
               <Select value={local.category} onValueChange={(v: any) => setLocal(l => ({ ...l, category: v }))}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Web"><span className="flex items-center gap-2"><Globe className="w-3.5 h-3.5" /> Web</span></SelectItem>
-                  <SelectItem value="Mobile"><span className="flex items-center gap-2"><Eye className="w-3.5 h-3.5" /> Mobile</span></SelectItem>
-                  <SelectItem value="Design"><span className="flex items-center gap-2"><Sparkles className="w-3.5 h-3.5" /> Design</span></SelectItem>
+                  <SelectItem value="Web"><span className="flex items-center gap-2"><Globe className="w-3.5 h-3.5" /> {d.categories.web}</span></SelectItem>
+                  <SelectItem value="Mobile"><span className="flex items-center gap-2"><Eye className="w-3.5 h-3.5" /> {d.categories.mobile}</span></SelectItem>
+                  <SelectItem value="Design"><span className="flex items-center gap-2"><Sparkles className="w-3.5 h-3.5" /> {d.categories.design}</span></SelectItem>
                 </SelectContent>
               </Select>
             </Field>
-            <Field label="Tags (comma separated)" required>
+            <Field label={labels.tags} required>
               <Input
                 value={local.tags.join(", ")}
                 onChange={e => setLocal(l => ({ ...l, tags: e.target.value.split(",").map(t => t.trim()).filter(Boolean) }))}
-                placeholder="React, TypeScript, Node.js"
+                placeholder={labels.placeholderTags}
               />
             </Field>
           </FieldRow>
 
-          <Field label="Project Images — one URL per line (first = cover)">
+          <Field label={labels.images}>
             <Textarea
               value={imgText}
               onChange={e => handleImgChange(e.target.value)}
               className="resize-none font-mono text-xs h-20"
-              placeholder={"https://images.unsplash.com/photo-xxx?w=800\nhttps://images.unsplash.com/photo-yyy?w=800"}
+              placeholder={labels.placeholderImages}
             />
             {previewImgs.length > 0 && (
               <div className="flex gap-2 mt-2 flex-wrap">
                 {previewImgs.map((img, i) => (
                   <div key={i} className="relative">
                     <img src={img} alt="" className="w-14 h-10 rounded-lg object-cover border border-border" />
-                    {i === 0 && <span className="absolute -top-1.5 -right-1 bg-primary text-[9px] text-white px-1.5 py-0.5 rounded-full font-medium">Cover</span>}
+                    {i === 0 && <span className="absolute -top-1.5 -right-1 bg-primary text-[9px] text-white px-1.5 py-0.5 rounded-full font-medium">{labels.cover}</span>}
                   </div>
                 ))}
               </div>
@@ -214,25 +218,25 @@ function ProjectDialog({ open, initial, onSave, onClose }: {
           </Field>
 
           <FieldRow>
-            <Field label="Live URL">
-              <Input value={local.liveUrl || ""} onChange={e => setLocal(l => ({ ...l, liveUrl: e.target.value }))} placeholder="https://myapp.com" />
+            <Field label={labels.liveUrl}>
+              <Input value={local.liveUrl || ""} onChange={e => setLocal(l => ({ ...l, liveUrl: e.target.value }))} placeholder={labels.placeholderLiveUrl} />
             </Field>
-            <Field label="GitHub URL">
-              <Input value={local.githubUrl || ""} onChange={e => setLocal(l => ({ ...l, githubUrl: e.target.value }))} placeholder="https://github.com/..." />
+            <Field label={labels.githubUrl}>
+              <Input value={local.githubUrl || ""} onChange={e => setLocal(l => ({ ...l, githubUrl: e.target.value }))} placeholder={labels.placeholderGithubUrl} />
             </Field>
           </FieldRow>
-          <Field label="Description (English)" required>
-            <Textarea value={local.description} onChange={e => setLocal(l => ({ ...l, description: e.target.value }))} className="resize-none h-20" placeholder="Describe the project, its impact, and technologies used..." />
+          <Field label={labels.descEn} required>
+            <Textarea value={local.description} onChange={e => setLocal(l => ({ ...l, description: e.target.value }))} className="resize-none h-20" placeholder={labels.placeholderDescEn} />
           </Field>
-          <Field label="Description (Arabic)">
-            <Textarea value={local.descriptionAr} onChange={e => setLocal(l => ({ ...l, descriptionAr: e.target.value }))} dir="rtl" className="resize-none h-20" placeholder="وصف المشروع..." />
+          <Field label={labels.descAr}>
+            <Textarea value={local.descriptionAr} onChange={e => setLocal(l => ({ ...l, descriptionAr: e.target.value }))} dir="rtl" className="resize-none h-20" placeholder={labels.placeholderDescAr} />
           </Field>
         </div>
 
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={() => { onSave(local); onClose(); }} disabled={!isValid} className="gap-2">
-            <CheckCircle2 className="w-4 h-4" /> {initial ? "Save Changes" : "Add Project"}
+          <Button variant="outline" onClick={onClose}>{d.actions.cancel}</Button>
+          <Button onClick={async () => { await onSave(local); onClose(); }} disabled={!isValid} className="gap-2">
+            <CheckCircle2 className="w-4 h-4" /> {initial ? d.actions.saveChanges : d.sections.projects.add}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -245,8 +249,11 @@ const blankExp = (): Omit<Experience, "id"> => ({
   company: "", role: "", roleAr: "", period: "", description: "", descriptionAr: ""
 });
 function ExperienceDialog({ open, initial, onSave, onClose }: {
-  open: boolean; initial?: Experience; onSave: (e: Omit<Experience, "id">) => void; onClose: () => void;
+  open: boolean; initial?: Experience; onSave: (e: Omit<Experience, "id">) => Promise<void>; onClose: () => void;
 }) {
+  const { language } = usePortfolio();
+  const d = translations[language].dashboard;
+  const labels = d.dialogs.experience;
   const [local, setLocal] = useState<Omit<Experience, "id">>(initial ?? blankExp());
   useEffect(() => { setLocal(initial ?? blankExp()); }, [open, initial]);
   const isValid = local.company.trim() && local.role.trim() && local.period.trim();
@@ -258,38 +265,38 @@ function ExperienceDialog({ open, initial, onSave, onClose }: {
             <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
               <Briefcase className="w-4 h-4 text-blue-500" />
             </div>
-            {initial ? "Edit Experience" : "Add Experience"}
+            {initial ? labels.titleEdit : labels.titleAdd}
           </DialogTitle>
-          <DialogDescription>Add your work history. Shown on the portfolio's Experience section.</DialogDescription>
+          <DialogDescription>{labels.description}</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <FieldRow>
-            <Field label="Company" required>
-              <Input value={local.company} onChange={e => setLocal(l => ({ ...l, company: e.target.value }))} placeholder="Google, Startup Inc., Freelance" />
+            <Field label={labels.company} required>
+              <Input value={local.company} onChange={e => setLocal(l => ({ ...l, company: e.target.value }))} placeholder={labels.placeholderCompany} />
             </Field>
-            <Field label="Period" required>
-              <Input value={local.period} onChange={e => setLocal(l => ({ ...l, period: e.target.value }))} placeholder="2022 – Present" />
+            <Field label={labels.period} required>
+              <Input value={local.period} onChange={e => setLocal(l => ({ ...l, period: e.target.value }))} placeholder={labels.placeholderPeriod} />
             </Field>
           </FieldRow>
           <FieldRow>
-            <Field label="Role (English)" required>
-              <Input value={local.role} onChange={e => setLocal(l => ({ ...l, role: e.target.value }))} placeholder="Senior Frontend Engineer" />
+            <Field label={labels.roleEn} required>
+              <Input value={local.role} onChange={e => setLocal(l => ({ ...l, role: e.target.value }))} placeholder={labels.placeholderRoleEn} />
             </Field>
-            <Field label="Role (Arabic)">
-              <Input value={local.roleAr} onChange={e => setLocal(l => ({ ...l, roleAr: e.target.value }))} dir="rtl" placeholder="مهندس واجهة أمامية" />
+            <Field label={labels.roleAr}>
+              <Input value={local.roleAr} onChange={e => setLocal(l => ({ ...l, roleAr: e.target.value }))} dir="rtl" placeholder={labels.placeholderRoleAr} />
             </Field>
           </FieldRow>
-          <Field label="Description (English)" required>
-            <Textarea value={local.description} onChange={e => setLocal(l => ({ ...l, description: e.target.value }))} className="resize-none h-24" placeholder="Key responsibilities, achievements, and impact..." />
+          <Field label={labels.descEn} required>
+            <Textarea value={local.description} onChange={e => setLocal(l => ({ ...l, description: e.target.value }))} className="resize-none h-24" placeholder={labels.placeholderDescEn} />
           </Field>
-          <Field label="Description (Arabic)">
-            <Textarea value={local.descriptionAr} onChange={e => setLocal(l => ({ ...l, descriptionAr: e.target.value }))} dir="rtl" className="resize-none h-20" placeholder="المسؤوليات والإنجازات..." />
+          <Field label={labels.descAr}>
+            <Textarea value={local.descriptionAr} onChange={e => setLocal(l => ({ ...l, descriptionAr: e.target.value }))} dir="rtl" className="resize-none h-20" placeholder={labels.placeholderDescAr} />
           </Field>
         </div>
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={() => { onSave(local); onClose(); }} disabled={!isValid} className="gap-2">
-            <CheckCircle2 className="w-4 h-4" /> {initial ? "Save Changes" : "Add Experience"}
+          <Button variant="outline" onClick={onClose}>{d.actions.cancel}</Button>
+          <Button onClick={async () => { await onSave(local); onClose(); }} disabled={!isValid} className="gap-2">
+            <CheckCircle2 className="w-4 h-4" /> {initial ? d.actions.saveChanges : d.sections.experience.add}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -303,8 +310,11 @@ const blankEdu = (): Omit<Education, "id"> => ({
   field: "", fieldAr: "", period: "", gpa: "", description: "", descriptionAr: ""
 });
 function EducationDialog({ open, initial, onSave, onClose }: {
-  open: boolean; initial?: Education; onSave: (e: Omit<Education, "id">) => void; onClose: () => void;
+  open: boolean; initial?: Education; onSave: (e: Omit<Education, "id">) => Promise<void>; onClose: () => void;
 }) {
+  const { language } = usePortfolio();
+  const d = translations[language].dashboard;
+  const labels = d.dialogs.education;
   const [local, setLocal] = useState<Omit<Education, "id">>(initial ?? blankEdu());
   useEffect(() => { setLocal(initial ?? blankEdu()); }, [open, initial]);
   const isValid = local.institution.trim() && local.degree.trim() && local.field.trim() && local.period.trim();
@@ -316,54 +326,54 @@ function EducationDialog({ open, initial, onSave, onClose }: {
             <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
               <GraduationCap className="w-4 h-4 text-green-500" />
             </div>
-            {initial ? "Edit Education" : "Add Education"}
+            {initial ? labels.titleEdit : labels.titleAdd}
           </DialogTitle>
-          <DialogDescription>Add academic credentials and certifications from universities.</DialogDescription>
+          <DialogDescription>{labels.description}</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <FieldRow>
-            <Field label="Institution (English)" required>
-              <Input value={local.institution} onChange={e => setLocal(l => ({ ...l, institution: e.target.value }))} placeholder="Stanford University" />
+            <Field label={labels.institutionEn} required>
+              <Input value={local.institution} onChange={e => setLocal(l => ({ ...l, institution: e.target.value }))} placeholder={labels.placeholderInstitutionEn} />
             </Field>
-            <Field label="Institution (Arabic)">
-              <Input value={local.institutionAr} onChange={e => setLocal(l => ({ ...l, institutionAr: e.target.value }))} dir="rtl" placeholder="جامعة ستانفورد" />
-            </Field>
-          </FieldRow>
-          <FieldRow>
-            <Field label="Degree (English)" required>
-              <Input value={local.degree} onChange={e => setLocal(l => ({ ...l, degree: e.target.value }))} placeholder="Bachelor of Science" />
-            </Field>
-            <Field label="Degree (Arabic)">
-              <Input value={local.degreeAr} onChange={e => setLocal(l => ({ ...l, degreeAr: e.target.value }))} dir="rtl" placeholder="بكالوريوس العلوم" />
+            <Field label={labels.institutionAr}>
+              <Input value={local.institutionAr} onChange={e => setLocal(l => ({ ...l, institutionAr: e.target.value }))} dir="rtl" placeholder={labels.placeholderInstitutionAr} />
             </Field>
           </FieldRow>
           <FieldRow>
-            <Field label="Field of Study (English)" required>
-              <Input value={local.field} onChange={e => setLocal(l => ({ ...l, field: e.target.value }))} placeholder="Computer Science" />
+            <Field label={labels.degreeEn} required>
+              <Input value={local.degree} onChange={e => setLocal(l => ({ ...l, degree: e.target.value }))} placeholder={labels.placeholderDegreeEn} />
             </Field>
-            <Field label="Field of Study (Arabic)">
-              <Input value={local.fieldAr} onChange={e => setLocal(l => ({ ...l, fieldAr: e.target.value }))} dir="rtl" placeholder="علوم الحاسب" />
+            <Field label={labels.degreeAr}>
+              <Input value={local.degreeAr} onChange={e => setLocal(l => ({ ...l, degreeAr: e.target.value }))} dir="rtl" placeholder={labels.placeholderDegreeAr} />
             </Field>
           </FieldRow>
           <FieldRow>
-            <Field label="Period" required>
-              <Input value={local.period} onChange={e => setLocal(l => ({ ...l, period: e.target.value }))} placeholder="2018 – 2022" />
+            <Field label={labels.fieldEn} required>
+              <Input value={local.field} onChange={e => setLocal(l => ({ ...l, field: e.target.value }))} placeholder={labels.placeholderFieldEn} />
             </Field>
-            <Field label="GPA (optional)">
-              <Input value={local.gpa || ""} onChange={e => setLocal(l => ({ ...l, gpa: e.target.value }))} placeholder="3.9 / 4.0" />
+            <Field label={labels.fieldAr}>
+              <Input value={local.fieldAr} onChange={e => setLocal(l => ({ ...l, fieldAr: e.target.value }))} dir="rtl" placeholder={labels.placeholderFieldAr} />
             </Field>
           </FieldRow>
-          <Field label="Description (English)">
-            <Textarea value={local.description} onChange={e => setLocal(l => ({ ...l, description: e.target.value }))} className="resize-none h-20" placeholder="Highlights, thesis, notable courses..." />
+          <FieldRow>
+            <Field label={labels.period} required>
+              <Input value={local.period} onChange={e => setLocal(l => ({ ...l, period: e.target.value }))} placeholder={labels.placeholderPeriod} />
+            </Field>
+            <Field label={labels.gpa}>
+              <Input value={local.gpa || ""} onChange={e => setLocal(l => ({ ...l, gpa: e.target.value }))} placeholder={labels.placeholderGpa} />
+            </Field>
+          </FieldRow>
+          <Field label={labels.descEn}>
+            <Textarea value={local.description} onChange={e => setLocal(l => ({ ...l, description: e.target.value }))} className="resize-none h-20" placeholder={labels.placeholderDescEn} />
           </Field>
-          <Field label="Description (Arabic)">
-            <Textarea value={local.descriptionAr} onChange={e => setLocal(l => ({ ...l, descriptionAr: e.target.value }))} dir="rtl" className="resize-none h-20" placeholder="أبرز الإنجازات والمواد الدراسية..." />
+          <Field label={labels.descAr}>
+            <Textarea value={local.descriptionAr} onChange={e => setLocal(l => ({ ...l, descriptionAr: e.target.value }))} dir="rtl" className="resize-none h-20" placeholder={labels.placeholderDescAr} />
           </Field>
         </div>
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={() => { onSave(local); onClose(); }} disabled={!isValid} className="gap-2">
-            <CheckCircle2 className="w-4 h-4" /> {initial ? "Save Changes" : "Add Education"}
+          <Button variant="outline" onClick={onClose}>{d.actions.cancel}</Button>
+          <Button onClick={async () => { await onSave(local); onClose(); }} disabled={!isValid} className="gap-2">
+            <CheckCircle2 className="w-4 h-4" /> {initial ? d.actions.saveChanges : d.sections.education.add}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -381,8 +391,11 @@ const blankTestimonial = (): Omit<Testimonial, "id"> => ({
 
 /* ─── Testimonial Dialog ──────────────────────────────── */
 function TestimonialDialog({ open, initial, onSave, onClose }: {
-  open: boolean; initial?: Testimonial; onSave: (t: Omit<Testimonial, "id">) => void; onClose: () => void;
+  open: boolean; initial?: Testimonial; onSave: (t: Omit<Testimonial, "id">) => Promise<void>; onClose: () => void;
 }) {
+  const { language } = usePortfolio();
+  const d = translations[language].dashboard;
+  const labels = d.dialogs.testimonial;
   const [local, setLocal] = useState<Omit<Testimonial, "id">>(initial ?? blankTestimonial());
   useEffect(() => { setLocal(initial ?? blankTestimonial()); }, [open, initial]);
   const isValid = local.name.trim() && local.role.trim() && local.text.trim() && local.imageUrl.trim();
@@ -394,35 +407,35 @@ function TestimonialDialog({ open, initial, onSave, onClose }: {
             <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
               <MessageCircle className="w-4 h-4 text-blue-500" />
             </div>
-            {initial ? "Edit Testimonial" : "Add Testimonial"}
+            {initial ? labels.titleEdit : labels.titleAdd}
           </DialogTitle>
-          <DialogDescription>Add client testimonials and feedback.</DialogDescription>
+          <DialogDescription>{labels.description}</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <FieldRow>
-            <Field label="Client Name (English)" required>
-              <Input value={local.name} onChange={e => setLocal(l => ({ ...l, name: e.target.value }))} placeholder="Sarah Johnson" />
+            <Field label={labels.nameEn} required>
+              <Input value={local.name} onChange={e => setLocal(l => ({ ...l, name: e.target.value }))} placeholder={labels.placeholderNameEn} />
             </Field>
-            <Field label="Client Name (Arabic)">
-              <Input value={local.nameAr} onChange={e => setLocal(l => ({ ...l, nameAr: e.target.value }))} dir="rtl" placeholder="سارة جونسون" />
+            <Field label={labels.nameAr}>
+              <Input value={local.nameAr} onChange={e => setLocal(l => ({ ...l, nameAr: e.target.value }))} dir="rtl" placeholder={labels.placeholderNameAr} />
             </Field>
           </FieldRow>
           <FieldRow>
-            <Field label="Role/Title (English)" required>
-              <Input value={local.role} onChange={e => setLocal(l => ({ ...l, role: e.target.value }))} placeholder="CEO, TechStartup Inc" />
+            <Field label={labels.roleEn} required>
+              <Input value={local.role} onChange={e => setLocal(l => ({ ...l, role: e.target.value }))} placeholder={labels.placeholderRoleEn} />
             </Field>
-            <Field label="Role/Title (Arabic)">
-              <Input value={local.roleAr} onChange={e => setLocal(l => ({ ...l, roleAr: e.target.value }))} dir="rtl" placeholder="الرئيس التنفيذي" />
+            <Field label={labels.roleAr}>
+              <Input value={local.roleAr} onChange={e => setLocal(l => ({ ...l, roleAr: e.target.value }))} dir="rtl" placeholder={labels.placeholderRoleAr} />
             </Field>
           </FieldRow>
-          <Field label="Testimonial Text (English)" required>
-            <Textarea value={local.text} onChange={e => setLocal(l => ({ ...l, text: e.target.value }))} className="resize-none h-20" placeholder="Share what you loved about working together..." />
+          <Field label={labels.textEn} required>
+            <Textarea value={local.text} onChange={e => setLocal(l => ({ ...l, text: e.target.value }))} className="resize-none h-20" placeholder={labels.placeholderTextEn} />
           </Field>
-          <Field label="Testimonial Text (Arabic)">
-            <Textarea value={local.textAr} onChange={e => setLocal(l => ({ ...l, textAr: e.target.value }))} dir="rtl" className="resize-none h-20" placeholder="شارك ما أعجبك..." />
+          <Field label={labels.textAr}>
+            <Textarea value={local.textAr} onChange={e => setLocal(l => ({ ...l, textAr: e.target.value }))} dir="rtl" className="resize-none h-20" placeholder={labels.placeholderTextAr} />
           </Field>
           <FieldRow>
-            <Field label="Rating (1-5 stars)" required>
+            <Field label={labels.rating} required>
               <Select value={local.rating.toString()} onValueChange={v => setLocal(l => ({ ...l, rating: parseInt(v) }))}>
                 <SelectTrigger>
                   <SelectValue />
@@ -436,18 +449,18 @@ function TestimonialDialog({ open, initial, onSave, onClose }: {
                 </SelectContent>
               </Select>
             </Field>
-            <Field label="Image URL" required>
+            <Field label={labels.imageUrl} required>
               <div className="flex gap-2">
-                <Input value={local.imageUrl} onChange={e => setLocal(l => ({ ...l, imageUrl: e.target.value }))} placeholder="https://..." className="flex-1" />
+                <Input value={local.imageUrl} onChange={e => setLocal(l => ({ ...l, imageUrl: e.target.value }))} placeholder={labels.placeholderImageUrl} className="flex-1" />
                 {local.imageUrl && <img src={local.imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover border border-border shrink-0" />}
               </div>
             </Field>
           </FieldRow>
         </div>
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={() => { onSave(local); onClose(); }} disabled={!isValid} className="gap-2">
-            <CheckCircle2 className="w-4 h-4" /> {initial ? "Save Changes" : "Add Testimonial"}
+          <Button variant="outline" onClick={onClose}>{d.actions.cancel}</Button>
+          <Button onClick={async () => { await onSave(local); onClose(); }} disabled={!isValid} className="gap-2">
+            <CheckCircle2 className="w-4 h-4" /> {initial ? d.actions.saveChanges : d.sections.testimonials.add}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -456,8 +469,11 @@ function TestimonialDialog({ open, initial, onSave, onClose }: {
 }
 
 function CertificateDialog({ open, initial, onSave, onClose }: {
-  open: boolean; initial?: Certificate; onSave: (c: Omit<Certificate, "id">) => void; onClose: () => void;
+  open: boolean; initial?: Certificate; onSave: (c: Omit<Certificate, "id">) => Promise<void>; onClose: () => void;
 }) {
+  const { language } = usePortfolio();
+  const d = translations[language].dashboard;
+  const labels = d.dialogs.certificate;
   const [local, setLocal] = useState<Omit<Certificate, "id">>(initial ?? blankCert());
   useEffect(() => { setLocal(initial ?? blankCert()); }, [open, initial]);
   const isValid = local.title.trim() && local.issuer.trim() && local.date.trim();
@@ -470,36 +486,36 @@ function CertificateDialog({ open, initial, onSave, onClose }: {
             <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
               <Award className="w-4 h-4 text-amber-500" />
             </div>
-            {initial ? "Edit Certificate" : "Add Certificate"}
+            {initial ? labels.titleEdit : labels.titleAdd}
           </DialogTitle>
-          <DialogDescription>Add professional certifications and credentials.</DialogDescription>
+          <DialogDescription>{labels.description}</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <FieldRow>
-            <Field label="Certificate Title (English)" required>
-              <Input value={local.title} onChange={e => setLocal(l => ({ ...l, title: e.target.value }))} placeholder="AWS Solutions Architect" />
+            <Field label={labels.titleEn} required>
+              <Input value={local.title} onChange={e => setLocal(l => ({ ...l, title: e.target.value }))} placeholder={labels.placeholderTitleEn} />
             </Field>
-            <Field label="Certificate Title (Arabic)">
-              <Input value={local.titleAr} onChange={e => setLocal(l => ({ ...l, titleAr: e.target.value }))} dir="rtl" placeholder="مهندس حلول AWS" />
-            </Field>
-          </FieldRow>
-          <FieldRow>
-            <Field label="Issuer (English)" required>
-              <Input value={local.issuer} onChange={e => setLocal(l => ({ ...l, issuer: e.target.value }))} placeholder="Amazon Web Services" />
-            </Field>
-            <Field label="Issuer (Arabic)">
-              <Input value={local.issuerAr} onChange={e => setLocal(l => ({ ...l, issuerAr: e.target.value }))} dir="rtl" placeholder="أمازون ويب سيرفيسز" />
+            <Field label={labels.titleAr}>
+              <Input value={local.titleAr} onChange={e => setLocal(l => ({ ...l, titleAr: e.target.value }))} dir="rtl" placeholder={labels.placeholderTitleAr} />
             </Field>
           </FieldRow>
           <FieldRow>
-            <Field label="Year" required>
-              <Input value={local.date} onChange={e => setLocal(l => ({ ...l, date: e.target.value }))} placeholder="2024" />
+            <Field label={labels.issuerEn} required>
+              <Input value={local.issuer} onChange={e => setLocal(l => ({ ...l, issuer: e.target.value }))} placeholder={labels.placeholderIssuerEn} />
             </Field>
-            <Field label="Credential URL (optional)">
-              <Input value={local.credentialUrl || ""} onChange={e => setLocal(l => ({ ...l, credentialUrl: e.target.value }))} placeholder="https://verify.example.com/..." />
+            <Field label={labels.issuerAr}>
+              <Input value={local.issuerAr} onChange={e => setLocal(l => ({ ...l, issuerAr: e.target.value }))} dir="rtl" placeholder={labels.placeholderIssuerAr} />
             </Field>
           </FieldRow>
-          <Field label="Badge Color">
+          <FieldRow>
+            <Field label={labels.year} required>
+              <Input value={local.date} onChange={e => setLocal(l => ({ ...l, date: e.target.value }))} placeholder={labels.placeholderYear} />
+            </Field>
+            <Field label={labels.credentialUrl}>
+              <Input value={local.credentialUrl || ""} onChange={e => setLocal(l => ({ ...l, credentialUrl: e.target.value }))} placeholder={labels.placeholderCredential} />
+            </Field>
+          </FieldRow>
+          <Field label={labels.badgeColor}>
             <div className="space-y-2">
               <div className="flex flex-wrap gap-2">
                 {PRESET_COLORS.map(c => (
@@ -523,9 +539,9 @@ function CertificateDialog({ open, initial, onSave, onClose }: {
           </Field>
         </div>
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={() => { onSave(local); onClose(); }} disabled={!isValid} className="gap-2">
-            <CheckCircle2 className="w-4 h-4" /> {initial ? "Save Changes" : "Add Certificate"}
+          <Button variant="outline" onClick={onClose}>{d.actions.cancel}</Button>
+          <Button onClick={async () => { await onSave(local); onClose(); }} disabled={!isValid} className="gap-2">
+            <CheckCircle2 className="w-4 h-4" /> {initial ? d.actions.saveChanges : d.sections.certificates.add}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -535,9 +551,11 @@ function CertificateDialog({ open, initial, onSave, onClose }: {
 
 /* ─── Item card row ──────────────────────────────────── */
 function ItemCard({ children, onEdit, onDelete, index }: {
-  children: React.ReactNode; onEdit: () => void; onDelete: () => void; index: number;
+  children: React.ReactNode; onEdit: () => void; onDelete: () => Promise<void>; index: number;
 }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const { language } = usePortfolio();
+  const d = translations[language].dashboard;
   return (
     <motion.div
       initial={{ opacity: 0, x: -16 }}
@@ -552,15 +570,23 @@ function ItemCard({ children, onEdit, onDelete, index }: {
           <div className="flex gap-2 shrink-0">
             {confirmDelete ? (
               <>
-                <Button variant="ghost" size="sm" onClick={() => setConfirmDelete(false)}>Cancel</Button>
-                <Button variant="destructive" size="sm" onClick={onDelete} className="gap-1.5">
-                  <Trash2 className="h-3.5 w-3.5" /> Confirm
+                <Button variant="ghost" size="sm" onClick={() => setConfirmDelete(false)}>{d.actions.cancel}</Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={async () => {
+                    await onDelete();
+                    setConfirmDelete(false);
+                  }}
+                  className="gap-1.5"
+                >
+                  <Trash2 className="h-3.5 w-3.5" /> {d.actions.confirm}
                 </Button>
               </>
             ) : (
               <>
                 <Button variant="outline" size="sm" onClick={onEdit} className="gap-1.5">
-                  <Edit2 className="h-3.5 w-3.5" /> Edit
+                  <Edit2 className="h-3.5 w-3.5" /> {d.edit}
                 </Button>
                 <Button variant="ghost" size="icon" className="h-9 w-9 text-destructive hover:bg-destructive/10" onClick={() => setConfirmDelete(true)}>
                   <Trash2 className="h-3.5 w-3.5" />
@@ -575,13 +601,16 @@ function ItemCard({ children, onEdit, onDelete, index }: {
 }
 
 /* ─── Personal Info editor (inline, saves in place) ─── */
-function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSave: (i: PersonalInfo) => void }) {
+function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSave: (i: PersonalInfo) => Promise<void> }) {
   const [local, setLocal] = useState({ ...info, floatingSkills: info.floatingSkills || ["React", "Flutter", "TypeScript", "Node.js", "Figma", "Next.js"] });
   const [saved, setSaved] = useState(false);
+  const { language } = usePortfolio();
+  const d = translations[language].dashboard;
+  const labels = d.dialogs.personalInfo;
   useEffect(() => { setLocal({ ...info, floatingSkills: info.floatingSkills || ["React", "Flutter", "TypeScript", "Node.js", "Figma", "Next.js"] }); }, [info]);
 
-  const handleSave = () => {
-    onSave(local);
+  const handleSave = async () => {
+    await onSave(local);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -593,78 +622,78 @@ function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSave: (i: 
           <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
             <User className="w-4 h-4 text-primary" />
           </div>
-          Personal Information
+          {labels.title}
         </CardTitle>
-        <CardDescription>Update your bio, contact details, and social links. Changes save to localStorage.</CardDescription>
+        <CardDescription>{labels.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
         <FieldRow>
-          <Field label="Name (English)" required><Input value={local.name} onChange={e => setLocal(l => ({ ...l, name: e.target.value }))} /></Field>
-          <Field label="Name (Arabic)"><Input value={local.nameAr} onChange={e => setLocal(l => ({ ...l, nameAr: e.target.value }))} dir="rtl" /></Field>
+          <Field label={labels.nameEn} required><Input value={local.name} onChange={e => setLocal(l => ({ ...l, name: e.target.value }))} /></Field>
+          <Field label={labels.nameAr}><Input value={local.nameAr} onChange={e => setLocal(l => ({ ...l, nameAr: e.target.value }))} dir="rtl" /></Field>
         </FieldRow>
         <FieldRow>
-          <Field label="Email" required><Input value={local.email} onChange={e => setLocal(l => ({ ...l, email: e.target.value }))} type="email" /></Field>
-          <Field label="Location (English)"><Input value={local.location} onChange={e => setLocal(l => ({ ...l, location: e.target.value }))} /></Field>
+          <Field label={labels.email} required><Input value={local.email} onChange={e => setLocal(l => ({ ...l, email: e.target.value }))} type="email" /></Field>
+          <Field label={labels.locationEn}><Input value={local.location} onChange={e => setLocal(l => ({ ...l, location: e.target.value }))} /></Field>
         </FieldRow>
         <FieldRow>
-          <Field label="Location (Arabic)"><Input value={local.locationAr} onChange={e => setLocal(l => ({ ...l, locationAr: e.target.value }))} dir="rtl" /></Field>
-          <Field label="Avatar URL">
+          <Field label={labels.locationAr}><Input value={local.locationAr} onChange={e => setLocal(l => ({ ...l, locationAr: e.target.value }))} dir="rtl" /></Field>
+          <Field label={labels.avatarUrl}>
             <div className="flex gap-2">
-              <Input value={local.avatarUrl} onChange={e => setLocal(l => ({ ...l, avatarUrl: e.target.value }))} placeholder="https://..." className="flex-1" />
+              <Input value={local.avatarUrl} onChange={e => setLocal(l => ({ ...l, avatarUrl: e.target.value }))} placeholder={labels.placeholderAvatar} className="flex-1" />
               {local.avatarUrl && <img src={local.avatarUrl} alt="" className="w-10 h-10 rounded-xl object-cover border border-border shrink-0" />}
             </div>
           </Field>
         </FieldRow>
-        <Field label="Bio (English)" required><Textarea value={local.bio} onChange={e => setLocal(l => ({ ...l, bio: e.target.value }))} className="h-24 resize-none" /></Field>
-        <Field label="Bio (Arabic)"><Textarea value={local.bioAr} onChange={e => setLocal(l => ({ ...l, bioAr: e.target.value }))} className="h-24 resize-none" dir="rtl" /></Field>
+        <Field label={labels.bioEn} required><Textarea value={local.bio} onChange={e => setLocal(l => ({ ...l, bio: e.target.value }))} className="h-24 resize-none" /></Field>
+        <Field label={labels.bioAr}><Textarea value={local.bioAr} onChange={e => setLocal(l => ({ ...l, bioAr: e.target.value }))} className="h-24 resize-none" dir="rtl" /></Field>
 
         <div className="border-t border-border pt-5">
           <p className="text-sm font-semibold mb-4 flex items-center gap-2">
-            <Globe className="w-4 h-4 text-primary" /> Social Links
+            <Globe className="w-4 h-4 text-primary" /> {labels.socialLinks}
           </p>
           <FieldRow>
-            <Field label="GitHub"><Input value={local.github} onChange={e => setLocal(l => ({ ...l, github: e.target.value }))} placeholder="https://github.com/..." /></Field>
-            <Field label="LinkedIn"><Input value={local.linkedin} onChange={e => setLocal(l => ({ ...l, linkedin: e.target.value }))} placeholder="https://linkedin.com/in/..." /></Field>
+            <Field label={labels.github}><Input value={local.github} onChange={e => setLocal(l => ({ ...l, github: e.target.value }))} placeholder={labels.placeholderGithub} /></Field>
+            <Field label={labels.linkedin}><Input value={local.linkedin} onChange={e => setLocal(l => ({ ...l, linkedin: e.target.value }))} placeholder={labels.placeholderLinkedin} /></Field>
           </FieldRow>
           <FieldRow>
-            <Field label="Twitter / X"><Input value={local.twitter} onChange={e => setLocal(l => ({ ...l, twitter: e.target.value }))} placeholder="https://twitter.com/..." /></Field>
-            <Field label="Instagram"><Input value={local.instagram} onChange={e => setLocal(l => ({ ...l, instagram: e.target.value }))} placeholder="https://instagram.com/..." /></Field>
+            <Field label={labels.twitter}><Input value={local.twitter} onChange={e => setLocal(l => ({ ...l, twitter: e.target.value }))} placeholder={labels.placeholderTwitter} /></Field>
+            <Field label={labels.instagram}><Input value={local.instagram} onChange={e => setLocal(l => ({ ...l, instagram: e.target.value }))} placeholder={labels.placeholderInstagram} /></Field>
           </FieldRow>
           <FieldRow>
-            <Field label="Facebook"><Input value={local.facebook} onChange={e => setLocal(l => ({ ...l, facebook: e.target.value }))} placeholder="https://facebook.com/..." /></Field>
-            <Field label="Telegram"><Input value={local.telegram} onChange={e => setLocal(l => ({ ...l, telegram: e.target.value }))} placeholder="https://t.me/..." /></Field>
+            <Field label={labels.facebook}><Input value={local.facebook} onChange={e => setLocal(l => ({ ...l, facebook: e.target.value }))} placeholder={labels.placeholderFacebook} /></Field>
+            <Field label={labels.telegram}><Input value={local.telegram} onChange={e => setLocal(l => ({ ...l, telegram: e.target.value }))} placeholder={labels.placeholderTelegram} /></Field>
           </FieldRow>
           <div className="mt-4">
-            <Field label="WhatsApp"><Input value={local.whatsapp} onChange={e => setLocal(l => ({ ...l, whatsapp: e.target.value }))} placeholder="https://wa.me/..." /></Field>
+            <Field label={labels.whatsapp}><Input value={local.whatsapp} onChange={e => setLocal(l => ({ ...l, whatsapp: e.target.value }))} placeholder={labels.placeholderWhatsapp} /></Field>
           </div>
         </div>
 
         <div className="border-t border-border pt-5">
           <p className="text-sm font-semibold mb-4 flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-primary" /> Floating Skill Icons
+            <Sparkles className="w-4 h-4 text-primary" /> {labels.floatingSkills}
           </p>
-          <Field label="Skills to display around avatar (comma-separated, max 6)">
+          <Field label={labels.floatingSkillsLabel}>
             <Textarea 
               value={local.floatingSkills.join(", ")} 
               onChange={e => setLocal(l => ({ ...l, floatingSkills: e.target.value.split(",").map(s => s.trim()).filter(Boolean).slice(0, 6) }))} 
-              placeholder="React, Flutter, TypeScript, Node.js, Figma, Next.js"
+              placeholder={labels.placeholderFloating}
               className="h-16 resize-none"
             />
           </Field>
-          <p className="text-xs text-muted-foreground mt-2">Examples: React, Flutter, TypeScript, Node.js, Python, Figma, Next.js, etc.</p>
+          <p className="text-xs text-muted-foreground mt-2">{labels.floatingSkillsHelp}</p>
         </div>
 
         <div className="border-t border-border pt-5">
           <p className="text-sm font-semibold mb-4 flex items-center gap-2">
-            <Download className="w-4 h-4 text-primary" /> CV & Resume
+            <Download className="w-4 h-4 text-primary" /> {labels.cvResume}
           </p>
-          <Field label="CV Download URL">
-            <Input value={local.cvUrl} onChange={e => setLocal(l => ({ ...l, cvUrl: e.target.value }))} placeholder="https://example.com/cv.pdf" />
+          <Field label={labels.cvUrl}>
+            <Input value={local.cvUrl} onChange={e => setLocal(l => ({ ...l, cvUrl: e.target.value }))} placeholder={labels.placeholderCv} />
           </Field>
         </div>
         <div className="flex justify-end pt-2">
           <Button onClick={handleSave} className="gap-2 min-w-[140px]">
-            {saved ? <><CheckCircle2 className="w-4 h-4" /> Saved!</> : "Save Changes"}
+            {saved ? <><CheckCircle2 className="w-4 h-4" /> {d.actions.saved}</> : d.actions.saveChanges}
           </Button>
         </div>
       </CardContent>
@@ -693,13 +722,13 @@ function StatBadge({ icon: Icon, label, value, color }: { icon: any; label: stri
 
 /* ─── Main Dashboard ─────────────────────────────────── */
 export default function Dashboard() {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    try { return sessionStorage.getItem("admin_auth") === "true"; } catch { return false; }
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const {
+    isLoading,
     language, projects, updateProject, addProject, deleteProject,
     personalInfo, setPersonalInfo,
     experience, updateExperience, addExperience, deleteExperience,
@@ -709,6 +738,12 @@ export default function Dashboard() {
   } = usePortfolio();
 
   const t = translations[language];
+  const d = t.dashboard;
+  const categoryLabels: Record<Project["category"], string> = {
+    Web: d.categories.web,
+    Mobile: d.categories.mobile,
+    Design: d.categories.design,
+  };
 
   /* dialog state */
   const [projectDialog, setProjectDialog] = useState<{ open: boolean; item?: Project }>({ open: false });
@@ -717,20 +752,29 @@ export default function Dashboard() {
   const [certDialog, setCertDialog] = useState<{ open: boolean; item?: Certificate }>({ open: false });
   const [testDialog, setTestDialog] = useState<{ open: boolean; item?: Testimonial }>({ open: false });
 
-  const handleLogin = (e: React.FormEvent) => {
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setIsAuthenticated(!!data.session);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(!!session);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === "admin123") {
-      setIsAuthenticated(true);
-      try { sessionStorage.setItem("admin_auth", "true"); } catch {}
-      setError("");
-    } else {
-      setError("Incorrect password");
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    if (signInError) {
+      setError(d.loginError);
+      return;
     }
+    setError("");
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     setIsAuthenticated(false);
-    try { sessionStorage.removeItem("admin_auth"); } catch {}
   };
 
   /* ── Login screen ── */
@@ -755,17 +799,24 @@ export default function Dashboard() {
               >
                 <LayoutDashboard className="w-8 h-8 text-primary" />
               </motion.div>
-              <CardTitle className="text-2xl font-bold">{t.dashboard.login}</CardTitle>
-              <CardDescription>Enter password to manage your portfolio</CardDescription>
+              <CardTitle className="text-2xl font-bold">{d.login}</CardTitle>
+              <CardDescription>{d.loginDescription}</CardDescription>
             </CardHeader>
             <CardContent className="pt-4">
               <form onSubmit={handleLogin} className="space-y-4">
+                <Input
+                  type="email"
+                  placeholder={t.dashboard.email}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoFocus
+                  className="h-12 text-base"
+                />
                 <Input
                   type="password"
                   placeholder={t.dashboard.password}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  autoFocus
                   className="h-12 text-base"
                   data-testid="input-password"
                 />
@@ -782,13 +833,13 @@ export default function Dashboard() {
                   )}
                 </AnimatePresence>
                 <Button type="submit" className="w-full h-12 rounded-xl font-semibold text-base shadow-lg shadow-primary/25" data-testid="button-login">
-                  {t.dashboard.enter}
+                  {d.enter}
                 </Button>
               </form>
               <div className="mt-5 text-center">
                 <Link href="/">
                   <Button variant="ghost" size="sm" className="text-muted-foreground gap-2 hover:text-foreground">
-                    <ArrowLeft className="h-4 w-4" /> Return to Portfolio
+                    <ArrowLeft className="h-4 w-4" /> {d.returnToPortfolio}
                   </Button>
                 </Link>
               </div>
@@ -815,30 +866,30 @@ export default function Dashboard() {
               <LayoutDashboard className="w-4 h-4 text-primary" />
             </div>
             <div>
-              <h1 className="text-base font-bold leading-none">Portfolio Dashboard</h1>
-              <p className="text-xs text-muted-foreground mt-0.5">Manage your content</p>
+              <h1 className="text-base font-bold leading-none">{d.headerTitle}</h1>
+              <p className="text-xs text-muted-foreground mt-0.5">{d.headerSubtitle}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <Link href="/">
               <Button variant="outline" size="sm" className="gap-2 rounded-xl">
-                <Eye className="h-3.5 w-3.5" /> View Site
+                <Eye className="h-3.5 w-3.5" /> {d.viewSite}
               </Button>
             </Link>
             <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10">
-              <LogOut className="h-3.5 w-3.5" /> Logout
+              <LogOut className="h-3.5 w-3.5" /> {d.logout}
             </Button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
-        {/* Stats row */}
-        <div className="flex flex-wrap gap-3 mb-8">
-          <StatBadge icon={Code2}        label="Projects"     value={projects.length}     color="#7C3AED" />
-          <StatBadge icon={Briefcase}    label="Experience"   value={experience.length}   color="#3B82F6" />
-          <StatBadge icon={GraduationCap} label="Education"   value={education.length}    color="#10B981" />
-          <StatBadge icon={Award}        label="Certificates" value={certificates.length} color="#F59E0B" />
+        <div className="max-w-6xl mx-auto px-6 py-8">
+          {/* Stats row */}
+          <div className="flex flex-wrap gap-3 mb-8">
+          <StatBadge icon={Code2}        label={d.stats.projects}     value={projects.length}     color="#7C3AED" />
+          <StatBadge icon={Briefcase}    label={d.stats.experience}   value={experience.length}   color="#3B82F6" />
+          <StatBadge icon={GraduationCap} label={d.stats.education}   value={education.length}    color="#10B981" />
+          <StatBadge icon={Award}        label={d.stats.certificates} value={certificates.length} color="#F59E0B" />
         </div>
 
         <Tabs defaultValue="projects" className="w-full">
@@ -859,25 +910,26 @@ export default function Dashboard() {
               <Award className="w-3.5 h-3.5" /> {t.dashboard.certificates}
             </TabsTrigger>
             <TabsTrigger value="testimonials" className="rounded-lg gap-1.5 data-[state=active]:shadow-sm">
-              <MessageCircle className="w-3.5 h-3.5" /> Testimonials
+              <MessageCircle className="w-3.5 h-3.5" /> {d.tabs.testimonials}
             </TabsTrigger>
           </TabsList>
 
           {/* ── PROJECTS ── */}
           <TabsContent value="projects">
             <SectionHeader
-              icon={Code2} title="Projects" count={projects.length} color="#7C3AED"
-              onAdd={() => setProjectDialog({ open: true })} addLabel="Add Project"
+              icon={Code2} title={d.sections.projects.title} count={projects.length} color="#7C3AED"
+              onAdd={() => setProjectDialog({ open: true })} addLabel={d.sections.projects.add}
+              itemLabel={projects.length === 1 ? d.itemCount.one : d.itemCount.many}
             />
             <AnimatePresence mode="popLayout">
               {projects.length === 0 ? (
                 <EmptyState
                   key="empty-projects"
                   icon={FolderOpen}
-                  title="No projects yet"
-                  description="Showcase your work by adding your first project. Include images, links, and a description to impress visitors."
+                  title={d.sections.projects.emptyTitle}
+                  description={d.sections.projects.emptyDescription}
                   onAdd={() => setProjectDialog({ open: true })}
-                  addLabel="Add Your First Project"
+                  addLabel={d.sections.projects.emptyAdd}
                 />
               ) : (
                 <div className="space-y-3">
@@ -896,7 +948,7 @@ export default function Dashboard() {
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             <h3 className="font-semibold truncate">{p.title}</h3>
-                            <Badge variant="secondary" className="text-[10px] shrink-0">{p.category}</Badge>
+                            <Badge variant="secondary" className="text-[10px] shrink-0">{categoryLabels[p.category] ?? p.category}</Badge>
                             {(p.images?.length ?? 0) > 1 && (
                               <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
                                 <Image className="w-3 h-3" /> {p.images!.length}
@@ -905,8 +957,8 @@ export default function Dashboard() {
                           </div>
                           <p className="text-xs text-muted-foreground mt-0.5 truncate">{p.tags.slice(0, 4).join(" · ")}</p>
                           <div className="flex gap-2 mt-1">
-                            {p.liveUrl && p.liveUrl !== "#" && <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline flex items-center gap-0.5"><ExternalLink className="w-2.5 h-2.5" /> Live</a>}
-                            {p.githubUrl && p.githubUrl !== "#" && <a href={p.githubUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-muted-foreground hover:underline flex items-center gap-0.5"><Github className="w-2.5 h-2.5" /> GitHub</a>}
+                            {p.liveUrl && p.liveUrl !== "#" && <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline flex items-center gap-0.5"><ExternalLink className="w-2.5 h-2.5" /> {d.links.live}</a>}
+                            {p.githubUrl && p.githubUrl !== "#" && <a href={p.githubUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-muted-foreground hover:underline flex items-center gap-0.5"><Github className="w-2.5 h-2.5" /> {d.links.github}</a>}
                           </div>
                         </div>
                       </div>
@@ -925,18 +977,19 @@ export default function Dashboard() {
           {/* ── EXPERIENCE ── */}
           <TabsContent value="experience">
             <SectionHeader
-              icon={Briefcase} title="Experience" count={experience.length} color="#3B82F6"
-              onAdd={() => setExpDialog({ open: true })} addLabel="Add Experience"
+              icon={Briefcase} title={d.sections.experience.title} count={experience.length} color="#3B82F6"
+              onAdd={() => setExpDialog({ open: true })} addLabel={d.sections.experience.add}
+              itemLabel={experience.length === 1 ? d.itemCount.one : d.itemCount.many}
             />
             <AnimatePresence mode="popLayout">
               {experience.length === 0 ? (
                 <EmptyState
                   key="empty-exp"
                   icon={Briefcase}
-                  title="No experience added"
-                  description="Add your work history to show visitors where you've worked and what impact you've made in each role."
+                  title={d.sections.experience.emptyTitle}
+                  description={d.sections.experience.emptyDescription}
                   onAdd={() => setExpDialog({ open: true })}
-                  addLabel="Add Your First Role"
+                  addLabel={d.sections.experience.emptyAdd}
                 />
               ) : (
                 <div className="space-y-3">
@@ -951,7 +1004,7 @@ export default function Dashboard() {
                           <Briefcase className="w-4.5 h-4.5 text-blue-500" />
                         </div>
                         <div>
-                          <p className="font-semibold leading-none">{e.role}</p>
+                          <p className="font-semibold leading-none">{language === "ar" ? e.roleAr || e.role : e.role}</p>
                           <p className="text-sm text-muted-foreground mt-1">{e.company} <span className="text-border">·</span> {e.period}</p>
                         </div>
                       </div>
@@ -965,18 +1018,19 @@ export default function Dashboard() {
           {/* ── EDUCATION ── */}
           <TabsContent value="education">
             <SectionHeader
-              icon={GraduationCap} title="Education" count={education.length} color="#10B981"
-              onAdd={() => setEduDialog({ open: true })} addLabel="Add Education"
+              icon={GraduationCap} title={d.sections.education.title} count={education.length} color="#10B981"
+              onAdd={() => setEduDialog({ open: true })} addLabel={d.sections.education.add}
+              itemLabel={education.length === 1 ? d.itemCount.one : d.itemCount.many}
             />
             <AnimatePresence mode="popLayout">
               {education.length === 0 ? (
                 <EmptyState
                   key="empty-edu"
                   icon={BookOpen}
-                  title="No education entries"
-                  description="Add your academic background — degrees, bootcamps, and online courses all count."
+                  title={d.sections.education.emptyTitle}
+                  description={d.sections.education.emptyDescription}
                   onAdd={() => setEduDialog({ open: true })}
-                  addLabel="Add Education"
+                  addLabel={d.sections.education.emptyAdd}
                 />
               ) : (
                 <div className="space-y-3">
@@ -991,10 +1045,14 @@ export default function Dashboard() {
                           <GraduationCap className="w-4.5 h-4.5 text-green-500" />
                         </div>
                         <div>
-                          <p className="font-semibold leading-none">{e.degree} in {e.field}</p>
+                          <p className="font-semibold leading-none">
+                            {language === "ar" ? e.degreeAr || e.degree : e.degree}{" "}
+                            {language === "ar" ? e.fieldAr || e.field : e.field}
+                          </p>
                           <p className="text-sm text-muted-foreground mt-1">
-                            {e.institution} <span className="text-border">·</span> {e.period}
-                            {e.gpa && <span className="ml-2 text-primary font-medium">GPA {e.gpa}</span>}
+                            {language === "ar" ? e.institutionAr || e.institution : e.institution}{" "}
+                            <span className="text-border">·</span> {e.period}
+                            {e.gpa && <span className="ml-2 text-primary font-medium">{d.dialogs.educationItem.gpaLabel} {e.gpa}</span>}
                           </p>
                         </div>
                       </div>
@@ -1008,18 +1066,19 @@ export default function Dashboard() {
           {/* ── CERTIFICATES ── */}
           <TabsContent value="certificates">
             <SectionHeader
-              icon={Award} title="Certificates" count={certificates.length} color="#F59E0B"
-              onAdd={() => setCertDialog({ open: true })} addLabel="Add Certificate"
+              icon={Award} title={d.sections.certificates.title} count={certificates.length} color="#F59E0B"
+              onAdd={() => setCertDialog({ open: true })} addLabel={d.sections.certificates.add}
+              itemLabel={certificates.length === 1 ? d.itemCount.one : d.itemCount.many}
             />
             <AnimatePresence mode="popLayout">
               {certificates.length === 0 ? (
                 <EmptyState
                   key="empty-certs"
                   icon={Award}
-                  title="No certificates yet"
-                  description="Add professional certificates and credentials to build credibility with visitors."
+                  title={d.sections.certificates.emptyTitle}
+                  description={d.sections.certificates.emptyDescription}
                   onAdd={() => setCertDialog({ open: true })}
-                  addLabel="Add Your First Certificate"
+                  addLabel={d.sections.certificates.emptyAdd}
                 />
               ) : (
                 <div className="space-y-3">
@@ -1035,14 +1094,16 @@ export default function Dashboard() {
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <p className="font-semibold leading-none">{c.title}</p>
+                            <p className="font-semibold leading-none">{language === "ar" ? c.titleAr || c.title : c.title}</p>
                             {c.credentialUrl && (
                               <a href={c.credentialUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/70">
                                 <ExternalLink className="w-3 h-3" />
                               </a>
                             )}
                           </div>
-                          <p className="text-sm text-muted-foreground mt-1">{c.issuer} <span className="text-border">·</span> {c.date}</p>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {language === "ar" ? c.issuerAr || c.issuer : c.issuer} <span className="text-border">·</span> {c.date}
+                          </p>
                         </div>
                       </div>
                     </ItemCard>
@@ -1055,18 +1116,19 @@ export default function Dashboard() {
           {/* ── TESTIMONIALS ── */}
           <TabsContent value="testimonials">
             <SectionHeader
-              icon={MessageCircle} title="Testimonials" count={testimonials.length} color="#3B82F6"
-              onAdd={() => setTestDialog({ open: true })} addLabel="Add Testimonial"
+              icon={MessageCircle} title={d.sections.testimonials.title} count={testimonials.length} color="#3B82F6"
+              onAdd={() => setTestDialog({ open: true })} addLabel={d.sections.testimonials.add}
+              itemLabel={testimonials.length === 1 ? d.itemCount.one : d.itemCount.many}
             />
             <AnimatePresence mode="popLayout">
               {testimonials.length === 0 ? (
                 <EmptyState
                   key="empty-test"
                   icon={MessageCircle}
-                  title="No testimonials yet"
-                  description="Add client testimonials to build trust and showcase your work quality."
+                  title={d.sections.testimonials.emptyTitle}
+                  description={d.sections.testimonials.emptyDescription}
                   onAdd={() => setTestDialog({ open: true })}
-                  addLabel="Add Your First Testimonial"
+                  addLabel={d.sections.testimonials.emptyAdd}
                 />
               ) : (
                 <div className="space-y-3">
@@ -1080,15 +1142,17 @@ export default function Dashboard() {
                         <img src={t.imageUrl} alt={t.name} className="w-10 h-10 rounded-full object-cover border border-border shrink-0" />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <p className="font-semibold leading-none">{t.name}</p>
+                            <p className="font-semibold leading-none">{language === "ar" ? t.nameAr || t.name : t.name}</p>
                             <div className="flex gap-0.5">
                               {Array(t.rating).fill(0).map((_, j) => (
                                 <Star key={j} className="w-3 h-3 fill-amber-400 text-amber-400" />
                               ))}
                             </div>
                           </div>
-                          <p className="text-sm text-muted-foreground mb-2">{t.role}</p>
-                          <p className="text-sm text-foreground/70 line-clamp-2">"{t.text}"</p>
+                          <p className="text-sm text-muted-foreground mb-2">{language === "ar" ? t.roleAr || t.role : t.role}</p>
+                          <p className="text-sm text-foreground/70 line-clamp-2">
+                            "{language === "ar" ? t.textAr || t.text : t.text}"
+                          </p>
                         </div>
                       </div>
                     </ItemCard>
@@ -1104,11 +1168,11 @@ export default function Dashboard() {
       <ProjectDialog
         open={projectDialog.open}
         initial={projectDialog.item}
-        onSave={(data) => {
+        onSave={async (data) => {
           if (projectDialog.item) {
-            updateProject(projectDialog.item.id, data);
+            await updateProject(projectDialog.item.id, data);
           } else {
-            addProject({ ...data, id: Date.now().toString() });
+            await addProject(data);
           }
         }}
         onClose={() => setProjectDialog({ open: false })}
@@ -1116,36 +1180,36 @@ export default function Dashboard() {
       <ExperienceDialog
         open={expDialog.open}
         initial={expDialog.item}
-        onSave={(data) => {
-          if (expDialog.item) updateExperience(expDialog.item.id, data);
-          else addExperience({ ...data, id: Date.now().toString() });
+        onSave={async (data) => {
+          if (expDialog.item) await updateExperience(expDialog.item.id, data);
+          else await addExperience(data);
         }}
         onClose={() => setExpDialog({ open: false })}
       />
       <EducationDialog
         open={eduDialog.open}
         initial={eduDialog.item}
-        onSave={(data) => {
-          if (eduDialog.item) updateEducation(eduDialog.item.id, data);
-          else addEducation({ ...data, id: Date.now().toString() });
+        onSave={async (data) => {
+          if (eduDialog.item) await updateEducation(eduDialog.item.id, data);
+          else await addEducation(data);
         }}
         onClose={() => setEduDialog({ open: false })}
       />
       <CertificateDialog
         open={certDialog.open}
         initial={certDialog.item}
-        onSave={(data) => {
-          if (certDialog.item) updateCertificate(certDialog.item.id, data);
-          else addCertificate({ ...data, id: Date.now().toString() });
+        onSave={async (data) => {
+          if (certDialog.item) await updateCertificate(certDialog.item.id, data);
+          else await addCertificate(data);
         }}
         onClose={() => setCertDialog({ open: false })}
       />
       <TestimonialDialog
         open={testDialog.open}
         initial={testDialog.item}
-        onSave={(data) => {
-          if (testDialog.item) updateTestimonial(testDialog.item.id, data);
-          else addTestimonial({ ...data, id: Date.now().toString() });
+        onSave={async (data) => {
+          if (testDialog.item) await updateTestimonial(testDialog.item.id, data);
+          else await addTestimonial(data);
         }}
         onClose={() => setTestDialog({ open: false })}
       />

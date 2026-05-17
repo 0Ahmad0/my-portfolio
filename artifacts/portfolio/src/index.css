@@ -199,6 +199,15 @@
   --chart-5: 340 75% 55%;
 }
 
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+}
+
 html[dir="rtl"] {
   --app-font-sans: 'Cairo', system-ui, sans-serif;
 }

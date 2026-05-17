@@ -1,9 +1,11 @@
 import { usePortfolio } from "@/contexts/PortfolioContext";
+import { translations } from "@/lib/i18n";
 import { Linkedin } from "lucide-react";
 import { SiGithub, SiX } from "react-icons/si";
 
 export default function Footer() {
   const { language, personalInfo } = usePortfolio();
+  const t = translations[language];
   const year = new Date().getFullYear();
 
   return (
@@ -16,7 +18,7 @@ export default function Footer() {
               AHMAD<span className="text-primary">.DEV</span>
             </h2>
             <p className="text-sm text-muted-foreground">
-              © {year} {language === "ar" ? personalInfo.nameAr : personalInfo.name}. All rights reserved.
+              © {year} {language === "ar" ? personalInfo.nameAr : personalInfo.name}. {t.footer.rights}
             </p>
           </div>
 

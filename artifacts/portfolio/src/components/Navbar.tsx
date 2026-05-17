@@ -13,6 +13,7 @@ export default function Navbar() {
   const { theme, setTheme } = useTheme();
   const { language, setLanguage } = usePortfolio();
   const t = translations[language];
+  const isRtl = language === "ar";
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -20,9 +21,11 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-    setIsMobileMenuOpen(false);
+  const scrollTo = (id: string, closeMenu = false) => {
+    if (closeMenu) setIsMobileMenuOpen(false);
+    requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   };
 
   const navLinks = [
@@ -33,6 +36,7 @@ export default function Navbar() {
     { name: t.nav.certificates, id: "certificates" },
     { name: t.nav.contact, id: "contact" },
   ];
+  const orderedNavLinks = isRtl ? [...navLinks].reverse() : navLinks;
 
   return (
     <header
@@ -42,7 +46,7 @@ export default function Navbar() {
           : "bg-transparent py-5"
       }`}
     >
-      <div className="container mx-auto px-6 flex items-center justify-between">
+        <div className={`container mx-auto px-6 flex items-center justify-between ${isRtl ? "flex-row-reverse" : ""}`}>
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           className="text-xl font-bold tracking-tighter hover:opacity-80 transition-opacity"
@@ -52,28 +56,32 @@ export default function Navbar() {
         </button>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-6">
-          <ul className="flex items-center gap-5 text-sm font-medium">
-            {navLinks.map((link) => (
-              <li key={link.id}>
-                <button
-                  onClick={() => scrollTo(link.id)}
-                  className="hover:text-primary transition-colors text-muted-foreground hover:text-foreground"
-                  data-testid={`link-${link.id}`}
-                >
-                  {link.name}
-                </button>
-              </li>
-            ))}
-          </ul>
+          <nav className={`hidden lg:flex items-center gap-6 ${isRtl ? "flex-row-reverse" : ""}`}>
+            <ul className={`flex items-center gap-5 text-sm font-medium ${isRtl ? "flex-row-reverse" : ""}`}>
+              {orderedNavLinks.map((link) => (
+                <li key={link.id}>
+                  <a
+                    href={`#${link.id}`}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      scrollTo(link.id);
+                    }}
+                    className={`hover:text-primary transition-colors text-muted-foreground hover:text-foreground ${isRtl ? "text-right" : "text-left"}`}
+                    data-testid={`link-${link.id}`}
+                  >
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
 
-          <div className="flex items-center gap-1 border-l border-border/50 pl-5">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setLanguage(language === "en" ? "ar" : "en")}
-              data-testid="button-lang-toggle"
-              className="text-xs font-bold tracking-wider w-10 h-9 px-0"
+            <div className={`flex items-center gap-1 ${isRtl ? "border-r border-border/50 pr-5" : "border-l border-border/50 pl-5"}`}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setLanguage(language === "en" ? "ar" : "en")}
+                data-testid="button-lang-toggle"
+                className="text-xs font-bold tracking-wider w-10 h-9 px-0"
             >
               {language === "en" ? "ع" : "EN"}
             </Button>
@@ -90,7 +98,7 @@ export default function Navbar() {
             </Button>
 
             <Link href="/dashboard" data-testid="link-dashboard">
-              <Button size="sm" className="ml-1 gap-1.5 rounded-full">
+              <Button size="sm" className={`${isRtl ? "mr-1" : "ml-1"} gap-1.5 rounded-full`}>
                 <LayoutDashboard className="w-3.5 h-3.5" />
                 {t.nav.dashboard}
               </Button>
@@ -99,7 +107,7 @@ export default function Navbar() {
         </nav>
 
         {/* Mobile controls */}
-        <div className="flex items-center gap-2 lg:hidden">
+        <div className={`flex items-center gap-2 lg:hidden ${isRtl ? "flex-row-reverse" : ""}`}>
           <Button
             variant="ghost"
             size="sm"
@@ -138,15 +146,16 @@ export default function Navbar() {
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="lg:hidden border-b border-border bg-background/95 backdrop-blur-xl overflow-hidden"
           >
-            <div className="container mx-auto px-6 py-5 flex flex-col gap-1">
-              {navLinks.map((link, i) => (
+            <div className={`container mx-auto px-6 py-5 flex flex-col gap-1 ${isRtl ? "items-end" : ""}`}>
+              {orderedNavLinks.map((link, i) => (
                 <motion.button
                   key={link.id}
-                  initial={{ opacity: 0, x: -10 }}
+                  initial={{ opacity: 0, x: isRtl ? 10 : -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  onClick={() => scrollTo(link.id)}
-                  className="text-left py-3 px-2 text-base font-medium border-b border-border/40 last:border-0 hover:text-primary transition-colors"
+                  onClick={() => scrollTo(link.id, true)}
+                  type="button"
+                  className={`py-3 px-2 text-base font-medium border-b border-border/40 last:border-0 hover:text-primary transition-colors ${isRtl ? "text-right" : "text-left"}`}
                 >
                   {link.name}
                 </motion.button>
