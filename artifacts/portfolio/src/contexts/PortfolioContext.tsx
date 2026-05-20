@@ -257,30 +257,38 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
     let isMounted = true;
     async function loadPortfolio() {
       setIsLoading(true);
-      const [
-        personalRes,
-        projectsRes,
-        expRes,
-        eduRes,
-        certRes,
-        testRes,
-      ] = await Promise.all([
-        supabase.from("portfolio_personal_info").select("*").eq("is_primary", true).limit(1),
-        supabase.from("portfolio_projects").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
-        supabase.from("portfolio_experience").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
-        supabase.from("portfolio_education").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
-        supabase.from("portfolio_certificates").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
-        supabase.from("portfolio_testimonials").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
-      ]);
+      try {
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+        if (!supabaseUrl || !supabaseKey) {
+          console.warn("Supabase env vars not set, using default data");
+          return;
+        }
 
-      if (!isMounted) return;
+        const [
+          personalRes,
+          projectsRes,
+          expRes,
+          eduRes,
+          certRes,
+          testRes,
+        ] = await Promise.all([
+          supabase.from("portfolio_personal_info").select("*").eq("is_primary", true).limit(1),
+          supabase.from("portfolio_projects").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+          supabase.from("portfolio_experience").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+          supabase.from("portfolio_education").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+          supabase.from("portfolio_certificates").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+          supabase.from("portfolio_testimonials").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+        ]);
 
-      if (personalRes.error) console.error("Failed to load personal info", personalRes.error);
-      if (projectsRes.error) console.error("Failed to load projects", projectsRes.error);
-      if (expRes.error) console.error("Failed to load experience", expRes.error);
-      if (eduRes.error) console.error("Failed to load education", eduRes.error);
-      if (certRes.error) console.error("Failed to load certificates", certRes.error);
-      if (testRes.error) console.error("Failed to load testimonials", testRes.error);
+        if (!isMounted) return;
+
+        if (personalRes.error) console.error("Failed to load personal info", personalRes.error);
+        if (projectsRes.error) console.error("Failed to load projects", projectsRes.error);
+        if (expRes.error) console.error("Failed to load experience", expRes.error);
+        if (eduRes.error) console.error("Failed to load education", eduRes.error);
+        if (certRes.error) console.error("Failed to load certificates", certRes.error);
+        if (testRes.error) console.error("Failed to load testimonials", testRes.error);
 
       const infoRow = personalRes.data?.[0];
       if (infoRow) {
@@ -376,8 +384,11 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
           imageUrl: row.image_url ?? "",
         })));
       }
-
-      setIsLoading(false);
+      } catch (err) {
+        console.error("Failed to load portfolio data", err);
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
     }
 
     loadPortfolio();
