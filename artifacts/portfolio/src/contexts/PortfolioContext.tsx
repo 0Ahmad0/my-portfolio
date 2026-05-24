@@ -290,6 +290,16 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
 
         if (!isMounted) return;
 
+        const hasAuthError = [personalRes, projectsRes, expRes, eduRes, certRes, testRes]
+          .some((r) => {
+            const code = r.error?.code;
+            return code === "PGRST301" || code === "42501" || (r as any).status === 401 || (r as any).status === 403;
+          });
+        if (hasAuthError) {
+          console.warn("Supabase auth error - check your API key. Falling back to default data.");
+          return;
+        }
+
         if (personalRes.error) console.error("Failed to load personal info", personalRes.error);
         if (projectsRes.error) console.error("Failed to load projects", projectsRes.error);
         if (expRes.error) console.error("Failed to load experience", expRes.error);
