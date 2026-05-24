@@ -258,12 +258,23 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
     async function loadPortfolio() {
       setIsLoading(true);
       try {
-        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-        const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-        if (!supabaseUrl || !supabaseKey) {
-          console.warn("Supabase env vars not set, using default data");
+        if (!supabase) {
+          console.warn("Supabase not configured, using default data");
           return;
         }
+
+        const timeout = (ms: number) => new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error(`Request timed out after ${ms}ms`)), ms)
+        );
+
+        const queries = [
+            supabase.from("portfolio_personal_info").select("*").eq("is_primary", true).limit(1),
+            supabase.from("portfolio_projects").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+            supabase.from("portfolio_experience").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+            supabase.from("portfolio_education").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+            supabase.from("portfolio_certificates").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+            supabase.from("portfolio_testimonials").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+        ] as const;
 
         const [
           personalRes,
@@ -272,13 +283,9 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
           eduRes,
           certRes,
           testRes,
-        ] = await Promise.all([
-          supabase.from("portfolio_personal_info").select("*").eq("is_primary", true).limit(1),
-          supabase.from("portfolio_projects").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
-          supabase.from("portfolio_experience").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
-          supabase.from("portfolio_education").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
-          supabase.from("portfolio_certificates").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
-          supabase.from("portfolio_testimonials").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+        ] = await Promise.race([
+          Promise.all(queries),
+          timeout(8000),
         ]);
 
         if (!isMounted) return;
@@ -398,6 +405,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
   const setLanguage = (lang: "en" | "ar") => setLanguageState(lang);
 
   const setPersonalInfo = async (info: PersonalInfo) => {
+    if (!supabase) throw new Error("Supabase not configured");
     if (personalInfoId) {
       const { data, error } = await supabase
         .from("portfolio_personal_info")
@@ -498,6 +506,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
   };
 
 const addProject = async (p: Omit<Project, "id">) => {
+    if (!supabase) throw new Error("Supabase not configured");
     const { data, error } = await supabase
       .from("portfolio_projects")
       .insert({
@@ -531,6 +540,7 @@ const addProject = async (p: Omit<Project, "id">) => {
   };
 
   const updateProject = async (id: string, p: Partial<Project>) => {
+    if (!supabase) throw new Error("Supabase not configured");
     const { data, error } = await supabase
       .from("portfolio_projects")
       .update({
@@ -565,12 +575,14 @@ const addProject = async (p: Omit<Project, "id">) => {
   };
 
   const deleteProject = async (id: string) => {
+    if (!supabase) throw new Error("Supabase not configured");
     const { error } = await supabase.from("portfolio_projects").delete().eq("id", id);
     if (error) throw new Error(error.message);
     setProjects((prev) => prev.filter((p) => p.id !== id));
   };
 
   const addExperience = async (e: Omit<Experience, "id">) => {
+    if (!supabase) throw new Error("Supabase not configured");
     const { data, error } = await supabase
       .from("portfolio_experience")
       .insert({
@@ -596,6 +608,7 @@ const addProject = async (p: Omit<Project, "id">) => {
   };
 
   const updateExperience = async (id: string, e: Partial<Experience>) => {
+    if (!supabase) throw new Error("Supabase not configured");
     const { data, error } = await supabase
       .from("portfolio_experience")
       .update({
@@ -622,12 +635,14 @@ const addProject = async (p: Omit<Project, "id">) => {
   };
 
   const deleteExperience = async (id: string) => {
+    if (!supabase) throw new Error("Supabase not configured");
     const { error } = await supabase.from("portfolio_experience").delete().eq("id", id);
     if (error) throw new Error(error.message);
     setExperience((prev) => prev.filter((e) => e.id !== id));
   };
 
   const addEducation = async (e: Omit<Education, "id">) => {
+    if (!supabase) throw new Error("Supabase not configured");
     const { data, error } = await supabase
       .from("portfolio_education")
       .insert({
@@ -661,6 +676,7 @@ const addProject = async (p: Omit<Project, "id">) => {
   };
 
   const updateEducation = async (id: string, e: Partial<Education>) => {
+    if (!supabase) throw new Error("Supabase not configured");
     const { data, error } = await supabase
       .from("portfolio_education")
       .update({
@@ -695,12 +711,14 @@ const addProject = async (p: Omit<Project, "id">) => {
   };
 
   const deleteEducation = async (id: string) => {
+    if (!supabase) throw new Error("Supabase not configured");
     const { error } = await supabase.from("portfolio_education").delete().eq("id", id);
     if (error) throw new Error(error.message);
     setEducation((prev) => prev.filter((e) => e.id !== id));
   };
 
   const addCertificate = async (c: Omit<Certificate, "id">) => {
+    if (!supabase) throw new Error("Supabase not configured");
     const { data, error } = await supabase
       .from("portfolio_certificates")
       .insert({
@@ -728,6 +746,7 @@ const addProject = async (p: Omit<Project, "id">) => {
   };
 
   const updateCertificate = async (id: string, c: Partial<Certificate>) => {
+    if (!supabase) throw new Error("Supabase not configured");
     const { data, error } = await supabase
       .from("portfolio_certificates")
       .update({
@@ -756,12 +775,14 @@ const addProject = async (p: Omit<Project, "id">) => {
   };
 
   const deleteCertificate = async (id: string) => {
+    if (!supabase) throw new Error("Supabase not configured");
     const { error } = await supabase.from("portfolio_certificates").delete().eq("id", id);
     if (error) throw new Error(error.message);
     setCertificates((prev) => prev.filter((c) => c.id !== id));
   };
 
   const addTestimonial = async (t: Omit<Testimonial, "id">) => {
+    if (!supabase) throw new Error("Supabase not configured");
     const { data, error } = await supabase
       .from("portfolio_testimonials")
       .insert({
@@ -791,6 +812,7 @@ const addProject = async (p: Omit<Project, "id">) => {
   };
 
   const updateTestimonial = async (id: string, t: Partial<Testimonial>) => {
+    if (!supabase) throw new Error("Supabase not configured");
     const { data, error } = await supabase
       .from("portfolio_testimonials")
       .update({
@@ -821,6 +843,7 @@ const addProject = async (p: Omit<Project, "id">) => {
   };
 
   const deleteTestimonial = async (id: string) => {
+    if (!supabase) throw new Error("Supabase not configured");
     const { error } = await supabase.from("portfolio_testimonials").delete().eq("id", id);
     if (error) throw new Error(error.message);
     setTestimonials((prev) => prev.filter((t) => t.id !== id));
