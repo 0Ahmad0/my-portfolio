@@ -783,6 +783,7 @@ export default function Dashboard() {
   const [testDialog, setTestDialog] = useState<{ open: boolean; item?: Testimonial }>({ open: false });
 
   useEffect(() => {
+    if (!supabase) return;
     supabase.auth.getSession().then(({ data }) => {
       setIsAuthenticated(!!data.session);
     });
@@ -794,6 +795,7 @@ export default function Dashboard() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!supabase) { setError("Supabase not configured"); return; }
     const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
     if (signInError) {
       setError(d.loginError);
@@ -803,6 +805,7 @@ export default function Dashboard() {
   };
 
   const handleLogout = async () => {
+    if (!supabase) { setIsAuthenticated(false); return; }
     await supabase.auth.signOut();
     setIsAuthenticated(false);
   };
