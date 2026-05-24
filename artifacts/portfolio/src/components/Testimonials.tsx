@@ -158,7 +158,7 @@ export default function Testimonials() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5, duration: 0.6 }}
-                  className="text-lg md:text-xl leading-relaxed mb-8 flex-1 text-foreground/90 font-medium"
+                  className="text-sm md:text-base leading-relaxed mb-8 flex-1 text-foreground/90 font-medium line-clamp-3"
                 >
                   "{text}"
                 </motion.p>
