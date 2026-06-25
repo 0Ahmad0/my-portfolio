@@ -11,10 +11,22 @@ import VisitorCounter from "@/components/VisitorCounter";
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [logoClicks, setLogoClicks] = useState(0);
+  const [showDashboard, setShowDashboard] = useState(false);
   const { theme, setTheme } = useTheme();
   const { language, setLanguage } = usePortfolio();
   const t = translations[language];
   const isRtl = language === "ar";
+
+  const handleLogoTap = () => {
+    const next = logoClicks + 1;
+    setLogoClicks(next);
+    if (next >= 5) {
+      setShowDashboard(true);
+      setLogoClicks(0);
+    }
+    setTimeout(() => setLogoClicks(0), 2000);
+  };
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -49,7 +61,7 @@ export default function Navbar() {
     >
         <div className={`container mx-auto px-6 flex items-center justify-between ${isRtl ? "flex-row-reverse" : ""}`}>
         <button
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); handleLogoTap(); }}
           className="text-xl font-bold tracking-tighter hover:opacity-80 transition-opacity"
           data-testid="link-home"
         >
@@ -100,12 +112,20 @@ export default function Navbar() {
 
             <VisitorCounter />
 
-            <Link href="/dashboard" data-testid="link-dashboard">
-              <Button size="sm" className={`${isRtl ? "mr-1" : "ml-1"} gap-1.5 rounded-full`}>
-                <LayoutDashboard className="w-3.5 h-3.5" />
-                {t.nav.dashboard}
-              </Button>
-            </Link>
+            {showDashboard && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                <Link href="/dashboard" data-testid="link-dashboard">
+                  <Button size="sm" className={`${isRtl ? "mr-1" : "ml-1"} gap-1.5 rounded-full`}>
+                    <LayoutDashboard className="w-3.5 h-3.5" />
+                    {t.nav.dashboard}
+                  </Button>
+                </Link>
+              </motion.div>
+            )}
           </div>
         </nav>
 
@@ -163,12 +183,14 @@ export default function Navbar() {
                   {link.name}
                 </motion.button>
               ))}
-              <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
-                <Button className="w-full mt-4 gap-2 rounded-full">
-                  <LayoutDashboard className="w-4 h-4" />
-                  {t.nav.dashboard}
-                </Button>
-              </Link>
+              {showDashboard && (
+                <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button className="w-full mt-4 gap-2 rounded-full">
+                    <LayoutDashboard className="w-4 h-4" />
+                    {t.nav.dashboard}
+                  </Button>
+                </Link>
+              )}
             </div>
           </motion.div>
         )}
