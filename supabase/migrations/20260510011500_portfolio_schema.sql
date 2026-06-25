@@ -120,6 +120,16 @@ create table if not exists portfolio_testimonials (
   updated_at timestamptz not null default now()
 );
 
+-- Site visits (visitor counter)
+create table if not exists site_visits (
+  id bigint primary key generated always as identity,
+  visitor_hash text not null,
+  visited_at timestamptz not null default now()
+);
+
+create index if not exists idx_site_visits_hash on site_visits (visitor_hash);
+create index if not exists idx_site_visits_at on site_visits (visited_at);
+
 -- Contact messages
 create table if not exists contact_messages (
   id uuid primary key default gen_random_uuid(),
@@ -177,6 +187,7 @@ alter table portfolio_experience enable row level security;
 alter table portfolio_education enable row level security;
 alter table portfolio_certificates enable row level security;
 alter table portfolio_testimonials enable row level security;
+alter table site_visits enable row level security;
 alter table contact_messages enable row level security;
 
 -- Admins: allow admin to read own row
@@ -235,6 +246,15 @@ drop policy if exists "admin write testimonials" on portfolio_testimonials;
 create policy "admin write testimonials" on portfolio_testimonials
   for all using (exists (select 1 from portfolio_admins where user_id = auth.uid()))
   with check (exists (select 1 from portfolio_admins where user_id = auth.uid()));
+
+-- Site visits: public read/insert (anon can track visits)
+drop policy if exists "public insert site_visits" on site_visits;
+create policy "public insert site_visits" on site_visits
+  for insert with check (true);
+
+drop policy if exists "public read site_visits" on site_visits;
+create policy "public read site_visits" on site_visits
+  for select using (true);
 
 -- Contact messages: public insert, admin read/update
 drop policy if exists "public create contact messages" on contact_messages;

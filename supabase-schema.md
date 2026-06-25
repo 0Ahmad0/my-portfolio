@@ -123,6 +123,24 @@ create table if not exists portfolio_testimonials (
   updated_at timestamptz not null default now()
 );
 
+-- Site visits (visitor counter)
+create table if not exists site_visits (
+  id bigint primary key generated always as identity,
+  visitor_hash text not null,
+  visited_at timestamptz not null default now()
+);
+
+create index if not exists idx_site_visits_hash on site_visits (visitor_hash);
+create index if not exists idx_site_visits_at on site_visits (visited_at);
+
+alter table site_visits enable row level security;
+
+create policy "public insert site_visits" on site_visits
+  for insert with check (true);
+
+create policy "public read site_visits" on site_visits
+  for select using (true);
+
 -- Contact messages
 create table if not exists contact_messages (
   id uuid primary key default gen_random_uuid(),

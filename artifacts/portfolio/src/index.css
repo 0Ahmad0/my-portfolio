@@ -289,4 +289,8 @@ html[dir="rtl"] {
   .glass {
     @apply bg-white/10 dark:bg-white/5 backdrop-blur-md border border-white/20 dark:border-white/10;
   }
+
+  .modal-glass {
+    @apply bg-background dark:bg-card border border-border dark:border-white/10 shadow-2xl;
+  }
 }
