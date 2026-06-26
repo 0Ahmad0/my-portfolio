@@ -69,6 +69,9 @@ export default function Hero() {
   const t = translations[language];
   const typedRole = useTypewriter(t.hero.roles, 75, 40, 1800);
   const name = language === "ar" ? personalInfo.nameAr : personalInfo.name;
+  const heroSkills = personalInfo.floatingSkills?.length
+    ? personalInfo.floatingSkills
+    : ["React", "Flutter", "Node.js", "Figma", "TypeScript"];
 
   return (
     <section className="relative min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden pt-20 pb-20">
@@ -166,7 +169,7 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 1.5 }}
           className="flex flex-wrap gap-2 justify-center mt-12 max-w-md"
         >
-          {["React", "Flutter", "Node.js", "Figma", "TypeScript"].map((tech, i) => (
+          {heroSkills.map((tech, i) => (
             <motion.span
               key={tech}
               initial={{ opacity: 0, scale: 0.8 }}

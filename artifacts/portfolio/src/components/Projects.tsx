@@ -98,7 +98,7 @@ function ProjectModal({ project, language, t, onClose }: { project: Project; lan
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8"
+      className="fixed inset-0 z-[100] overflow-y-auto overscroll-contain p-3 md:p-8"
       onClick={onClose}
     >
       <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
@@ -108,7 +108,7 @@ function ProjectModal({ project, language, t, onClose }: { project: Project; lan
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.92, y: 30 }}
         transition={{ type: "spring", stiffness: 280, damping: 28 }}
-        className="relative z-10 w-full max-w-3xl modal-glass rounded-3xl overflow-hidden"
+        className="relative z-10 my-4 md:my-0 mx-auto w-full max-w-3xl modal-glass rounded-3xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Carousel */}

@@ -47,14 +47,15 @@ export function useVisitorCount() {
         try {
           const alreadyVisited = sessionStorage.getItem(SESSION_VISITED_KEY);
           if (!alreadyVisited) {
-            await supabase.from("site_visits").insert({ visitor_hash: visitorHash });
+            const { error: insertError } = await supabase.from("site_visits").insert({ visitor_hash: visitorHash });
+            if (insertError) throw insertError;
+            if (!cancelled) setIsNewVisit(true);
             sessionStorage.setItem(SESSION_VISITED_KEY, "1");
-            setIsNewVisit(true);
           }
 
           const { count: total, error } = await supabase
             .from("site_visits")
-            .select("visitor_hash", { head: false, count: "exact" });
+            .select("*", { head: true, count: "exact" });
 
           if (!cancelled && !error && total !== null) {
             setCount(total);
@@ -66,11 +67,11 @@ export function useVisitorCount() {
 
       const localVisitors = getLocalVisitors();
       const alreadyTracked = sessionStorage.getItem(SESSION_VISITED_KEY);
-      if (!alreadyTracked) {
+      if (!alreadyTracked || !localVisitors.has(visitorHash)) {
         localVisitors.add(visitorHash);
         saveLocalVisitors(localVisitors);
         sessionStorage.setItem(SESSION_VISITED_KEY, "1");
-        setIsNewVisit(true);
+        if (!cancelled) setIsNewVisit(true);
       }
 
       if (!cancelled) {

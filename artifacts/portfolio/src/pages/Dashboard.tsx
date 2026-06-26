@@ -10,7 +10,7 @@ import {
   ArrowLeft, Plus, Trash2, Edit2, LayoutDashboard, FolderOpen,
   Briefcase, GraduationCap, Award, User, LogOut, ExternalLink,
   Github, CheckCircle2, Image, Globe, Code2, BookOpen, Sparkles,
-  Eye, Download, Star, MessageCircle
+  Eye, Download, Star, MessageCircle, ArrowUp, ArrowDown
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -557,8 +557,15 @@ function CertificateDialog({ open, initial, onSave, onClose }: {
 }
 
 /* ─── Item card row ──────────────────────────────────── */
-function ItemCard({ children, onEdit, onDelete, index }: {
-  children: React.ReactNode; onEdit: () => void; onDelete: () => Promise<void>; index: number;
+function ItemCard({ children, onEdit, onDelete, onMoveUp, onMoveDown, canMoveUp, canMoveDown, index }: {
+  children: React.ReactNode;
+  onEdit: () => void;
+  onDelete: () => Promise<void>;
+  onMoveUp?: () => void | Promise<void>;
+  onMoveDown?: () => void | Promise<void>;
+  canMoveUp?: boolean;
+  canMoveDown?: boolean;
+  index: number;
 }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -600,6 +607,16 @@ function ItemCard({ children, onEdit, onDelete, index }: {
               </>
             ) : (
               <>
+                {(onMoveUp || onMoveDown) && (
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" className="h-9 w-9" onClick={onMoveUp} disabled={!canMoveUp} title={language === "ar" ? "نقل للأعلى" : "Move up"}>
+                      <ArrowUp className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-9 w-9" onClick={onMoveDown} disabled={!canMoveDown} title={language === "ar" ? "نقل للأسفل" : "Move down"}>
+                      <ArrowDown className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                )}
                 <Button variant="outline" size="sm" onClick={onEdit} className="gap-1.5">
                   <Edit2 className="h-3.5 w-3.5" /> {d.edit}
                 </Button>
@@ -641,6 +658,16 @@ function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSave: (i: 
     } finally {
       setSaving(false);
     }
+  };
+
+  const moveSkill = (index: number, direction: -1 | 1) => {
+    const target = index + direction;
+    if (target < 0 || target >= local.floatingSkills.length) return;
+    setLocal((current) => {
+      const next = [...current.floatingSkills];
+      [next[index], next[target]] = [next[target], next[index]];
+      return { ...current, floatingSkills: next };
+    });
   };
 
   return (
@@ -708,6 +735,23 @@ function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSave: (i: 
               className="h-16 resize-none"
             />
           </Field>
+          {local.floatingSkills.length > 0 && (
+            <div className="space-y-2 mt-3">
+              {local.floatingSkills.map((skill, index) => (
+                <div key={`${skill}-${index}`} className="flex items-center justify-between gap-3 rounded-xl border border-border/50 bg-muted/30 px-3 py-2">
+                  <span className="text-sm font-medium truncate">{skill}</span>
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => moveSkill(index, -1)} disabled={index === 0} title={language === "ar" ? "نقل للأعلى" : "Move up"}>
+                      <ArrowUp className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => moveSkill(index, 1)} disabled={index === local.floatingSkills.length - 1} title={language === "ar" ? "نقل للأسفل" : "Move down"}>
+                      <ArrowDown className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
           <p className="text-xs text-muted-foreground mt-2">{labels.floatingSkillsHelp}</p>
         </div>
 
@@ -759,12 +803,12 @@ export default function Dashboard() {
 
   const {
     isLoading,
-    language, projects, updateProject, addProject, deleteProject,
+    language, projects, setProjects, updateProject, addProject, deleteProject,
     personalInfo, setPersonalInfo,
     experience, updateExperience, addExperience, deleteExperience,
     education, updateEducation, addEducation, deleteEducation,
-    certificates, updateCertificate, addCertificate, deleteCertificate,
-    testimonials, updateTestimonial, addTestimonial, deleteTestimonial,
+    certificates, setCertificates, updateCertificate, addCertificate, deleteCertificate,
+    testimonials, setTestimonials, updateTestimonial, addTestimonial, deleteTestimonial,
   } = usePortfolio();
 
   const t = translations[language];
@@ -781,6 +825,36 @@ export default function Dashboard() {
   const [eduDialog, setEduDialog] = useState<{ open: boolean; item?: Education }>({ open: false });
   const [certDialog, setCertDialog] = useState<{ open: boolean; item?: Certificate }>({ open: false });
   const [testDialog, setTestDialog] = useState<{ open: boolean; item?: Testimonial }>({ open: false });
+
+  const persistOrder = async <T extends { id: string; sortOrder?: number }>(
+    items: T[],
+    table: string,
+    setItems: (items: T[]) => void,
+  ) => {
+    const ordered = items.map((item, index) => ({ ...item, sortOrder: index }));
+    setItems(ordered);
+    if (!supabase) return;
+    const updates = ordered
+      .filter((item) => item.sortOrder !== items.find((current) => current.id === item.id)?.sortOrder)
+      .map((item) => supabase.from(table).update({ sort_order: item.sortOrder }).eq("id", item.id));
+    const results = await Promise.all(updates);
+    const error = results.find((result) => result.error)?.error;
+    if (error) throw new Error(error.message);
+  };
+
+  const moveOrderedItem = async <T extends { id: string; sortOrder?: number }>(
+    items: T[],
+    index: number,
+    direction: -1 | 1,
+    table: string,
+    setItems: (items: T[]) => void,
+  ) => {
+    const target = index + direction;
+    if (target < 0 || target >= items.length) return;
+    const next = [...items];
+    [next[index], next[target]] = [next[target], next[index]];
+    await persistOrder(next, table, setItems);
+  };
 
   useEffect(() => {
     if (!supabase) {
@@ -984,6 +1058,16 @@ export default function Dashboard() {
                   {projects.map((p, i) => (
                     <ItemCard
                       key={p.id} index={i}
+                      onMoveUp={async () => {
+                        try { await moveOrderedItem(projects, i, -1, "portfolio_projects", setProjects); }
+                        catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); }
+                      }}
+                      onMoveDown={async () => {
+                        try { await moveOrderedItem(projects, i, 1, "portfolio_projects", setProjects); }
+                        catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); }
+                      }}
+                      canMoveUp={i > 0}
+                      canMoveDown={i < projects.length - 1}
                       onEdit={() => setProjectDialog({ open: true, item: p })}
                       onDelete={async () => { try { await deleteProject(p.id); toast({ title: d.actions.deleted }); } catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); } }}
                     >
@@ -1133,6 +1217,16 @@ export default function Dashboard() {
                   {certificates.map((c, i) => (
                     <ItemCard
                       key={c.id} index={i}
+                      onMoveUp={async () => {
+                        try { await moveOrderedItem(certificates, i, -1, "portfolio_certificates", setCertificates); }
+                        catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); }
+                      }}
+                      onMoveDown={async () => {
+                        try { await moveOrderedItem(certificates, i, 1, "portfolio_certificates", setCertificates); }
+                        catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); }
+                      }}
+                      canMoveUp={i > 0}
+                      canMoveDown={i < certificates.length - 1}
                       onEdit={() => setCertDialog({ open: true, item: c })}
                       onDelete={async () => { try { await deleteCertificate(c.id); toast({ title: d.actions.deleted }); } catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); } }}
                     >
@@ -1183,6 +1277,16 @@ export default function Dashboard() {
                   {testimonials.map((t, i) => (
                     <ItemCard
                       key={t.id} index={i}
+                      onMoveUp={async () => {
+                        try { await moveOrderedItem(testimonials, i, -1, "portfolio_testimonials", setTestimonials); }
+                        catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); }
+                      }}
+                      onMoveDown={async () => {
+                        try { await moveOrderedItem(testimonials, i, 1, "portfolio_testimonials", setTestimonials); }
+                        catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); }
+                      }}
+                      canMoveUp={i > 0}
+                      canMoveDown={i < testimonials.length - 1}
                       onEdit={() => setTestDialog({ open: true, item: t })}
                       onDelete={async () => { try { await deleteTestimonial(t.id); toast({ title: d.actions.deleted }); } catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); } }}
                     >

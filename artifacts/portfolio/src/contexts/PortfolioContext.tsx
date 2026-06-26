@@ -3,6 +3,7 @@ import { supabase } from "@/utils/supabase";
 
 export type Project = {
   id: string;
+  sortOrder?: number;
   title: string;
   titleAr: string;
   description: string;
@@ -41,6 +42,7 @@ export type Education = {
 
 export type Certificate = {
   id: string;
+  sortOrder?: number;
   title: string;
   titleAr: string;
   issuer: string;
@@ -52,6 +54,7 @@ export type Certificate = {
 
 export type Testimonial = {
   id: string;
+  sortOrder?: number;
   name: string;
   nameAr: string;
   role: string;
@@ -334,6 +337,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
       if (projectsRes.data) {
         setProjects(projectsRes.data.map((row) => ({
           id: row.id,
+          sortOrder: row.sort_order ?? 0,
           title: row.title ?? "",
           titleAr: row.title_ar ?? "",
           description: row.description ?? "",
@@ -378,6 +382,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
       if (certRes.data) {
         setCertificates(certRes.data.map((row) => ({
           id: row.id,
+          sortOrder: row.sort_order ?? 0,
           title: row.title ?? "",
           titleAr: row.title_ar ?? "",
           issuer: row.issuer ?? "",
@@ -391,6 +396,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
       if (testRes.data) {
         setTestimonials(testRes.data.map((row) => ({
           id: row.id,
+          sortOrder: row.sort_order ?? 0,
           name: row.name ?? "",
           nameAr: row.name_ar ?? "",
           role: row.role ?? "",
@@ -530,12 +536,14 @@ const addProject = async (p: Omit<Project, "id">) => {
         images: p.images ?? [],
         live_url: p.liveUrl,
         github_url: p.githubUrl,
+        sort_order: projects.length,
       })
       .select()
       .single();
     if (error) throw new Error(error.message);
     setProjects((prev) => [...prev, {
       id: data.id,
+      sortOrder: data.sort_order ?? 0,
       title: data.title ?? "",
       titleAr: data.title_ar ?? "",
       description: data.description ?? "",
@@ -564,6 +572,7 @@ const addProject = async (p: Omit<Project, "id">) => {
         images: p.images,
         live_url: p.liveUrl,
         github_url: p.githubUrl,
+        sort_order: p.sortOrder,
       })
       .eq("id", id)
       .select()
@@ -571,6 +580,7 @@ const addProject = async (p: Omit<Project, "id">) => {
     if (error) throw new Error(error.message);
     setProjects((prev) => prev.map((item) => item.id === id ? {
       id: data.id,
+      sortOrder: data.sort_order ?? 0,
       title: data.title ?? "",
       titleAr: data.title_ar ?? "",
       description: data.description ?? "",
@@ -739,12 +749,14 @@ const addProject = async (p: Omit<Project, "id">) => {
         date: c.date,
         credential_url: c.credentialUrl,
         badge_color: c.badgeColor,
+        sort_order: certificates.length,
       })
       .select()
       .single();
     if (error) throw new Error(error.message);
     setCertificates((prev) => [...prev, {
       id: data.id,
+      sortOrder: data.sort_order ?? 0,
       title: data.title ?? "",
       titleAr: data.title_ar ?? "",
       issuer: data.issuer ?? "",
@@ -767,6 +779,7 @@ const addProject = async (p: Omit<Project, "id">) => {
         date: c.date,
         credential_url: c.credentialUrl,
         badge_color: c.badgeColor,
+        sort_order: c.sortOrder,
       })
       .eq("id", id)
       .select()
@@ -774,6 +787,7 @@ const addProject = async (p: Omit<Project, "id">) => {
     if (error) throw new Error(error.message);
     setCertificates((prev) => prev.map((item) => item.id === id ? {
       id: data.id,
+      sortOrder: data.sort_order ?? 0,
       title: data.title ?? "",
       titleAr: data.title_ar ?? "",
       issuer: data.issuer ?? "",
@@ -804,12 +818,14 @@ const addProject = async (p: Omit<Project, "id">) => {
         text_ar: t.textAr,
         rating: t.rating,
         image_url: t.imageUrl,
+        sort_order: testimonials.length,
       })
       .select()
       .single();
     if (error) throw new Error(error.message);
     setTestimonials((prev) => [...prev, {
       id: data.id,
+      sortOrder: data.sort_order ?? 0,
       name: data.name ?? "",
       nameAr: data.name_ar ?? "",
       role: data.role ?? "",
@@ -834,6 +850,7 @@ const addProject = async (p: Omit<Project, "id">) => {
         text_ar: t.textAr,
         rating: t.rating,
         image_url: t.imageUrl,
+        sort_order: t.sortOrder,
       })
       .eq("id", id)
       .select()
@@ -841,6 +858,7 @@ const addProject = async (p: Omit<Project, "id">) => {
     if (error) throw new Error(error.message);
     setTestimonials((prev) => prev.map((item) => item.id === id ? {
       id: data.id,
+      sortOrder: data.sort_order ?? 0,
       name: data.name ?? "",
       nameAr: data.name_ar ?? "",
       role: data.role ?? "",
