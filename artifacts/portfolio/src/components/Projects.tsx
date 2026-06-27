@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePortfolio, Project } from "@/contexts/PortfolioContext";
 import { translations } from "@/lib/i18n";
-import { ExternalLink, Github, ChevronLeft, ChevronRight, X, ArrowUpRight } from "lucide-react";
+import { ExternalLink, Github, ChevronLeft, ChevronRight, X, ArrowUpRight, Smartphone, Apple } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -144,6 +144,20 @@ function ProjectModal({ project, language, t, onClose }: { project: Project; lan
                   </Button>
                 </a>
               )}
+              {project.androidUrl && project.androidUrl !== "#" && (
+                <a href={project.androidUrl} target="_blank" rel="noopener noreferrer">
+                  <Button variant="outline" size="sm" className="gap-1.5 rounded-full">
+                    <Smartphone className="w-3.5 h-3.5" /> Android
+                  </Button>
+                </a>
+              )}
+              {project.iosUrl && project.iosUrl !== "#" && (
+                <a href={project.iosUrl} target="_blank" rel="noopener noreferrer">
+                  <Button variant="outline" size="sm" className="gap-1.5 rounded-full">
+                    <Apple className="w-3.5 h-3.5" /> iOS
+                  </Button>
+                </a>
+              )}
             </div>
           </div>
 
@@ -235,6 +249,34 @@ function ProjectCard({ project, language, t, onOpen }: { project: Project; langu
               title={t.projects.viewGithub}
             >
               <Github className="w-4 h-4" />
+            </motion.a>
+          )}
+          {project.androidUrl && project.androidUrl !== "#" && (
+            <motion.a
+              href={project.androidUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-2.5 bg-white/20 backdrop-blur border border-white/30 text-white rounded-full hover:bg-white/30 transition-colors"
+              onClick={(e) => e.stopPropagation()}
+              title="Android"
+            >
+              <Smartphone className="w-4 h-4" />
+            </motion.a>
+          )}
+          {project.iosUrl && project.iosUrl !== "#" && (
+            <motion.a
+              href={project.iosUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-2.5 bg-white/20 backdrop-blur border border-white/30 text-white rounded-full hover:bg-white/30 transition-colors"
+              onClick={(e) => e.stopPropagation()}
+              title="iOS"
+            >
+              <Apple className="w-4 h-4" />
             </motion.a>
           )}
         </div>

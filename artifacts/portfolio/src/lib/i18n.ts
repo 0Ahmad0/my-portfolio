@@ -185,7 +185,9 @@ export const translations = {
             },
             links: {
                 live: "Live",
-                github: "GitHub"
+                github: "GitHub",
+                android: "Android",
+                ios: "iOS"
             },
             dialogs: {
                 project: {
@@ -200,6 +202,8 @@ export const translations = {
                     cover: "Cover",
                     liveUrl: "Live URL",
                     githubUrl: "GitHub URL",
+                    androidUrl: "Android URL",
+                    iosUrl: "iOS URL",
                     descEn: "Description (English)",
                     descAr: "Description (Arabic)",
                     placeholderTitleEn: "My Awesome Project",
@@ -208,6 +212,8 @@ export const translations = {
                     placeholderImages: "https://images.unsplash.com/photo-xxx?w=800\nhttps://images.unsplash.com/photo-yyy?w=800",
                     placeholderLiveUrl: "https://myapp.com",
                     placeholderGithubUrl: "https://github.com/...",
+                    placeholderAndroidUrl: "https://play.google.com/store/apps/details?id=...",
+                    placeholderIosUrl: "https://apps.apple.com/app/...",
                     placeholderDescEn: "Describe the project, its impact, and technologies used...",
                     placeholderDescAr: "وصف المشروع..."
                 },
@@ -525,7 +531,9 @@ export const translations = {
             },
             links: {
                 live: "عرض",
-                github: "جيت هاب"
+                github: "جيت هاب",
+                android: "أندرويد",
+                ios: "آيفون"
             },
             dialogs: {
                 project: {
@@ -540,6 +548,8 @@ export const translations = {
                     cover: "غلاف",
                     liveUrl: "رابط العرض",
                     githubUrl: "رابط GitHub",
+                    androidUrl: "رابط أندرويد",
+                    iosUrl: "رابط آيفون",
                     descEn: "الوصف (إنجليزي)",
                     descAr: "الوصف (عربي)",
                     placeholderTitleEn: "مشروعي الرائع",
@@ -548,6 +558,8 @@ export const translations = {
                     placeholderImages: "https://images.unsplash.com/photo-xxx?w=800\nhttps://images.unsplash.com/photo-yyy?w=800",
                     placeholderLiveUrl: "https://myapp.com",
                     placeholderGithubUrl: "https://github.com/...",
+                    placeholderAndroidUrl: "https://play.google.com/store/apps/details?id=...",
+                    placeholderIosUrl: "https://apps.apple.com/app/...",
                     placeholderDescEn: "وصف المشروع وتأثيره والتقنيات المستخدمة...",
                     placeholderDescAr: "وصف المشروع..."
                 },

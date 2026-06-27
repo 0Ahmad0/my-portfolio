@@ -4,7 +4,7 @@ import { Eye } from "lucide-react";
 import { useVisitorCount } from "@/hooks/use-visitor-count";
 
 export default function VisitorCounter() {
-  const { count } = useVisitorCount();
+  const { count, error } = useVisitorCount();
   const [display, setDisplay] = useState("0");
   const prevCount = useRef(0);
   const motionVal = useMotionValue(0);
@@ -26,7 +26,7 @@ export default function VisitorCounter() {
     prevCount.current = count;
   }, [count, motionVal]);
 
-  if (count === null) return null;
+  if (count === null && !error) return null;
 
   return (
     <motion.div
@@ -43,10 +43,10 @@ export default function VisitorCounter() {
 
       <div
         className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-primary/5 border border-primary/15 text-xs font-medium text-muted-foreground hover:bg-primary/10 hover:border-primary/30 hover:text-primary transition-all duration-300 cursor-default"
-        title="Unique visitors"
+        title={error ?? "Unique visitors"}
       >
         <Eye className="w-3 h-3" />
-        <span className="tabular-nums font-semibold min-w-[2ch]">{display}</span>
+        <span className="tabular-nums font-semibold min-w-[2ch]">{error ? "--" : display}</span>
       </div>
     </motion.div>
   );

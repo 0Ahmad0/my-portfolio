@@ -14,6 +14,8 @@ export type Project = {
   images?: string[];
   githubUrl?: string;
   liveUrl?: string;
+  androidUrl?: string;
+  iosUrl?: string;
 };
 
 export type Experience = {
@@ -355,6 +357,8 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
           images: row.images ?? [],
           githubUrl: row.github_url ?? "",
           liveUrl: row.live_url ?? "",
+          androidUrl: row.android_url ?? "",
+          iosUrl: row.ios_url ?? "",
         })));
       }
 
@@ -548,6 +552,8 @@ const addProject = async (p: Omit<Project, "id">) => {
         images: p.images ?? [],
         live_url: p.liveUrl,
         github_url: p.githubUrl,
+        android_url: p.androidUrl,
+        ios_url: p.iosUrl,
         sort_order: projects.length,
       })
       .select()
@@ -566,6 +572,8 @@ const addProject = async (p: Omit<Project, "id">) => {
       images: data.images ?? [],
       githubUrl: data.github_url ?? "",
       liveUrl: data.live_url ?? "",
+      androidUrl: data.android_url ?? "",
+      iosUrl: data.ios_url ?? "",
     }]);
   };
 
@@ -584,6 +592,8 @@ const addProject = async (p: Omit<Project, "id">) => {
         images: p.images,
         live_url: p.liveUrl,
         github_url: p.githubUrl,
+        android_url: p.androidUrl,
+        ios_url: p.iosUrl,
         sort_order: p.sortOrder,
       })
       .eq("id", id)
@@ -603,6 +613,8 @@ const addProject = async (p: Omit<Project, "id">) => {
       images: data.images ?? [],
       githubUrl: data.github_url ?? "",
       liveUrl: data.live_url ?? "",
+      androidUrl: data.android_url ?? "",
+      iosUrl: data.ios_url ?? "",
     } : item));
   };
 

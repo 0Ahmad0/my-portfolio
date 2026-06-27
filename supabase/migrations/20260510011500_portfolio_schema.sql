@@ -48,6 +48,8 @@ create table if not exists portfolio_projects (
   images text[] not null default '{}'::text[],
   live_url text,
   github_url text,
+  android_url text,
+  ios_url text,
   sort_order integer not null default 0,
   is_published boolean not null default true,
   created_at timestamptz not null default now(),

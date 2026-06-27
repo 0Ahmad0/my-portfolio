@@ -10,7 +10,7 @@ import {
   ArrowLeft, Plus, Trash2, Edit2, LayoutDashboard, FolderOpen,
   Briefcase, GraduationCap, Award, User, LogOut, ExternalLink,
   Github, CheckCircle2, Image, Globe, Code2, BookOpen, Sparkles,
-  Eye, Download, Star, MessageCircle, ArrowUp, ArrowDown
+  Eye, Download, Star, MessageCircle, ArrowUp, ArrowDown, Smartphone, Apple
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -128,7 +128,7 @@ function EmptyState({ icon: Icon, title, description, onAdd, addLabel }: {
 const blankProject = (): Omit<Project, "id"> => ({
   title: "", titleAr: "", description: "", descriptionAr: "",
   category: "Web", tags: [], imageUrl: "", images: [],
-  liveUrl: "", githubUrl: ""
+  liveUrl: "", githubUrl: "", androidUrl: "", iosUrl: ""
 });
 function ProjectDialog({ open, initial, onSave, onClose }: {
   open: boolean;
@@ -226,6 +226,14 @@ function ProjectDialog({ open, initial, onSave, onClose }: {
             </Field>
             <Field label={labels.githubUrl}>
               <Input value={local.githubUrl || ""} onChange={e => setLocal(l => ({ ...l, githubUrl: e.target.value }))} placeholder={labels.placeholderGithubUrl} />
+            </Field>
+          </FieldRow>
+          <FieldRow>
+            <Field label={labels.androidUrl}>
+              <Input value={local.androidUrl || ""} onChange={e => setLocal(l => ({ ...l, androidUrl: e.target.value }))} placeholder={labels.placeholderAndroidUrl} />
+            </Field>
+            <Field label={labels.iosUrl}>
+              <Input value={local.iosUrl || ""} onChange={e => setLocal(l => ({ ...l, iosUrl: e.target.value }))} placeholder={labels.placeholderIosUrl} />
             </Field>
           </FieldRow>
           <Field label={labels.descEn} required>
@@ -1142,6 +1150,8 @@ export default function Dashboard() {
                           <div className="flex gap-2 mt-1">
                             {p.liveUrl && p.liveUrl !== "#" && <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline flex items-center gap-0.5"><ExternalLink className="w-2.5 h-2.5" /> {d.links.live}</a>}
                             {p.githubUrl && p.githubUrl !== "#" && <a href={p.githubUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-muted-foreground hover:underline flex items-center gap-0.5"><Github className="w-2.5 h-2.5" /> {d.links.github}</a>}
+                            {p.androidUrl && p.androidUrl !== "#" && <a href={p.androidUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-muted-foreground hover:underline flex items-center gap-0.5"><Smartphone className="w-2.5 h-2.5" /> {d.links.android}</a>}
+                            {p.iosUrl && p.iosUrl !== "#" && <a href={p.iosUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-muted-foreground hover:underline flex items-center gap-0.5"><Apple className="w-2.5 h-2.5" /> {d.links.ios}</a>}
                           </div>
                         </div>
                       </div>

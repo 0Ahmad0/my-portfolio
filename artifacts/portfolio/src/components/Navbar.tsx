@@ -131,6 +131,7 @@ export default function Navbar() {
 
         {/* Mobile controls */}
         <div className={`flex items-center gap-2 lg:hidden ${isRtl ? "flex-row-reverse" : ""}`}>
+          <VisitorCounter />
           <Button
             variant="ghost"
             size="sm"

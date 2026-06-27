@@ -49,6 +49,8 @@ insert into portfolio_projects (
   tags,
   image_url,
   images,
+  android_url,
+  ios_url,
   sort_order
 ) values
 (
@@ -60,6 +62,8 @@ insert into portfolio_projects (
   array['Flutter','Dart','Firebase'],
   'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&auto=format&fit=crop&q=60',
   array['https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&auto=format&fit=crop&q=60'],
+  null,
+  null,
   1
 ),
 (
@@ -71,6 +75,8 @@ insert into portfolio_projects (
   array['Flutter','Dart','REST API'],
   'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&auto=format&fit=crop&q=60',
   array['https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&auto=format&fit=crop&q=60'],
+  null,
+  null,
   2
 ),
 (
@@ -82,6 +88,8 @@ insert into portfolio_projects (
   array['Flutter','Dart','Firebase'],
   'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&auto=format&fit=crop&q=60',
   array['https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&auto=format&fit=crop&q=60'],
+  null,
+  null,
   3
 ),
 (
@@ -93,6 +101,8 @@ insert into portfolio_projects (
   array['Flutter','Dart','AI'],
   'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=800&auto=format&fit=crop&q=60',
   array['https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=800&auto=format&fit=crop&q=60'],
+  null,
+  null,
   4
 );
 

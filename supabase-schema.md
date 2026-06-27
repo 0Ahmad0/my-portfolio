@@ -51,6 +51,8 @@ create table if not exists portfolio_projects (
   images text[] not null default '{}'::text[],
   live_url text,
   github_url text,
+  android_url text,
+  ios_url text,
   sort_order integer not null default 0,
   is_published boolean not null default true,
   created_at timestamptz not null default now(),
@@ -128,11 +130,18 @@ create table if not exists portfolio_testimonials (
 create table if not exists site_visits (
   id bigint primary key generated always as identity,
   visitor_hash text not null,
-  visited_at timestamptz not null default now()
+  visited_at timestamptz not null default now(),
+  first_visit timestamptz not null default now(),
+  last_visit timestamptz not null default now(),
+  visit_count integer not null default 1,
+  device_type text,
+  browser_info text
 );
 
 create index if not exists idx_site_visits_hash on site_visits (visitor_hash);
 create index if not exists idx_site_visits_at on site_visits (visited_at);
+create unique index if not exists site_visits_visitor_hash_unique
+  on site_visits (visitor_hash);
 
 alter table site_visits enable row level security;
 
@@ -141,6 +150,10 @@ create policy "public insert site_visits" on site_visits
 
 create policy "public read site_visits" on site_visits
   for select using (true);
+
+create policy "public update site_visits" on site_visits
+  for update using (true)
+  with check (true);
 
 -- Contact messages
 create table if not exists contact_messages (
