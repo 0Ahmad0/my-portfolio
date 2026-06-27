@@ -27,6 +27,7 @@ create table if not exists portfolio_personal_info (
   cv_url text,
   avatar_url text,
   floating_skills text[] not null default '{}'::text[],
+  core_skills text[] not null default '{}'::text[],
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );

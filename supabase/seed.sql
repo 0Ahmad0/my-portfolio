@@ -16,7 +16,8 @@ insert into portfolio_personal_info (
   facebook,
   cv_url,
   avatar_url,
-  floating_skills
+  floating_skills,
+  core_skills
 ) values (
   true,
   'Ahmad Alhariri',
@@ -35,6 +36,7 @@ insert into portfolio_personal_info (
   'https://www.facebook.com/ahmad.alhariri.56027',
   '#',
   '/avatar.jpg',
+  array['Flutter','Firebase','C++','React','Git','Dart'],
   array['React','Flutter','Next.js','TypeScript','Node.js','Python','C++','Dart','Android','Kotlin','Swift','Figma','Tailwind','Docker','MongoDB','PostgreSQL','Firebase','Git']
 );
 

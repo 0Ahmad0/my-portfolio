@@ -84,7 +84,11 @@ export type PersonalInfo = {
   cvUrl: string;
   avatarUrl: string;
   floatingSkills: string[];
+  coreSkills: string[];
 };
+
+const defaultFloatingSkills = ["Flutter", "Firebase", "C++", "React", "Git", "Dart"];
+const defaultCoreSkills = ["React", "Flutter", "Next.js", "TypeScript", "Node.js", "Python", "C++", "Dart", "Android", "Kotlin", "Swift", "Figma", "Tailwind", "Docker", "MongoDB", "PostgreSQL", "Firebase", "Git"];
 
 type PortfolioContextType = {
   isLoading: boolean;
@@ -136,7 +140,8 @@ const defaultPersonalInfo: PersonalInfo = {
   facebook: "https://www.facebook.com/ahmad.alhariri.56027",
   cvUrl: "#",
   avatarUrl: "/avatar.jpg",
-  floatingSkills: ["React", "Flutter", "Next.js", "TypeScript", "Node.js", "Python", "C++", "Dart", "Android", "Kotlin", "Swift", "Figma", "Tailwind", "Docker", "MongoDB", "PostgreSQL", "Firebase", "Git"],
+  floatingSkills: defaultFloatingSkills,
+  coreSkills: defaultCoreSkills,
 };
 
 const defaultProjects: Project[] = [
@@ -331,7 +336,8 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
           facebook: infoRow.facebook ?? "",
           cvUrl: infoRow.cv_url ?? "",
           avatarUrl: infoRow.avatar_url ?? "",
-          floatingSkills: infoRow.floating_skills ?? [],
+          floatingSkills: infoRow.floating_skills ?? defaultFloatingSkills,
+          coreSkills: infoRow.core_skills ?? defaultCoreSkills,
         });
       }
 
@@ -445,6 +451,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
           cv_url: info.cvUrl,
           avatar_url: info.avatarUrl,
           floating_skills: info.floatingSkills,
+          core_skills: info.coreSkills,
         })
         .eq("id", personalInfoId)
         .select()
@@ -469,7 +476,8 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
         facebook: data.facebook ?? "",
         cvUrl: data.cv_url ?? "",
         avatarUrl: data.avatar_url ?? "",
-        floatingSkills: data.floating_skills ?? [],
+        floatingSkills: data.floating_skills ?? defaultFloatingSkills,
+        coreSkills: data.core_skills ?? defaultCoreSkills,
       });
       return;
     }
@@ -495,6 +503,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
         cv_url: info.cvUrl,
         avatar_url: info.avatarUrl,
         floating_skills: info.floatingSkills,
+        core_skills: info.coreSkills,
       })
       .select()
       .single();
@@ -519,7 +528,8 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
       facebook: data.facebook ?? "",
       cvUrl: data.cv_url ?? "",
       avatarUrl: data.avatar_url ?? "",
-      floatingSkills: data.floating_skills ?? [],
+      floatingSkills: data.floating_skills ?? defaultFloatingSkills,
+      coreSkills: data.core_skills ?? defaultCoreSkills,
     });
   };
 

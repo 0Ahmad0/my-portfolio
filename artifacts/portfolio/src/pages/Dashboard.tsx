@@ -632,11 +632,16 @@ function ItemCard({ children, onEdit, onDelete, onMoveUp, onMoveDown, canMoveUp,
   );
 }
 
+const DEFAULT_FLOATING_SKILLS = ["Flutter", "Firebase", "C++", "React", "Git", "Dart"];
 const DEFAULT_CORE_SKILLS = ["React", "Flutter", "Next.js", "TypeScript", "Node.js", "Python", "C++", "Dart", "Android", "Kotlin", "Swift", "Figma", "Tailwind", "Docker", "MongoDB", "PostgreSQL", "Firebase", "Git"];
 
 /* ─── Personal Info editor (inline, saves in place) ─── */
 function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSave: (i: PersonalInfo) => Promise<void> }) {
-  const [local, setLocal] = useState({ ...info, floatingSkills: info.floatingSkills?.length ? info.floatingSkills : DEFAULT_CORE_SKILLS });
+  const [local, setLocal] = useState({
+    ...info,
+    floatingSkills: info.floatingSkills?.length ? info.floatingSkills : DEFAULT_FLOATING_SKILLS,
+    coreSkills: info.coreSkills?.length ? info.coreSkills : DEFAULT_CORE_SKILLS,
+  });
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
@@ -644,7 +649,13 @@ function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSave: (i: 
   const d = translations[language].dashboard;
   const { toast } = useToast();
   const labels = d.dialogs.personalInfo;
-  useEffect(() => { setLocal({ ...info, floatingSkills: info.floatingSkills?.length ? info.floatingSkills : DEFAULT_CORE_SKILLS }); }, [info]);
+  useEffect(() => {
+    setLocal({
+      ...info,
+      floatingSkills: info.floatingSkills?.length ? info.floatingSkills : DEFAULT_FLOATING_SKILLS,
+      coreSkills: info.coreSkills?.length ? info.coreSkills : DEFAULT_CORE_SKILLS,
+    });
+  }, [info]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -662,13 +673,13 @@ function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSave: (i: 
     }
   };
 
-  const moveSkill = (index: number, direction: -1 | 1) => {
+  const moveSkill = (field: "floatingSkills" | "coreSkills", index: number, direction: -1 | 1) => {
     const target = index + direction;
-    if (target < 0 || target >= local.floatingSkills.length) return;
+    if (target < 0 || target >= local[field].length) return;
     setLocal((current) => {
-      const next = [...current.floatingSkills];
+      const next = [...current[field]];
       [next[index], next[target]] = [next[target], next[index]];
-      return { ...current, floatingSkills: next };
+      return { ...current, [field]: next };
     });
   };
 
@@ -732,7 +743,7 @@ function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSave: (i: 
           <Field label={labels.floatingSkillsLabel}>
             <Textarea 
               value={local.floatingSkills.join(", ")} 
-              onChange={e => setLocal(l => ({ ...l, floatingSkills: e.target.value.split(",").map(s => s.trim()).filter(Boolean) }))} 
+              onChange={e => setLocal(l => ({ ...l, floatingSkills: e.target.value.split(",").map(s => s.trim()).filter(Boolean).slice(0, 6) }))} 
               placeholder={labels.placeholderFloating}
               className="h-16 resize-none"
             />
@@ -743,10 +754,10 @@ function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSave: (i: 
                 <div key={`${skill}-${index}`} className="flex items-center justify-between gap-3 rounded-xl border border-border/50 bg-muted/30 px-3 py-2">
                   <span className="text-sm font-medium truncate">{skill}</span>
                   <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => moveSkill(index, -1)} disabled={index === 0} title={language === "ar" ? "نقل للأعلى" : "Move up"}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => moveSkill("floatingSkills", index, -1)} disabled={index === 0} title={language === "ar" ? "نقل للأعلى" : "Move up"}>
                       <ArrowUp className="h-3.5 w-3.5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => moveSkill(index, 1)} disabled={index === local.floatingSkills.length - 1} title={language === "ar" ? "نقل للأسفل" : "Move down"}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => moveSkill("floatingSkills", index, 1)} disabled={index === local.floatingSkills.length - 1} title={language === "ar" ? "نقل للأسفل" : "Move down"}>
                       <ArrowDown className="h-3.5 w-3.5" />
                     </Button>
                     <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => setLocal(l => ({ ...l, floatingSkills: l.floatingSkills.filter((_, i) => i !== index) }))} title={language === "ar" ? "حذف" : "Delete"}>
@@ -758,6 +769,41 @@ function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSave: (i: 
             </div>
           )}
           <p className="text-xs text-muted-foreground mt-2">{labels.floatingSkillsHelp}</p>
+        </div>
+
+        <div className="border-t border-border pt-5">
+          <p className="text-sm font-semibold mb-4 flex items-center gap-2">
+            <Code2 className="w-4 h-4 text-primary" /> {labels.coreSkills}
+          </p>
+          <Field label={labels.coreSkillsLabel}>
+            <Textarea
+              value={local.coreSkills.join(", ")}
+              onChange={e => setLocal(l => ({ ...l, coreSkills: e.target.value.split(",").map(s => s.trim()).filter(Boolean) }))}
+              placeholder={labels.placeholderCoreSkills}
+              className="h-20 resize-none"
+            />
+          </Field>
+          {local.coreSkills.length > 0 && (
+            <div className="space-y-2 mt-3">
+              {local.coreSkills.map((skill, index) => (
+                <div key={`${skill}-${index}`} className="flex items-center justify-between gap-3 rounded-xl border border-border/50 bg-muted/30 px-3 py-2">
+                  <span className="text-sm font-medium truncate">{skill}</span>
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => moveSkill("coreSkills", index, -1)} disabled={index === 0} title={language === "ar" ? "نقل للأعلى" : "Move up"}>
+                      <ArrowUp className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => moveSkill("coreSkills", index, 1)} disabled={index === local.coreSkills.length - 1} title={language === "ar" ? "نقل للأسفل" : "Move down"}>
+                      <ArrowDown className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => setLocal(l => ({ ...l, coreSkills: l.coreSkills.filter((_, i) => i !== index) }))} title={language === "ar" ? "حذف" : "Delete"}>
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="text-xs text-muted-foreground mt-2">{labels.coreSkillsHelp}</p>
         </div>
 
         <div className="border-t border-border pt-5">

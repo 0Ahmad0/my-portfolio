@@ -200,7 +200,8 @@ export default function About() {
   const { language, personalInfo } = usePortfolio();
   const t = translations[language];
   const bio = t.about.description;
-  const coreSkills = personalInfo.floatingSkills.filter(Boolean);
+  const floatingSkills = personalInfo.floatingSkills.filter(Boolean).slice(0, 6);
+  const coreSkills = personalInfo.coreSkills.filter(Boolean);
 
   return (
     <section id="about" className="py-28 relative overflow-hidden">
@@ -219,7 +220,7 @@ export default function About() {
             transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="flex flex-col items-center gap-8"
           >
-            <HexAvatar src={personalInfo.avatarUrl} alt={personalInfo.name} floatingSkills={coreSkills.slice(0, 6)} />
+            <HexAvatar src={personalInfo.avatarUrl} alt={personalInfo.name} floatingSkills={floatingSkills} />
 
             {/* Animated stat counters */}
             <div className="grid grid-cols-3 gap-3 w-full max-w-sm">
