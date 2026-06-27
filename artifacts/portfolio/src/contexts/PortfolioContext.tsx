@@ -18,6 +18,7 @@ export type Project = {
 
 export type Experience = {
   id: string;
+  sortOrder?: number;
   company: string;
   role: string;
   roleAr: string;
@@ -135,7 +136,7 @@ const defaultPersonalInfo: PersonalInfo = {
   facebook: "https://www.facebook.com/ahmad.alhariri.56027",
   cvUrl: "#",
   avatarUrl: "/avatar.jpg",
-  floatingSkills: ["Flutter", "Dart", "C++", "Firebase", "Git"],
+  floatingSkills: ["React", "Flutter", "Next.js", "TypeScript", "Node.js", "Python", "C++", "Dart", "Android", "Kotlin", "Swift", "Figma", "Tailwind", "Docker", "MongoDB", "PostgreSQL", "Firebase", "Git"],
 };
 
 const defaultProjects: Project[] = [
@@ -354,6 +355,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
       if (expRes.data) {
         setExperience(expRes.data.map((row) => ({
           id: row.id,
+          sortOrder: row.sort_order ?? 0,
           company: row.company ?? "",
           role: row.role ?? "",
           roleAr: row.role_ar ?? "",
@@ -612,12 +614,14 @@ const addProject = async (p: Omit<Project, "id">) => {
         period: e.period,
         description: e.description,
         description_ar: e.descriptionAr,
+        sort_order: experience.length,
       })
       .select()
       .single();
     if (error) throw new Error(error.message);
     setExperience((prev) => [...prev, {
       id: data.id,
+      sortOrder: data.sort_order ?? 0,
       company: data.company ?? "",
       role: data.role ?? "",
       roleAr: data.role_ar ?? "",
@@ -638,6 +642,7 @@ const addProject = async (p: Omit<Project, "id">) => {
         period: e.period,
         description: e.description,
         description_ar: e.descriptionAr,
+        sort_order: e.sortOrder,
       })
       .eq("id", id)
       .select()
@@ -645,6 +650,7 @@ const addProject = async (p: Omit<Project, "id">) => {
     if (error) throw new Error(error.message);
     setExperience((prev) => prev.map((item) => item.id === id ? {
       id: data.id,
+      sortOrder: data.sort_order ?? 0,
       company: data.company ?? "",
       role: data.role ?? "",
       roleAr: data.role_ar ?? "",

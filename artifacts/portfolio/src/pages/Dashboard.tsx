@@ -730,7 +730,7 @@ function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSave: (i: 
           <Field label={labels.floatingSkillsLabel}>
             <Textarea 
               value={local.floatingSkills.join(", ")} 
-              onChange={e => setLocal(l => ({ ...l, floatingSkills: e.target.value.split(",").map(s => s.trim()).filter(Boolean).slice(0, 6) }))} 
+              onChange={e => setLocal(l => ({ ...l, floatingSkills: e.target.value.split(",").map(s => s.trim()).filter(Boolean) }))} 
               placeholder={labels.placeholderFloating}
               className="h-16 resize-none"
             />
@@ -746,6 +746,9 @@ function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSave: (i: 
                     </Button>
                     <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => moveSkill(index, 1)} disabled={index === local.floatingSkills.length - 1} title={language === "ar" ? "نقل للأسفل" : "Move down"}>
                       <ArrowDown className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => setLocal(l => ({ ...l, floatingSkills: l.floatingSkills.filter((_, i) => i !== index) }))} title={language === "ar" ? "حذف" : "Delete"}>
+                      <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>
                 </div>
@@ -805,7 +808,7 @@ export default function Dashboard() {
     isLoading,
     language, projects, setProjects, updateProject, addProject, deleteProject,
     personalInfo, setPersonalInfo,
-    experience, updateExperience, addExperience, deleteExperience,
+    experience, setExperience, updateExperience, addExperience, deleteExperience,
     education, updateEducation, addEducation, deleteEducation,
     certificates, setCertificates, updateCertificate, addCertificate, deleteCertificate,
     testimonials, setTestimonials, updateTestimonial, addTestimonial, deleteTestimonial,
@@ -1128,6 +1131,16 @@ export default function Dashboard() {
                   {experience.map((e, i) => (
                     <ItemCard
                       key={e.id} index={i}
+                      onMoveUp={async () => {
+                        try { await moveOrderedItem(experience, i, -1, "portfolio_experience", setExperience); }
+                        catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); }
+                      }}
+                      onMoveDown={async () => {
+                        try { await moveOrderedItem(experience, i, 1, "portfolio_experience", setExperience); }
+                        catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); }
+                      }}
+                      canMoveUp={i > 0}
+                      canMoveDown={i < experience.length - 1}
                       onEdit={() => setExpDialog({ open: true, item: e })}
                       onDelete={async () => { try { await deleteExperience(e.id); toast({ title: d.actions.deleted }); } catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); } }}
                     >

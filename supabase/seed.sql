@@ -35,7 +35,7 @@ insert into portfolio_personal_info (
   'https://www.facebook.com/ahmad.alhariri.56027',
   '#',
   '/avatar.jpg',
-  array['Flutter','Dart','C++','Firebase','Git']
+  array['React','Flutter','Next.js','TypeScript','Node.js','Python','C++','Dart','Android','Kotlin','Swift','Figma','Tailwind','Docker','MongoDB','PostgreSQL','Firebase','Git']
 );
 
 insert into portfolio_projects (

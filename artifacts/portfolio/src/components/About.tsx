@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, useInView, animate } from "framer-motion";
+import { Code2 } from "lucide-react";
 
 import { usePortfolio } from "@/contexts/PortfolioContext";
 import { translations } from "@/lib/i18n";
@@ -30,6 +31,13 @@ const SKILLS = [
   { icon: SiFirebase,    label: "Firebase",   color: "#FFCA28" },
   { icon: SiGit,         label: "Git",        color: "#F05032" },
 ];
+
+const getSkill = (label: string) =>
+  SKILLS.find(s => s.label.toLowerCase() === label.toLowerCase()) || {
+    icon: Code2,
+    label,
+    color: "hsl(var(--primary))",
+  };
 
 
 /* ─── Hexagon avatar with animated border radius ──────────────── */
@@ -91,8 +99,7 @@ function HexAvatar({ src, alt, floatingSkills }: { src: string; alt: string; flo
 
       {/* floating skill icons from personalInfo */}
       {floatingSkills.map((skillName, i) => {
-        const skill = SKILLS.find(s => s.label === skillName);
-        if (!skill) return null;
+        const skill = getSkill(skillName);
         
         const Icon = skill.icon;
         const angle = (i / floatingSkills.length) * Math.PI * 2;
@@ -102,7 +109,7 @@ function HexAvatar({ src, alt, floatingSkills }: { src: string; alt: string; flo
         
         return (
           <motion.div
-            key={skill.label}
+            key={`${skill.label}-${i}`}
             animate={{ 
               rotate: 360,
               x: [x, x * 1.15, x],
@@ -193,6 +200,7 @@ export default function About() {
   const { language, personalInfo } = usePortfolio();
   const t = translations[language];
   const bio = t.about.description;
+  const coreSkills = personalInfo.floatingSkills.filter(Boolean);
 
   return (
     <section id="about" className="py-28 relative overflow-hidden">
@@ -211,7 +219,7 @@ export default function About() {
             transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="flex flex-col items-center gap-8"
           >
-            <HexAvatar src={personalInfo.avatarUrl} alt={personalInfo.name} floatingSkills={personalInfo.floatingSkills || ["React", "Flutter", "TypeScript", "Node.js", "Figma", "Next.js"]} />
+            <HexAvatar src={personalInfo.avatarUrl} alt={personalInfo.name} floatingSkills={coreSkills.slice(0, 6)} />
 
             {/* Animated stat counters */}
             <div className="grid grid-cols-3 gap-3 w-full max-w-sm">
@@ -246,8 +254,8 @@ export default function About() {
                 <span className="w-4 h-px bg-primary/60 inline-block" />
               </h3>
               <div className="grid grid-cols-6 gap-2">
-                {SKILLS.map((skill, i) => (
-                  <SkillIcon key={skill.label} {...skill} index={i} />
+                {coreSkills.map((skillName, i) => (
+                  <SkillIcon key={`${skillName}-${i}`} {...getSkill(skillName)} index={i} />
                 ))}
               </div>
             </div>
