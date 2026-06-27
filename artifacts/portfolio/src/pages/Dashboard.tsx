@@ -632,9 +632,11 @@ function ItemCard({ children, onEdit, onDelete, onMoveUp, onMoveDown, canMoveUp,
   );
 }
 
+const DEFAULT_CORE_SKILLS = ["React", "Flutter", "Next.js", "TypeScript", "Node.js", "Python", "C++", "Dart", "Android", "Kotlin", "Swift", "Figma", "Tailwind", "Docker", "MongoDB", "PostgreSQL", "Firebase", "Git"];
+
 /* ─── Personal Info editor (inline, saves in place) ─── */
 function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSave: (i: PersonalInfo) => Promise<void> }) {
-  const [local, setLocal] = useState({ ...info, floatingSkills: info.floatingSkills || ["React", "Flutter", "TypeScript", "Node.js", "Figma", "Next.js"] });
+  const [local, setLocal] = useState({ ...info, floatingSkills: info.floatingSkills?.length ? info.floatingSkills : DEFAULT_CORE_SKILLS });
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
@@ -642,7 +644,7 @@ function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSave: (i: 
   const d = translations[language].dashboard;
   const { toast } = useToast();
   const labels = d.dialogs.personalInfo;
-  useEffect(() => { setLocal({ ...info, floatingSkills: info.floatingSkills || ["React", "Flutter", "TypeScript", "Node.js", "Figma", "Next.js"] }); }, [info]);
+  useEffect(() => { setLocal({ ...info, floatingSkills: info.floatingSkills?.length ? info.floatingSkills : DEFAULT_CORE_SKILLS }); }, [info]);
 
   const handleSave = async () => {
     setSaving(true);
