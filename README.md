@@ -96,6 +96,12 @@ A cutting-edge, fully responsive personal portfolio website featuring advanced a
 - **Vercel Account** - For seamless deployment (recommended)
 - **Netlify Account** - Alternative deployment option
 
+### Supabase Required Files
+- `supabase-schema.md` - Full database schema reference.
+- `supabase/migrations/20260510011500_portfolio_schema.sql` - Base Supabase schema, including `portfolio_personal_info.core_skills`.
+- `supabase/migrations/20260627120000_add_core_skills.sql` - Adds `core_skills` to existing databases.
+- `supabase/seed.sql` - Starter portfolio data, including `core_skills` values.
+
 ---
 
 ## 🚀 Getting Started
@@ -336,6 +342,16 @@ pnpm --filter @workspace/portfolio run build:deploy
 - Try clearing browser cache and localStorage
 - Password is case-sensitive: `admin123`
 
+### Supabase `core_skills` Schema Cache Error
+If Supabase returns `Could not find the 'core_skills' column of 'portfolio_personal_info' in the schema cache`, run:
+
+```sql
+alter table portfolio_personal_info
+  add column if not exists core_skills text[] not null default '{}'::text[];
+```
+
+Then refresh/restart the Supabase API/PostgREST schema cache and retry.
+
 ---
 
 ## 📈 Future Enhancements
@@ -393,4 +409,6 @@ For questions or issues:
 
 ---
 
-**Made with ❤️ by Ahmad | Last Updated: May 2026**
+**Made with ❤️ by Ahmad-Alhariri| Last Updated: May 2026**
+
+
