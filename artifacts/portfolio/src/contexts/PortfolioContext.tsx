@@ -4,6 +4,7 @@ import { supabase } from "@/utils/supabase";
 export type Project = {
   id: string;
   sortOrder?: number;
+  isPublished: boolean;
   title: string;
   titleAr: string;
   description: string;
@@ -149,6 +150,7 @@ const defaultPersonalInfo: PersonalInfo = {
 const defaultProjects: Project[] = [
   {
     id: "1",
+    isPublished: true,
     title: "Tigre",
     titleAr: "تيغري",
     description: "Ultimate destination for food enthusiasts and restaurant discovery.",
@@ -159,6 +161,7 @@ const defaultProjects: Project[] = [
   },
   {
     id: "2",
+    isPublished: true,
     title: "Vivafone",
     titleAr: "فيفافون",
     description: "An app for selling eSIM cards with a seamless user experience.",
@@ -169,6 +172,7 @@ const defaultProjects: Project[] = [
   },
   {
     id: "3",
+    isPublished: true,
     title: "Enjaz",
     titleAr: "إنجاز",
     description: "Tracking and managing university projects with supervisor support.",
@@ -179,6 +183,7 @@ const defaultProjects: Project[] = [
   },
   {
     id: "4",
+    isPublished: true,
     title: "Mardod App",
     titleAr: "تطبيق مردود",
     description: "AI-powered app exploring Saudi Arabia through chat.",
@@ -347,6 +352,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
         setProjects(projectsRes.data.map((row) => ({
           id: row.id,
           sortOrder: row.sort_order ?? 0,
+          isPublished: row.is_published ?? true,
           title: row.title ?? "",
           titleAr: row.title_ar ?? "",
           description: row.description ?? "",
@@ -554,6 +560,7 @@ const addProject = async (p: Omit<Project, "id">) => {
         github_url: p.githubUrl,
         android_url: p.androidUrl,
         ios_url: p.iosUrl,
+        is_published: p.isPublished,
         sort_order: projects.length,
       })
       .select()
@@ -562,6 +569,7 @@ const addProject = async (p: Omit<Project, "id">) => {
     setProjects((prev) => [...prev, {
       id: data.id,
       sortOrder: data.sort_order ?? 0,
+      isPublished: data.is_published ?? true,
       title: data.title ?? "",
       titleAr: data.title_ar ?? "",
       description: data.description ?? "",
@@ -594,6 +602,7 @@ const addProject = async (p: Omit<Project, "id">) => {
         github_url: p.githubUrl,
         android_url: p.androidUrl,
         ios_url: p.iosUrl,
+        is_published: p.isPublished,
         sort_order: p.sortOrder,
       })
       .eq("id", id)
@@ -603,6 +612,7 @@ const addProject = async (p: Omit<Project, "id">) => {
     setProjects((prev) => prev.map((item) => item.id === id ? {
       id: data.id,
       sortOrder: data.sort_order ?? 0,
+      isPublished: data.is_published ?? true,
       title: data.title ?? "",
       titleAr: data.title_ar ?? "",
       description: data.description ?? "",

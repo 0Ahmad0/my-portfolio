@@ -68,6 +68,23 @@ export const translations = {
             ], //[cite: 1]
             verify: "Verify Credential"
         },
+        messages: {
+            title: "Messages",
+            subtitle: "Contact form submissions",
+            name: "Name",
+            email: "Email",
+            message: "Message",
+            status: "Status",
+            date: "Date",
+            new: "New",
+            read: "Read",
+            archived: "Archived",
+            markRead: "Mark as Read",
+            markArchived: "Archive",
+            emptyTitle: "No messages yet",
+            emptyDescription: "When someone sends you a message via the contact form, it will appear here.",
+            itemCount: "messages"
+        },
         testimonials: {
             title: "Client Testimonials",
             subtitle: "What my clients say about working with me"
@@ -124,10 +141,12 @@ export const translations = {
                 projects: "Projects",
                 experience: "Experience",
                 education: "Education",
-                certificates: "Certificates"
+                certificates: "Certificates",
+                messages: "Messages"
             },
             tabs: {
-                testimonials: "Testimonials"
+                testimonials: "Testimonials",
+                messages: "Messages"
             },
             itemCount: {
                 one: "item",
@@ -414,6 +433,23 @@ export const translations = {
             ], //[cite: 1]
             verify: "تحقق من الشهادة"
         },
+        messages: {
+            title: "الرسائل",
+            subtitle: "رسائل نموذج الاتصال",
+            name: "الاسم",
+            email: "البريد الإلكتروني",
+            message: "الرسالة",
+            status: "الحالة",
+            date: "التاريخ",
+            new: "جديد",
+            read: "مقروء",
+            archived: "مؤرشف",
+            markRead: "تحديد كمقروء",
+            markArchived: "أرشفة",
+            emptyTitle: "لا توجد رسائل بعد",
+            emptyDescription: "عندما يرسل لك شخص رسالة عبر نموذج الاتصال، ستظهر هنا.",
+            itemCount: "رسائل"
+        },
         testimonials: {
             title: "تقييمات العملاء",
             subtitle: "ماذا يقول عملائي عن العمل معي"
@@ -470,10 +506,12 @@ export const translations = {
                 projects: "المشاريع",
                 experience: "الخبرات",
                 education: "التعليم",
-                certificates: "الشهادات"
+                certificates: "الشهادات",
+                messages: "الرسائل"
             },
             tabs: {
-                testimonials: "آراء العملاء"
+                testimonials: "آراء العملاء",
+                messages: "الرسائل"
             },
             itemCount: {
                 one: "عنصر",
