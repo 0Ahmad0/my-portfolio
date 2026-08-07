@@ -32,14 +32,36 @@ export default function Contact() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
-    const { error } = await supabase.from("contact_messages").insert({
-      name: values.name,
-      email: values.email,
-      message: values.message,
-    });
+    const apiUrl = import.meta.env.VITE_API_URL as string | undefined;
+
+    let error: string | null = null;
+
+    if (apiUrl) {
+      try {
+        const res = await fetch(`${apiUrl}/api/contact`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          error = data.error || "Failed to send message";
+        }
+      } catch {
+        error = "Network error. Please try again.";
+      }
+    } else {
+      const { error: dbError } = await supabase.from("contact_messages").insert({
+        name: values.name,
+        email: values.email,
+        message: values.message,
+      });
+      if (dbError) error = dbError.message;
+    }
+
     setIsSubmitting(false);
     if (error) {
-      toast({ title: t.contact.error, description: error.message });
+      toast({ title: t.contact.error, description: error });
       return;
     }
     toast({ title: t.contact.success, description: t.contact.successDescription });

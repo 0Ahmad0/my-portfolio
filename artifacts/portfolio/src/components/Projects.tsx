@@ -327,7 +327,8 @@ export default function Projects() {
     { id: "Design", label: t.projects.filterDesign },
   ];
 
-  const filteredProjects = filter === "All" ? projects : projects.filter(p => p.category === filter);
+  const visibleProjects = projects.filter(p => p.isPublished);
+  const filteredProjects = filter === "All" ? visibleProjects : visibleProjects.filter(p => p.category === filter);
 
   return (
     <section id="projects" className="py-28 relative bg-muted/20">

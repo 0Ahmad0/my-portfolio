@@ -10,7 +10,7 @@ import {
   ArrowLeft, Plus, Trash2, Edit2, LayoutDashboard, FolderOpen,
   Briefcase, GraduationCap, Award, User, LogOut, ExternalLink,
   Github, CheckCircle2, Image, Globe, Code2, BookOpen, Sparkles,
-  Eye, Download, Star, MessageCircle, ArrowUp, ArrowDown, Smartphone, Apple
+  Eye, EyeOff, Download, Star, MessageCircle, ArrowUp, ArrowDown, Smartphone, Apple
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -128,7 +128,7 @@ function EmptyState({ icon: Icon, title, description, onAdd, addLabel }: {
 const blankProject = (): Omit<Project, "id"> => ({
   title: "", titleAr: "", description: "", descriptionAr: "",
   category: "Web", tags: [], imageUrl: "", images: [],
-  liveUrl: "", githubUrl: "", androidUrl: "", iosUrl: ""
+  liveUrl: "", githubUrl: "", androidUrl: "", iosUrl: "", isPublished: true
 });
 function ProjectDialog({ open, initial, onSave, onClose }: {
   open: boolean;
@@ -878,6 +878,40 @@ export default function Dashboard() {
     Design: d.categories.design,
   };
 
+  /* contact messages */
+  type ContactMessage = {
+    id: string;
+    name: string;
+    email: string;
+    message: string;
+    status: "new" | "read" | "archived";
+    created_at: string;
+  };
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [loadingMessages, setLoadingMessages] = useState(false);
+
+  const fetchMessages = async () => {
+    if (!supabase) return;
+    setLoadingMessages(true);
+    const { data, error } = await supabase
+      .from("contact_messages")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (!error && data) setMessages(data as ContactMessage[]);
+    setLoadingMessages(false);
+  };
+
+  const updateMessageStatus = async (id: string, status: "read" | "archived") => {
+    if (!supabase) return;
+    await supabase.from("contact_messages").update({ status }).eq("id", id);
+    setMessages(prev => prev.map(m => m.id === id ? { ...m, status } : m));
+    toast({ title: d.actions.saved });
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) fetchMessages();
+  }, [isAuthenticated]);
+
   /* dialog state */
   const [projectDialog, setProjectDialog] = useState<{ open: boolean; item?: Project }>({ open: false });
   const [expDialog, setExpDialog] = useState<{ open: boolean; item?: Experience }>({ open: false });
@@ -1071,6 +1105,7 @@ export default function Dashboard() {
           <StatBadge icon={Briefcase}    label={d.stats.experience}   value={experience.length}   color="#3B82F6" />
           <StatBadge icon={GraduationCap} label={d.stats.education}   value={education.length}    color="#10B981" />
           <StatBadge icon={Award}        label={d.stats.certificates} value={certificates.length} color="#F59E0B" />
+          <StatBadge icon={MessageCircle} label={d.stats.messages}    value={messages.filter(m => m.status === "new").length} color="#06B6D4" />
         </div>
 
         <Tabs defaultValue="projects" className="w-full">
@@ -1092,6 +1127,14 @@ export default function Dashboard() {
             </TabsTrigger>
             <TabsTrigger value="testimonials" className="rounded-lg gap-1.5 data-[state=active]:shadow-sm">
               <MessageCircle className="w-3.5 h-3.5" /> {d.tabs.testimonials}
+            </TabsTrigger>
+            <TabsTrigger value="messages" className="rounded-lg gap-1.5 data-[state=active]:shadow-sm relative">
+              <MessageCircle className="w-3.5 h-3.5" /> {d.tabs.messages}
+              {messages.filter(m => m.status === "new").length > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-[9px] text-white font-bold flex items-center justify-center">
+                  {messages.filter(m => m.status === "new").length}
+                </span>
+              )}
             </TabsTrigger>
           </TabsList>
 
@@ -1140,6 +1183,19 @@ export default function Dashboard() {
                           <div className="flex items-center gap-2 flex-wrap">
                             <h3 className="font-semibold truncate">{p.title}</h3>
                             <Badge variant="secondary" className="text-[10px] shrink-0">{categoryLabels[p.category] ?? p.category}</Badge>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 gap-1.5 px-2 text-[11px]"
+                              title={p.isPublished ? (language === "ar" ? "إخفاء المشروع" : "Hide project") : (language === "ar" ? "إظهار المشروع" : "Show project")}
+                              onClick={async () => {
+                                try { await updateProject(p.id, { isPublished: !p.isPublished }); }
+                                catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); }
+                              }}
+                            >
+                              {p.isPublished ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                              {p.isPublished ? (language === "ar" ? "ظاهر" : "Visible") : (language === "ar" ? "مخفي" : "Hidden")}
+                            </Button>
                             {(p.images?.length ?? 0) > 1 && (
                               <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
                                 <Image className="w-3 h-3" /> {p.images!.length}
@@ -1324,6 +1380,70 @@ export default function Dashboard() {
                 </div>
               )}
             </AnimatePresence>
+          </TabsContent>
+
+          {/* ── MESSAGES ── */}
+          <TabsContent value="messages">
+            <SectionHeader
+              icon={MessageCircle} title={t.messages?.title || "Messages"} count={messages.length} color="#06B6D4"
+              onAdd={() => {}} addLabel=""
+              itemLabel={t.messages?.itemCount || "messages"}
+            />
+            {loadingMessages ? (
+              <div className="flex items-center justify-center py-20">
+                <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+              </div>
+            ) : messages.length === 0 ? (
+              <EmptyState
+                icon={MessageCircle}
+                title={t.messages?.emptyTitle || "No messages yet"}
+                description={t.messages?.emptyDescription || "When someone sends you a message via the contact form, it will appear here."}
+                onAdd={() => {}}
+                addLabel=""
+              />
+            ) : (
+              <div className="space-y-3">
+                {messages.map((msg, i) => (
+                  <motion.div
+                    key={msg.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2, delay: i * 0.03 }}
+                  >
+                    <Card className={`hover:border-primary/30 transition-colors ${msg.status === "new" ? "border-l-4 border-l-primary" : ""}`}>
+                      <CardContent className="p-5">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap mb-1">
+                              <span className="font-semibold">{msg.name}</span>
+                              <span className="text-xs text-muted-foreground">·</span>
+                              <a href={`mailto:${msg.email}`} className="text-sm text-primary hover:underline">{msg.email}</a>
+                              <Badge variant={msg.status === "new" ? "default" : msg.status === "read" ? "secondary" : "outline"} className="text-[10px]">
+                                {msg.status === "new" ? (t.messages?.new || "New") : msg.status === "read" ? (t.messages?.read || "Read") : (t.messages?.archived || "Archived")}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-foreground/80 whitespace-pre-wrap mb-3">{msg.message}</p>
+                            <p className="text-[11px] text-muted-foreground">{new Date(msg.created_at).toLocaleString(language === "ar" ? "ar-SA" : "en-US")}</p>
+                          </div>
+                          <div className="flex gap-2 shrink-0">
+                            {msg.status === "new" && (
+                              <Button variant="outline" size="sm" className="gap-1.5" onClick={() => updateMessageStatus(msg.id, "read")}>
+                                <CheckCircle2 className="w-3.5 h-3.5" /> {t.messages?.markRead || "Mark as Read"}
+                              </Button>
+                            )}
+                            {msg.status !== "archived" && (
+                              <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground" onClick={() => updateMessageStatus(msg.id, "archived")}>
+                                <Trash2 className="w-3.5 h-3.5" /> {t.messages?.markArchived || "Archive"}
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </TabsContent>
 
           {/* ── TESTIMONIALS ── */}
