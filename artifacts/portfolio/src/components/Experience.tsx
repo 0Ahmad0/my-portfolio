@@ -54,7 +54,7 @@ function ExperienceItem({ exp, index, language }: { exp: any; index: number; lan
               <Briefcase className="w-7 h-7 text-white" />
             </div>
             {/* Connection line to card */}
-            <div className="absolute top-1/2 -left-8 w-8 h-0.5 bg-gradient-to-l from-primary/60 to-primary/0" />
+            <div className={`absolute top-1/2 w-8 h-0.5 ${language === "ar" ? "-right-8 bg-gradient-to-r" : "-left-8 bg-gradient-to-l"} from-primary/60 to-primary/0`} />
           </motion.div>
 
           {/* Right side (empty for left items) */}
@@ -77,7 +77,7 @@ function ExperienceItem({ exp, index, language }: { exp: any; index: number; lan
               <Briefcase className="w-7 h-7 text-white" />
             </div>
             {/* Connection line to card */}
-            <div className="absolute top-1/2 -right-8 w-8 h-0.5 bg-gradient-to-r from-primary/60 to-primary/0" />
+            <div className={`absolute top-1/2 w-8 h-0.5 ${language === "ar" ? "-left-8 bg-gradient-to-l" : "-right-8 bg-gradient-to-r"} from-primary/60 to-primary/0`} />
           </motion.div>
 
           {/* Content Card - Right */}
