@@ -982,12 +982,17 @@ export default function Dashboard() {
     useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
   );
 
-  const handleProjectDragEnd = async ({ active, over }: DragEndEvent) => {
+  const handleOrderedDragEnd = async <T extends { id: string; sortOrder?: number }>(
+    { active, over }: DragEndEvent,
+    items: T[],
+    table: string,
+    setItems: (items: T[]) => void,
+  ) => {
     if (!over || active.id === over.id) return;
-    const from = projects.findIndex((project) => project.id === active.id);
-    const to = projects.findIndex((project) => project.id === over.id);
+    const from = items.findIndex((item) => item.id === active.id);
+    const to = items.findIndex((item) => item.id === over.id);
     if (from < 0 || to < 0) return;
-    try { await persistOrder(arrayMove(projects, from, to), "portfolio_projects", setProjects); }
+    try { await persistOrder(arrayMove(items, from, to), table, setItems); }
     catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); }
   };
 
@@ -1198,7 +1203,7 @@ export default function Dashboard() {
                   addLabel={d.sections.projects.emptyAdd}
                 />
               ) : (
-                <DndContext sensors={dragSensors} collisionDetection={closestCenter} onDragEnd={handleProjectDragEnd}>
+                <DndContext sensors={dragSensors} collisionDetection={closestCenter} onDragEnd={(event) => handleOrderedDragEnd(event, projects, "portfolio_projects", setProjects)}>
                   <SortableContext items={projects.map((project) => project.id)} strategy={verticalListSortingStrategy}>
                 <div className="space-y-3">
                   {projects.map((p, i) => (
@@ -1287,10 +1292,12 @@ export default function Dashboard() {
                   addLabel={d.sections.experience.emptyAdd}
                 />
               ) : (
+                <DndContext sensors={dragSensors} collisionDetection={closestCenter} onDragEnd={(event) => handleOrderedDragEnd(event, experience, "portfolio_experience", setExperience)}>
+                  <SortableContext items={experience.map((item) => item.id)} strategy={verticalListSortingStrategy}>
                 <div className="space-y-3">
                   {experience.map((e, i) => (
                     <ItemCard
-                      key={e.id} index={i}
+                      key={e.id} index={i} sortableId={e.id}
                       onMoveUp={async () => {
                         try { await moveOrderedItem(experience, i, -1, "portfolio_experience", setExperience); }
                         catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); }
@@ -1316,6 +1323,8 @@ export default function Dashboard() {
                     </ItemCard>
                   ))}
                 </div>
+                  </SortableContext>
+                </DndContext>
               )}
             </AnimatePresence>
           </TabsContent>
@@ -1386,10 +1395,12 @@ export default function Dashboard() {
                   addLabel={d.sections.certificates.emptyAdd}
                 />
               ) : (
+                <DndContext sensors={dragSensors} collisionDetection={closestCenter} onDragEnd={(event) => handleOrderedDragEnd(event, certificates, "portfolio_certificates", setCertificates)}>
+                  <SortableContext items={certificates.map((item) => item.id)} strategy={verticalListSortingStrategy}>
                 <div className="space-y-3">
                   {certificates.map((c, i) => (
                     <ItemCard
-                      key={c.id} index={i}
+                      key={c.id} index={i} sortableId={c.id}
                       onMoveUp={async () => {
                         try { await moveOrderedItem(certificates, i, -1, "portfolio_certificates", setCertificates); }
                         catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); }
@@ -1424,6 +1435,8 @@ export default function Dashboard() {
                     </ItemCard>
                   ))}
                 </div>
+                  </SortableContext>
+                </DndContext>
               )}
             </AnimatePresence>
           </TabsContent>
@@ -1510,10 +1523,12 @@ export default function Dashboard() {
                   addLabel={d.sections.testimonials.emptyAdd}
                 />
               ) : (
+                <DndContext sensors={dragSensors} collisionDetection={closestCenter} onDragEnd={(event) => handleOrderedDragEnd(event, testimonials, "portfolio_testimonials", setTestimonials)}>
+                  <SortableContext items={testimonials.map((item) => item.id)} strategy={verticalListSortingStrategy}>
                 <div className="space-y-3">
                   {testimonials.map((t, i) => (
                     <ItemCard
-                      key={t.id} index={i}
+                      key={t.id} index={i} sortableId={t.id}
                       onMoveUp={async () => {
                         try { await moveOrderedItem(testimonials, i, -1, "portfolio_testimonials", setTestimonials); }
                         catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); }
@@ -1547,6 +1562,8 @@ export default function Dashboard() {
                     </ItemCard>
                   ))}
                 </div>
+                  </SortableContext>
+                </DndContext>
               )}
             </AnimatePresence>
           </TabsContent>
