@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
+import { DndContext, DragEndEvent, MouseSensor, TouchSensor, closestCenter, useSensor, useSensors } from "@dnd-kit/core";
+import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import {
   usePortfolio, Project, Experience, Education, Certificate, PersonalInfo, Testimonial
 } from "@/contexts/PortfolioContext";
@@ -10,7 +13,7 @@ import {
   ArrowLeft, Plus, Trash2, Edit2, LayoutDashboard, FolderOpen,
   Briefcase, GraduationCap, Award, User, LogOut, ExternalLink,
   Github, CheckCircle2, Image, Globe, Code2, BookOpen, Sparkles,
-  Eye, EyeOff, Download, Star, MessageCircle, ArrowUp, ArrowDown, Smartphone, Apple
+  Eye, EyeOff, Download, Star, MessageCircle, ArrowUp, ArrowDown, Smartphone, Apple, GripVertical
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -565,7 +568,7 @@ function CertificateDialog({ open, initial, onSave, onClose }: {
 }
 
 /* ─── Item card row ──────────────────────────────────── */
-function ItemCard({ children, onEdit, onDelete, onMoveUp, onMoveDown, canMoveUp, canMoveDown, index }: {
+function ItemCard({ children, onEdit, onDelete, onMoveUp, onMoveDown, canMoveUp, canMoveDown, index, sortableId }: {
   children: React.ReactNode;
   onEdit: () => void;
   onDelete: () => Promise<void>;
@@ -574,12 +577,22 @@ function ItemCard({ children, onEdit, onDelete, onMoveUp, onMoveDown, canMoveUp,
   canMoveUp?: boolean;
   canMoveDown?: boolean;
   index: number;
+  sortableId?: string;
 }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const { language } = usePortfolio();
   const d = translations[language].dashboard;
+  const { attributes, listeners, setActivatorNodeRef, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: sortableId ?? `item-${index}`,
+    disabled: !sortableId,
+  });
   return (
+    <div
+      ref={setNodeRef}
+      style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.55 : 1 }}
+      className={isDragging ? "relative z-50" : undefined}
+    >
     <motion.div
       initial={{ opacity: 0, x: -16 }}
       animate={{ opacity: 1, x: 0 }}
@@ -615,6 +628,20 @@ function ItemCard({ children, onEdit, onDelete, onMoveUp, onMoveDown, canMoveUp,
               </>
             ) : (
               <>
+                {sortableId && (
+                  <Button
+                    ref={setActivatorNodeRef}
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 cursor-grab touch-none active:cursor-grabbing"
+                    title={language === "ar" ? "اسحب لإعادة الترتيب" : "Drag to reorder"}
+                    aria-label={language === "ar" ? "اسحب لإعادة الترتيب" : "Drag to reorder"}
+                    {...attributes}
+                    {...listeners}
+                  >
+                    <GripVertical className="h-4 w-4" />
+                  </Button>
+                )}
                 {(onMoveUp || onMoveDown) && (
                   <div className="flex gap-1">
                     <Button variant="ghost" size="icon" className="h-9 w-9" onClick={onMoveUp} disabled={!canMoveUp} title={language === "ar" ? "نقل للأعلى" : "Move up"}>
@@ -637,6 +664,7 @@ function ItemCard({ children, onEdit, onDelete, onMoveUp, onMoveDown, canMoveUp,
         </CardContent>
       </Card>
     </motion.div>
+    </div>
   );
 }
 
@@ -949,6 +977,20 @@ export default function Dashboard() {
     await persistOrder(next, table, setItems);
   };
 
+  const dragSensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
+  );
+
+  const handleProjectDragEnd = async ({ active, over }: DragEndEvent) => {
+    if (!over || active.id === over.id) return;
+    const from = projects.findIndex((project) => project.id === active.id);
+    const to = projects.findIndex((project) => project.id === over.id);
+    if (from < 0 || to < 0) return;
+    try { await persistOrder(arrayMove(projects, from, to), "portfolio_projects", setProjects); }
+    catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); }
+  };
+
   useEffect(() => {
     if (!supabase) {
       setIsAuthenticated(sessionStorage.getItem("dashboard_auth") === "true");
@@ -1156,10 +1198,12 @@ export default function Dashboard() {
                   addLabel={d.sections.projects.emptyAdd}
                 />
               ) : (
+                <DndContext sensors={dragSensors} collisionDetection={closestCenter} onDragEnd={handleProjectDragEnd}>
+                  <SortableContext items={projects.map((project) => project.id)} strategy={verticalListSortingStrategy}>
                 <div className="space-y-3">
                   {projects.map((p, i) => (
                     <ItemCard
-                      key={p.id} index={i}
+                      key={p.id} index={i} sortableId={p.id}
                       onMoveUp={async () => {
                         try { await moveOrderedItem(projects, i, -1, "portfolio_projects", setProjects); }
                         catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); }
@@ -1214,6 +1258,8 @@ export default function Dashboard() {
                     </ItemCard>
                   ))}
                 </div>
+                  </SortableContext>
+                </DndContext>
               )}
             </AnimatePresence>
           </TabsContent>
