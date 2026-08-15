@@ -402,7 +402,8 @@ const blankCert = (): Omit<Certificate, "id"> => ({
   title: "", titleAr: "", issuer: "", issuerAr: "", date: "", credentialUrl: "", badgeColor: "#6C63FF"
 });
 const blankTestimonial = (): Omit<Testimonial, "id"> => ({
-  name: "", nameAr: "", role: "", roleAr: "", text: "", textAr: "", rating: 5, imageUrl: ""
+  name: "", nameAr: "", role: "", roleAr: "", company: "", companyAr: "", countryCode: "SA",
+  text: "", textAr: "", highlight: "", highlightAr: "", rating: 5, imageUrl: ""
 });
 
 /* ─── Testimonial Dialog ──────────────────────────────── */
@@ -415,7 +416,7 @@ function TestimonialDialog({ open, initial, onSave, onClose }: {
   const [local, setLocal] = useState<Omit<Testimonial, "id">>(initial ?? blankTestimonial());
   const [saving, setSaving] = useState(false);
   useEffect(() => { setLocal(initial ?? blankTestimonial()); setSaving(false); }, [open, initial]);
-  const isValid = local.name.trim() && local.role.trim() && local.text.trim() && local.imageUrl.trim();
+  const isValid = local.name.trim() && local.role.trim() && local.text.trim();
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
       <DialogContent className="max-w-xl max-h-[90vh]">
@@ -445,12 +446,28 @@ function TestimonialDialog({ open, initial, onSave, onClose }: {
               <Input value={local.roleAr} onChange={e => setLocal(l => ({ ...l, roleAr: e.target.value }))} dir="rtl" placeholder={labels.placeholderRoleAr} />
             </Field>
           </FieldRow>
+          <FieldRow>
+            <Field label={labels.companyEn}>
+              <Input value={local.company} onChange={e => setLocal(l => ({ ...l, company: e.target.value }))} placeholder={labels.placeholderCompanyEn} />
+            </Field>
+            <Field label={labels.companyAr}>
+              <Input value={local.companyAr} onChange={e => setLocal(l => ({ ...l, companyAr: e.target.value }))} dir="rtl" placeholder={labels.placeholderCompanyAr} />
+            </Field>
+          </FieldRow>
           <Field label={labels.textEn} required>
             <Textarea value={local.text} onChange={e => setLocal(l => ({ ...l, text: e.target.value }))} className="resize-none h-20" placeholder={labels.placeholderTextEn} />
           </Field>
           <Field label={labels.textAr}>
             <Textarea value={local.textAr} onChange={e => setLocal(l => ({ ...l, textAr: e.target.value }))} dir="rtl" className="resize-none h-20" placeholder={labels.placeholderTextAr} />
           </Field>
+          <FieldRow>
+            <Field label={labels.highlightEn}>
+              <Input value={local.highlight} onChange={e => setLocal(l => ({ ...l, highlight: e.target.value }))} placeholder={labels.placeholderHighlightEn} />
+            </Field>
+            <Field label={labels.highlightAr}>
+              <Input value={local.highlightAr} onChange={e => setLocal(l => ({ ...l, highlightAr: e.target.value }))} dir="rtl" placeholder={labels.placeholderHighlightAr} />
+            </Field>
+          </FieldRow>
           <FieldRow>
             <Field label={labels.rating} required>
               <Select value={local.rating.toString()} onValueChange={v => setLocal(l => ({ ...l, rating: parseInt(v) }))}>
@@ -466,13 +483,22 @@ function TestimonialDialog({ open, initial, onSave, onClose }: {
                 </SelectContent>
               </Select>
             </Field>
-            <Field label={labels.imageUrl} required>
+            <Field label={labels.country} required>
+              <Select value={local.countryCode} onValueChange={(countryCode: "SA" | "SY") => setLocal(l => ({ ...l, countryCode }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="SA">{labels.saudiArabia}</SelectItem>
+                  <SelectItem value="SY">{labels.syria}</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+          </FieldRow>
+          <Field label={labels.imageUrl}>
               <div className="flex gap-2">
                 <Input value={local.imageUrl} onChange={e => setLocal(l => ({ ...l, imageUrl: e.target.value }))} placeholder={labels.placeholderImageUrl} className="flex-1" />
                 {local.imageUrl && <img src={local.imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover border border-border shrink-0" />}
               </div>
-            </Field>
-          </FieldRow>
+          </Field>
         </div>
         <DialogFooter className="gap-2">
           <Button variant="outline" onClick={onClose} disabled={saving}>{d.actions.cancel}</Button>
@@ -1543,7 +1569,13 @@ export default function Dashboard() {
                       onDelete={async () => { try { await deleteTestimonial(t.id); toast({ title: d.actions.deleted }); } catch (err: any) { toast({ title: d.actions.error || "Error", description: err.message, variant: "destructive" }); } }}
                     >
                       <div className="flex items-start gap-3">
-                        <img src={t.imageUrl} alt={t.name} className="w-10 h-10 rounded-full object-cover border border-border shrink-0" />
+                        {t.imageUrl ? (
+                          <img src={t.imageUrl} alt={t.name} className="w-10 h-10 rounded-full object-cover border border-border shrink-0" />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full border border-border bg-primary/10 text-primary flex items-center justify-center font-bold shrink-0">
+                            {(language === "ar" ? t.nameAr || t.name : t.name).trim().charAt(0)}
+                          </div>
+                        )}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <p className="font-semibold leading-none">{language === "ar" ? t.nameAr || t.name : t.name}</p>
@@ -1553,7 +1585,10 @@ export default function Dashboard() {
                               ))}
                             </div>
                           </div>
-                          <p className="text-sm text-muted-foreground mb-2">{language === "ar" ? t.roleAr || t.role : t.role}</p>
+                          <p className="text-sm text-muted-foreground mb-2">
+                            {language === "ar" ? t.roleAr || t.role : t.role}
+                            {(language === "ar" ? t.companyAr || t.company : t.company) && ` · ${language === "ar" ? t.companyAr || t.company : t.company}`}
+                          </p>
                           <p className="text-sm text-foreground/70 line-clamp-2">
                             "{language === "ar" ? t.textAr || t.text : t.text}"
                           </p>
