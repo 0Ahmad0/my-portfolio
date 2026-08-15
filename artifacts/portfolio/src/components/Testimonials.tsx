@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { MapPin, Quote, Star } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { ChevronLeft, ChevronRight, MapPin, Quote, Star } from "lucide-react";
 import { usePortfolio, type Testimonial } from "@/contexts/PortfolioContext";
 import { translations } from "@/lib/i18n";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -8,9 +8,11 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 export default function Testimonials() {
   const { language, testimonials } = usePortfolio();
   const [selected, setSelected] = useState<Testimonial | null>(null);
+  const [current, setCurrent] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
   const t = translations[language];
-
-  if (testimonials.length === 0) return null;
 
   const localized = (testimonial: Testimonial) => ({
     name: language === "ar" ? testimonial.nameAr || testimonial.name : testimonial.name,
@@ -23,8 +25,30 @@ export default function Testimonials() {
       : (language === "ar" ? "المملكة العربية السعودية" : "Saudi Arabia"),
   });
 
+  const goTo = (index: number) => {
+    const next = (index + testimonials.length) % testimonials.length;
+    const slider = sliderRef.current;
+    const card = slider?.children[next];
+    if (!slider || !card) return;
+    const sliderBox = slider.getBoundingClientRect();
+    const cardBox = card.getBoundingClientRect();
+    setCurrent(next);
+    slider.scrollBy({
+      behavior: reduceMotion ? "auto" : "smooth",
+      left: language === "ar" ? cardBox.right - sliderBox.right : cardBox.left - sliderBox.left,
+    });
+  };
+
+  useEffect(() => {
+    if (paused || reduceMotion || testimonials.length < 2) return;
+    const interval = window.setInterval(() => goTo(current + 1), 6000);
+    return () => window.clearInterval(interval);
+  }, [current, paused, reduceMotion, testimonials.length]);
+
+  if (testimonials.length === 0) return null;
+
   return (
-    <section id="testimonials" className="py-28 relative overflow-hidden">
+    <section id="testimonials" className="py-20 relative overflow-hidden">
       <div className="absolute top-1/4 right-1/3 w-[600px] h-[600px] bg-gradient-to-br from-violet-500/15 via-primary/10 to-transparent rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] bg-gradient-to-tl from-cyan-500/10 via-primary/8 to-transparent rounded-full blur-[100px] pointer-events-none" />
 
@@ -34,7 +58,7 @@ export default function Testimonials() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.3 }}
-          className="text-center mb-14"
+          className="text-center mb-10"
         >
           <span className="inline-block py-1 px-3 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-wider mb-4">
             {language === "ar" ? "الآراء" : "FEEDBACK"}
@@ -43,7 +67,23 @@ export default function Testimonials() {
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{t.testimonials.subtitle}</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 auto-rows-fr gap-6 max-w-7xl mx-auto">
+        <div
+          ref={sliderRef}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onFocusCapture={() => setPaused(true)}
+          onBlurCapture={(event) => !event.currentTarget.contains(event.relatedTarget) && setPaused(false)}
+          onScroll={(event) => {
+            const container = event.currentTarget.getBoundingClientRect();
+            const index = Array.from(event.currentTarget.children).findIndex((child) => {
+              const card = child.getBoundingClientRect();
+              return card.left >= container.left - 2 && card.right <= container.right + 2;
+            });
+            if (index >= 0) setCurrent(index);
+          }}
+          className="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth max-w-7xl mx-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          aria-label={language === "ar" ? "تقييمات العملاء" : "Client testimonials"}
+        >
           {testimonials.map((testimonial, index) => {
             const content = localized(testimonial);
             const highlights = content.highlight.split("·").map((item) => item.trim()).filter(Boolean);
@@ -55,7 +95,7 @@ export default function Testimonials() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.15 }}
                 transition={{ duration: 0.25, delay: Math.min(index * 0.03, 0.18) }}
-                className="h-full min-h-[390px] rounded-3xl border border-primary/25 bg-background/65 backdrop-blur-xl p-6 flex flex-col shadow-lg shadow-primary/5 hover:border-primary/50 transition-colors"
+                className="w-full md:w-[calc((100%-1.5rem)/2)] xl:w-[calc((100%-3rem)/3)] flex-none snap-start min-h-[350px] rounded-3xl border border-primary/25 bg-background/65 backdrop-blur-xl p-5 flex flex-col shadow-lg shadow-primary/5 hover:border-primary/50 transition-colors"
               >
                 <div className="flex items-center justify-between gap-4 mb-5">
                   <div className="flex items-center gap-1" aria-label={`${testimonial.rating} / 5`}>
@@ -74,7 +114,7 @@ export default function Testimonials() {
                 </div>
 
                 <Quote aria-hidden="true" className="w-8 h-8 text-primary/35 mb-3" />
-                <p className="text-base leading-relaxed text-foreground/90 line-clamp-6 mb-3">{content.text}</p>
+                <p className="text-sm leading-relaxed text-foreground/90 line-clamp-4 mb-2">{content.text}</p>
                 <button
                   type="button"
                   onClick={() => setSelected(testimonial)}
@@ -83,7 +123,7 @@ export default function Testimonials() {
                   {language === "ar" ? "قراءة التقييم كاملًا" : "Read full review"}
                 </button>
 
-                <div className="min-h-16 mt-2">
+                <div className="min-h-14 mt-1">
                   {highlights.length > 0 && (
                     <>
                       <p className="text-xs font-semibold text-muted-foreground mb-2">
@@ -118,6 +158,28 @@ export default function Testimonials() {
               </motion.article>
             );
           })}
+        </div>
+
+        <div className="flex items-center justify-center gap-3 mt-7" dir="ltr">
+          <button
+            type="button"
+            onClick={() => goTo(current - 1)}
+            aria-label={language === "ar" ? "التقييم السابق" : "Previous testimonial"}
+            className="w-11 h-11 rounded-full border border-primary/30 bg-background/70 text-primary flex items-center justify-center hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors"
+          >
+            <ChevronLeft aria-hidden="true" className="w-5 h-5" />
+          </button>
+          <span className="min-w-14 text-center text-sm text-muted-foreground" aria-live="polite">
+            {current + 1} / {testimonials.length}
+          </span>
+          <button
+            type="button"
+            onClick={() => goTo(current + 1)}
+            aria-label={language === "ar" ? "التقييم التالي" : "Next testimonial"}
+            className="w-11 h-11 rounded-full border border-primary/30 bg-background/70 text-primary flex items-center justify-center hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors"
+          >
+            <ChevronRight aria-hidden="true" className="w-5 h-5" />
+          </button>
         </div>
       </div>
 
