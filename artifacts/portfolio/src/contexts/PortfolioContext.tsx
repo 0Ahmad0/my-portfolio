@@ -1,102 +1,33 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { supabase } from "@/utils/supabase";
+import {
+  type Certificate,
+  type Education,
+  type Experience,
+  type PersonalInfo,
+  type Project,
+  type Testimonial,
+  certificatePayload,
+  defaultCertificates,
+  defaultEducation,
+  defaultExperience,
+  defaultPersonalInfo,
+  defaultProjects,
+  defaultTestimonials,
+  educationPayload,
+  experiencePayload,
+  mapCertificate,
+  mapEducation,
+  mapExperience,
+  mapPersonalInfo,
+  mapProject,
+  mapTestimonial,
+  personalInfoPayload,
+  projectPayload,
+  testimonialPayload,
+} from "./portfolio-data";
 
-export type Project = {
-  id: string;
-  sortOrder?: number;
-  isPublished: boolean;
-  title: string;
-  titleAr: string;
-  description: string;
-  descriptionAr: string;
-  category: "Web" | "Mobile" | "Design";
-  tags: string[];
-  imageUrl: string;
-  images?: string[];
-  githubUrl?: string;
-  liveUrl?: string;
-  androidUrl?: string;
-  iosUrl?: string;
-};
-
-export type Experience = {
-  id: string;
-  sortOrder?: number;
-  company: string;
-  role: string;
-  roleAr: string;
-  period: string;
-  description: string;
-  descriptionAr: string;
-};
-
-export type Education = {
-  id: string;
-  institution: string;
-  institutionAr: string;
-  degree: string;
-  degreeAr: string;
-  field: string;
-  fieldAr: string;
-  period: string;
-  gpa?: string;
-  description: string;
-  descriptionAr: string;
-};
-
-export type Certificate = {
-  id: string;
-  sortOrder?: number;
-  title: string;
-  titleAr: string;
-  issuer: string;
-  issuerAr: string;
-  date: string;
-  credentialUrl?: string;
-  badgeColor: string;
-};
-
-export type Testimonial = {
-  id: string;
-  sortOrder?: number;
-  name: string;
-  nameAr: string;
-  role: string;
-  roleAr: string;
-  company: string;
-  companyAr: string;
-  countryCode: "SA" | "SY";
-  text: string;
-  textAr: string;
-  highlight: string;
-  highlightAr: string;
-  rating: number;
-  imageUrl: string;
-};
-
-export type PersonalInfo = {
-  name: string;
-  nameAr: string;
-  bio: string;
-  bioAr: string;
-  email: string;
-  location: string;
-  locationAr: string;
-  github: string;
-  linkedin: string;
-  twitter: string;
-  telegram: string;
-  whatsapp: string;
-  instagram: string;
-  facebook: string;
-  cvUrl: string;
-  avatarUrl: string;
-  floatingSkills: string[];
-  coreSkills: string[];
-};
-
-const defaultFloatingSkills = ["Flutter", "Firebase", "C++", "React", "Git", "Dart"];
-const defaultCoreSkills = ["React", "Flutter", "Next.js", "TypeScript", "Node.js", "Python", "C++", "Dart", "Android", "Kotlin", "Swift", "Figma", "Tailwind", "Docker", "MongoDB", "PostgreSQL", "Firebase", "Git"];
+export type { Certificate, Education, Experience, PersonalInfo, Project, Testimonial } from "./portfolio-data";
 
 type PortfolioContextType = {
   isLoading: boolean;
@@ -131,134 +62,41 @@ type PortfolioContextType = {
   deleteTestimonial: (id: string) => Promise<void>;
 };
 
-const defaultPersonalInfo: PersonalInfo = {
-  name: "Ahmad Alhariri",
-  nameAr: "أحمد الحريري",
-  bio: "Motivated Software Engineer with over four years of experience in mobile application development using Flutter. Skilled in designing, building, and optimizing cross-platform applications.",
-  bioAr: "مهندس برمجيات طموح لديه أكثر من أربع سنوات من الخبرة في تطوير تطبيقات الموبايل باستخدام Flutter. ماهر في تصميم وبناء وتحسين التطبيقات.",
-  email: "mr.ahmed.alhariri@gmail.com",
-  location: "Syria - Daraa",
-  locationAr: "سوريا - درعا",
-  github: "https://github.com/0Ahmad0",
-  linkedin: "https://www.linkedin.com/in/ahmadhariri",
-  twitter: "https://x.com/AhmadAl45892861",
-  telegram: "https://t.me/Ahmad_Alhariri",
-  whatsapp: "https://wa.me/+963954872922",
-  instagram: "https://www.instagram.com/dev.ahm",
-  facebook: "https://www.facebook.com/ahmad.alhariri.56027",
-  cvUrl: "#",
-  avatarUrl: "/avatar.jpg",
-  floatingSkills: defaultFloatingSkills,
-  coreSkills: defaultCoreSkills,
-};
+type Row = Record<string, any>;
+type Payload = Record<string, any>;
 
-const defaultProjects: Project[] = [
-  {
-    id: "1",
-    isPublished: true,
-    title: "Tigre",
-    titleAr: "تيغري",
-    description: "Ultimate destination for food enthusiasts and restaurant discovery.",
-    descriptionAr: "الوجهة النهائية لعشاق الطعام واكتشاف المطاعم.",
-    category: "Mobile",
-    tags: ["Flutter", "Dart", "Firebase"],
-    imageUrl: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&auto=format&fit=crop&q=60",
-  },
-  {
-    id: "2",
-    isPublished: true,
-    title: "Vivafone",
-    titleAr: "فيفافون",
-    description: "An app for selling eSIM cards with a seamless user experience.",
-    descriptionAr: "تطبيق لبيع بطاقات eSIM مع تجربة مستخدم سلسة.",
-    category: "Mobile",
-    tags: ["Flutter", "Dart", "REST API"],
-    imageUrl: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&auto=format&fit=crop&q=60",
-  },
-  {
-    id: "3",
-    isPublished: true,
-    title: "Enjaz",
-    titleAr: "إنجاز",
-    description: "Tracking and managing university projects with supervisor support.",
-    descriptionAr: "تتبع وإدارة المشاريع الجامعية مع دعم المشرفين.",
-    category: "Mobile",
-    tags: ["Flutter", "Dart", "Firebase"],
-    imageUrl: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&auto=format&fit=crop&q=60",
-  },
-  {
-    id: "4",
-    isPublished: true,
-    title: "Mardod App",
-    titleAr: "تطبيق مردود",
-    description: "AI-powered app exploring Saudi Arabia through chat.",
-    descriptionAr: "تطبيق مدعوم بالذكاء الاصطناعي لاستكشاف السعودية عبر الدردشة.",
-    category: "Mobile",
-    tags: ["Flutter", "Dart", "AI"],
-    imageUrl: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=800&auto=format&fit=crop&q=60",
-  },
-];
+function requireSupabase() {
+  if (!supabase) throw new Error("Supabase not configured");
+  return supabase;
+}
 
-const defaultExperience: Experience[] = [
-  {
-    id: "1",
-    company: "York British Academy",
-    role: "Mobile Developer",
-    roleAr: "مطور موبايل",
-    period: "2023 - Present",
-    description: "Developed government-level mobile applications using Flutter.",
-    descriptionAr: "تطوير تطبيقات موبايل على مستوى حكومي باستخدام Flutter.",
-  },
-  {
-    id: "2",
-    company: "Future X",
-    role: "Mobile Developer",
-    roleAr: "مطور موبايل",
-    period: "2023 - Present",
-    description: "Built food delivery and social media management applications.",
-    descriptionAr: "بناء تطبيقات توصيل طعام وإدارة وسائل التواصل الاجتماعي.",
-  },
-  {
-    id: "3",
-    company: "Smart Life",
-    role: "Mobile Developer",
-    roleAr: "مطور موبايل",
-    period: "2023",
-    description: "Restructured and optimized CRM applications.",
-    descriptionAr: "إعادة هيكلة وتحسين تطبيقات إدارة علاقات العملاء (CRM).",
-  },
-];
+async function insertRecord<T>(table: string, payload: Payload, map: (row: Row) => T) {
+  const { data, error } = await requireSupabase().from(table).insert(payload).select().single();
+  if (error) throw new Error(error.message);
+  return map(data);
+}
 
-const defaultEducation: Education[] = [
-  {
-    id: "1",
-    institution: "Damascus University",
-    institutionAr: "جامعة دمشق",
-    degree: "Bachelor's of Software Engineering",
-    degreeAr: "بكالوريوس في هندسة البرمجيات",
-    field: "Software Engineering",
-    fieldAr: "هندسة البرمجيات",
-    period: "2018 - 2023",
-    gpa: "Good",
-    description: "Studied software engineering fundamentals, system analysis, algorithms, and mobile application development.",
-    descriptionAr: "دراسة أساسيات هندسة البرمجيات وتحليل الأنظمة والخوارزميات وتطوير تطبيقات الموبايل.",
-  },
-];
+async function updateRecord<T>(table: string, id: string, payload: Payload, map: (row: Row) => T) {
+  const { data, error } = await requireSupabase().from(table).update(payload).eq("id", id).select().single();
+  if (error) throw new Error(error.message);
+  return map(data);
+}
 
-const defaultCertificates: Certificate[] = [
-  { id: "1", title: "Agile Project Management", titleAr: "إدارة المشاريع Agile", issuer: "HP LIFE", issuerAr: "HP LIFE", date: "2023", credentialUrl: "#", badgeColor: "#0096D6" },
-  { id: "2", title: "Fundamentals of Technical Project Management", titleAr: "أساسيات إدارة المشاريع التقنية", issuer: "PMI", issuerAr: "PMI", date: "2023", credentialUrl: "#", badgeColor: "#E4002B" },
-  { id: "3", title: "Volunteer Certificate", titleAr: "شهادة تطوع", issuer: "RBCs Team", issuerAr: "فريق RBCs", date: "2023", credentialUrl: "#", badgeColor: "#00897B" },
-];
-
-const defaultTestimonials: Testimonial[] = [];
+async function deleteRecord(table: string, id: string) {
+  const { error } = await requireSupabase().from(table).delete().eq("id", id);
+  if (error) throw new Error(error.message);
+}
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
 
 export function PortfolioProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [language, setLanguageState] = useState<"en" | "ar">(() => {
-    try { return (localStorage.getItem("portfolio_lang") as "en" | "ar") || "en"; } catch { return "en"; }
+    try {
+      return (localStorage.getItem("portfolio_lang") as "en" | "ar") || "en";
+    } catch {
+      return "en";
+    }
   });
   const [personalInfoId, setPersonalInfoId] = useState<string | null>(null);
   const [personalInfo, setPersonalInfoState] = useState<PersonalInfo>(defaultPersonalInfo);
@@ -284,157 +122,43 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
           return;
         }
 
-        const timeout = (ms: number) => new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error(`Request timed out after ${ms}ms`)), ms)
-        );
-
+        const timeout = (ms: number) => new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`Request timed out after ${ms}ms`)), ms));
         const queries = [
-            supabase.from("portfolio_personal_info").select("*").eq("is_primary", true).limit(1),
-            supabase.from("portfolio_projects").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
-            supabase.from("portfolio_experience").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
-            supabase.from("portfolio_education").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
-            supabase.from("portfolio_certificates").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
-            supabase.from("portfolio_testimonials").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+          supabase.from("portfolio_personal_info").select("*").eq("is_primary", true).limit(1),
+          supabase.from("portfolio_projects").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+          supabase.from("portfolio_experience").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+          supabase.from("portfolio_education").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+          supabase.from("portfolio_certificates").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
+          supabase.from("portfolio_testimonials").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
         ] as const;
-
-        const [
-          personalRes,
-          projectsRes,
-          expRes,
-          eduRes,
-          certRes,
-          testRes,
-        ] = await Promise.race([
-          Promise.all(queries),
-          timeout(8000),
-        ]);
+        const [personalRes, projectsRes, expRes, eduRes, certRes, testRes] = await Promise.race([Promise.all(queries), timeout(8000)]);
 
         if (!isMounted) return;
-
-        const hasAuthError = [personalRes, projectsRes, expRes, eduRes, certRes, testRes]
-          .some((r) => {
-            const code = r.error?.code;
-            return code === "PGRST301" || code === "42501" || (r as any).status === 401 || (r as any).status === 403;
-          });
+        const responses = [personalRes, projectsRes, expRes, eduRes, certRes, testRes];
+        const hasAuthError = responses.some((response) => {
+          const code = response.error?.code;
+          return code === "PGRST301" || code === "42501" || (response as any).status === 401 || (response as any).status === 403;
+        });
         if (hasAuthError) {
           console.warn("Supabase auth error - check your API key. Falling back to default data.");
           return;
         }
 
-        if (personalRes.error) console.error("Failed to load personal info", personalRes.error);
-        if (projectsRes.error) console.error("Failed to load projects", projectsRes.error);
-        if (expRes.error) console.error("Failed to load experience", expRes.error);
-        if (eduRes.error) console.error("Failed to load education", eduRes.error);
-        if (certRes.error) console.error("Failed to load certificates", certRes.error);
-        if (testRes.error) console.error("Failed to load testimonials", testRes.error);
-
-      const infoRow = personalRes.data?.[0];
-      if (infoRow) {
-        setPersonalInfoId(infoRow.id);
-        setPersonalInfoState({
-          name: infoRow.name ?? "",
-          nameAr: infoRow.name_ar ?? "",
-          bio: infoRow.bio ?? "",
-          bioAr: infoRow.bio_ar ?? "",
-          email: infoRow.email ?? "",
-          location: infoRow.location ?? "",
-          locationAr: infoRow.location_ar ?? "",
-          github: infoRow.github ?? "",
-          linkedin: infoRow.linkedin ?? "",
-          twitter: infoRow.twitter ?? "",
-          telegram: infoRow.telegram ?? "",
-          whatsapp: infoRow.whatsapp ?? "",
-          instagram: infoRow.instagram ?? "",
-          facebook: infoRow.facebook ?? "",
-          cvUrl: infoRow.cv_url ?? "",
-          avatarUrl: infoRow.avatar_url ?? "",
-          floatingSkills: infoRow.floating_skills ?? defaultFloatingSkills,
-          coreSkills: infoRow.core_skills ?? defaultCoreSkills,
+        const labels = ["personal info", "projects", "experience", "education", "certificates", "testimonials"];
+        responses.forEach((response, index) => {
+          if (response.error) console.error(`Failed to load ${labels[index]}`, response.error);
         });
-      }
 
-      if (projectsRes.data) {
-        setProjects(projectsRes.data.map((row) => ({
-          id: row.id,
-          sortOrder: row.sort_order ?? 0,
-          isPublished: row.is_published ?? true,
-          title: row.title ?? "",
-          titleAr: row.title_ar ?? "",
-          description: row.description ?? "",
-          descriptionAr: row.description_ar ?? "",
-          category: row.category ?? "Web",
-          tags: row.tags ?? [],
-          imageUrl: row.image_url ?? "",
-          images: row.images ?? [],
-          githubUrl: row.github_url ?? "",
-          liveUrl: row.live_url ?? "",
-          androidUrl: row.android_url ?? "",
-          iosUrl: row.ios_url ?? "",
-        })));
-      }
-
-      if (expRes.data) {
-        setExperience(expRes.data.map((row) => ({
-          id: row.id,
-          sortOrder: row.sort_order ?? 0,
-          company: row.company ?? "",
-          role: row.role ?? "",
-          roleAr: row.role_ar ?? "",
-          period: row.period ?? "",
-          description: row.description ?? "",
-          descriptionAr: row.description_ar ?? "",
-        })));
-      }
-
-      if (eduRes.data) {
-        setEducation(eduRes.data.map((row) => ({
-          id: row.id,
-          institution: row.institution ?? "",
-          institutionAr: row.institution_ar ?? "",
-          degree: row.degree ?? "",
-          degreeAr: row.degree_ar ?? "",
-          field: row.field ?? "",
-          fieldAr: row.field_ar ?? "",
-          period: row.period ?? "",
-          gpa: row.gpa ?? "",
-          description: row.description ?? "",
-          descriptionAr: row.description_ar ?? "",
-        })));
-      }
-
-      if (certRes.data) {
-        setCertificates(certRes.data.map((row) => ({
-          id: row.id,
-          sortOrder: row.sort_order ?? 0,
-          title: row.title ?? "",
-          titleAr: row.title_ar ?? "",
-          issuer: row.issuer ?? "",
-          issuerAr: row.issuer_ar ?? "",
-          date: row.date ?? "",
-          credentialUrl: row.credential_url ?? "",
-          badgeColor: row.badge_color ?? "#6C63FF",
-        })));
-      }
-
-      if (testRes.data) {
-        setTestimonials(testRes.data.map((row) => ({
-          id: row.id,
-          sortOrder: row.sort_order ?? 0,
-          name: row.name ?? "",
-          nameAr: row.name_ar ?? "",
-          role: row.role ?? "",
-          roleAr: row.role_ar ?? "",
-          company: row.company ?? "",
-          companyAr: row.company_ar ?? "",
-          countryCode: row.country_code === "SY" ? "SY" : "SA",
-          text: row.text ?? "",
-          textAr: row.text_ar ?? "",
-          highlight: row.highlight ?? "",
-          highlightAr: row.highlight_ar ?? "",
-          rating: row.rating ?? 5,
-          imageUrl: row.image_url ?? "",
-        })));
-      }
+        const infoRow = personalRes.data?.[0];
+        if (infoRow) {
+          setPersonalInfoId(infoRow.id);
+          setPersonalInfoState(mapPersonalInfo(infoRow));
+        }
+        if (projectsRes.data) setProjects(projectsRes.data.map(mapProject));
+        if (expRes.data) setExperience(expRes.data.map(mapExperience));
+        if (eduRes.data) setEducation(eduRes.data.map(mapEducation));
+        if (certRes.data) setCertificates(certRes.data.map(mapCertificate));
+        if (testRes.data) setTestimonials(testRes.data.map(mapTestimonial));
       } catch (err) {
         console.error("Failed to load portfolio data", err);
       } finally {
@@ -443,519 +167,136 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
     }
 
     loadPortfolio();
-    return () => { isMounted = false; };
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const setLanguage = (lang: "en" | "ar") => setLanguageState(lang);
 
   const setPersonalInfo = async (info: PersonalInfo) => {
-    if (!supabase) throw new Error("Supabase not configured");
-    if (personalInfoId) {
-      const { data, error } = await supabase
-        .from("portfolio_personal_info")
-        .update({
-          name: info.name,
-          name_ar: info.nameAr,
-          bio: info.bio,
-          bio_ar: info.bioAr,
-          email: info.email,
-          location: info.location,
-          location_ar: info.locationAr,
-          github: info.github,
-          linkedin: info.linkedin,
-          twitter: info.twitter,
-          telegram: info.telegram,
-          whatsapp: info.whatsapp,
-          instagram: info.instagram,
-          facebook: info.facebook,
-          cv_url: info.cvUrl,
-          avatar_url: info.avatarUrl,
-          floating_skills: info.floatingSkills,
-          core_skills: info.coreSkills,
-        })
-        .eq("id", personalInfoId)
-        .select()
-        .single();
-
-      if (error) throw new Error(error.message);
-
-      setPersonalInfoState({
-        name: data.name ?? "",
-        nameAr: data.name_ar ?? "",
-        bio: data.bio ?? "",
-        bioAr: data.bio_ar ?? "",
-        email: data.email ?? "",
-        location: data.location ?? "",
-        locationAr: data.location_ar ?? "",
-        github: data.github ?? "",
-        linkedin: data.linkedin ?? "",
-        twitter: data.twitter ?? "",
-        telegram: data.telegram ?? "",
-        whatsapp: data.whatsapp ?? "",
-        instagram: data.instagram ?? "",
-        facebook: data.facebook ?? "",
-        cvUrl: data.cv_url ?? "",
-        avatarUrl: data.avatar_url ?? "",
-        floatingSkills: data.floating_skills ?? defaultFloatingSkills,
-        coreSkills: data.core_skills ?? defaultCoreSkills,
-      });
-      return;
-    }
-
-    const { data, error } = await supabase
-      .from("portfolio_personal_info")
-      .insert({
-        is_primary: true,
-        name: info.name,
-        name_ar: info.nameAr,
-        bio: info.bio,
-        bio_ar: info.bioAr,
-        email: info.email,
-        location: info.location,
-        location_ar: info.locationAr,
-        github: info.github,
-        linkedin: info.linkedin,
-        twitter: info.twitter,
-        telegram: info.telegram,
-        whatsapp: info.whatsapp,
-        instagram: info.instagram,
-        facebook: info.facebook,
-        cv_url: info.cvUrl,
-        avatar_url: info.avatarUrl,
-        floating_skills: info.floatingSkills,
-        core_skills: info.coreSkills,
-      })
-      .select()
-      .single();
-
-    if (error) throw new Error(error.message);
-
-    setPersonalInfoId(data.id);
-    setPersonalInfoState({
-      name: data.name ?? "",
-      nameAr: data.name_ar ?? "",
-      bio: data.bio ?? "",
-      bioAr: data.bio_ar ?? "",
-      email: data.email ?? "",
-      location: data.location ?? "",
-      locationAr: data.location_ar ?? "",
-      github: data.github ?? "",
-      linkedin: data.linkedin ?? "",
-      twitter: data.twitter ?? "",
-      telegram: data.telegram ?? "",
-      whatsapp: data.whatsapp ?? "",
-      instagram: data.instagram ?? "",
-      facebook: data.facebook ?? "",
-      cvUrl: data.cv_url ?? "",
-      avatarUrl: data.avatar_url ?? "",
-      floatingSkills: data.floating_skills ?? defaultFloatingSkills,
-      coreSkills: data.core_skills ?? defaultCoreSkills,
-    });
+    const client = requireSupabase();
+    const payload = personalInfoPayload(info);
+    const result = personalInfoId
+      ? await client.from("portfolio_personal_info").update(payload).eq("id", personalInfoId).select().single()
+      : await client
+          .from("portfolio_personal_info")
+          .insert({ is_primary: true, ...payload })
+          .select()
+          .single();
+    if (result.error) throw new Error(result.error.message);
+    if (!personalInfoId) setPersonalInfoId(result.data.id);
+    setPersonalInfoState(mapPersonalInfo(result.data));
   };
 
-const addProject = async (p: Omit<Project, "id">) => {
-    if (!supabase) throw new Error("Supabase not configured");
-    const { data, error } = await supabase
-      .from("portfolio_projects")
-      .insert({
-        title: p.title,
-        title_ar: p.titleAr,
-        description: p.description,
-        description_ar: p.descriptionAr,
-        category: p.category,
-        tags: p.tags,
-        image_url: p.imageUrl,
-        images: p.images ?? [],
-        live_url: p.liveUrl,
-        github_url: p.githubUrl,
-        android_url: p.androidUrl,
-        ios_url: p.iosUrl,
-        is_published: p.isPublished,
-        sort_order: projects.length,
-      })
-      .select()
-      .single();
-    if (error) throw new Error(error.message);
-    setProjects((prev) => [...prev, {
-      id: data.id,
-      sortOrder: data.sort_order ?? 0,
-      isPublished: data.is_published ?? true,
-      title: data.title ?? "",
-      titleAr: data.title_ar ?? "",
-      description: data.description ?? "",
-      descriptionAr: data.description_ar ?? "",
-      category: data.category ?? "Web",
-      tags: data.tags ?? [],
-      imageUrl: data.image_url ?? "",
-      images: data.images ?? [],
-      githubUrl: data.github_url ?? "",
-      liveUrl: data.live_url ?? "",
-      androidUrl: data.android_url ?? "",
-      iosUrl: data.ios_url ?? "",
-    }]);
+  const addProject = async (item: Omit<Project, "id">) => {
+    const saved = await insertRecord(
+      "portfolio_projects",
+      projectPayload({
+        ...item,
+        images: item.images ?? [],
+        sortOrder: projects.length,
+      }),
+      mapProject,
+    );
+    setProjects((current) => [...current, saved]);
   };
-
-  const updateProject = async (id: string, p: Partial<Project>) => {
-    if (!supabase) throw new Error("Supabase not configured");
-    const { data, error } = await supabase
-      .from("portfolio_projects")
-      .update({
-        title: p.title,
-        title_ar: p.titleAr,
-        description: p.description,
-        description_ar: p.descriptionAr,
-        category: p.category,
-        tags: p.tags,
-        image_url: p.imageUrl,
-        images: p.images,
-        live_url: p.liveUrl,
-        github_url: p.githubUrl,
-        android_url: p.androidUrl,
-        ios_url: p.iosUrl,
-        is_published: p.isPublished,
-        sort_order: p.sortOrder,
-      })
-      .eq("id", id)
-      .select()
-      .single();
-    if (error) throw new Error(error.message);
-    setProjects((prev) => prev.map((item) => item.id === id ? {
-      id: data.id,
-      sortOrder: data.sort_order ?? 0,
-      isPublished: data.is_published ?? true,
-      title: data.title ?? "",
-      titleAr: data.title_ar ?? "",
-      description: data.description ?? "",
-      descriptionAr: data.description_ar ?? "",
-      category: data.category ?? "Web",
-      tags: data.tags ?? [],
-      imageUrl: data.image_url ?? "",
-      images: data.images ?? [],
-      githubUrl: data.github_url ?? "",
-      liveUrl: data.live_url ?? "",
-      androidUrl: data.android_url ?? "",
-      iosUrl: data.ios_url ?? "",
-    } : item));
+  const updateProject = async (id: string, item: Partial<Project>) => {
+    const saved = await updateRecord("portfolio_projects", id, projectPayload(item), mapProject);
+    setProjects((current) => current.map((entry) => (entry.id === id ? saved : entry)));
   };
-
   const deleteProject = async (id: string) => {
-    if (!supabase) throw new Error("Supabase not configured");
-    const { error } = await supabase.from("portfolio_projects").delete().eq("id", id);
-    if (error) throw new Error(error.message);
-    setProjects((prev) => prev.filter((p) => p.id !== id));
+    await deleteRecord("portfolio_projects", id);
+    setProjects((current) => current.filter((item) => item.id !== id));
   };
 
-  const addExperience = async (e: Omit<Experience, "id">) => {
-    if (!supabase) throw new Error("Supabase not configured");
-    const { data, error } = await supabase
-      .from("portfolio_experience")
-      .insert({
-        company: e.company,
-        role: e.role,
-        role_ar: e.roleAr,
-        period: e.period,
-        description: e.description,
-        description_ar: e.descriptionAr,
-        sort_order: experience.length,
-      })
-      .select()
-      .single();
-    if (error) throw new Error(error.message);
-    setExperience((prev) => [...prev, {
-      id: data.id,
-      sortOrder: data.sort_order ?? 0,
-      company: data.company ?? "",
-      role: data.role ?? "",
-      roleAr: data.role_ar ?? "",
-      period: data.period ?? "",
-      description: data.description ?? "",
-      descriptionAr: data.description_ar ?? "",
-    }]);
+  const addExperience = async (item: Omit<Experience, "id">) => {
+    const saved = await insertRecord("portfolio_experience", experiencePayload({ ...item, sortOrder: experience.length }), mapExperience);
+    setExperience((current) => [...current, saved]);
   };
-
-  const updateExperience = async (id: string, e: Partial<Experience>) => {
-    if (!supabase) throw new Error("Supabase not configured");
-    const { data, error } = await supabase
-      .from("portfolio_experience")
-      .update({
-        company: e.company,
-        role: e.role,
-        role_ar: e.roleAr,
-        period: e.period,
-        description: e.description,
-        description_ar: e.descriptionAr,
-        sort_order: e.sortOrder,
-      })
-      .eq("id", id)
-      .select()
-      .single();
-    if (error) throw new Error(error.message);
-    setExperience((prev) => prev.map((item) => item.id === id ? {
-      id: data.id,
-      sortOrder: data.sort_order ?? 0,
-      company: data.company ?? "",
-      role: data.role ?? "",
-      roleAr: data.role_ar ?? "",
-      period: data.period ?? "",
-      description: data.description ?? "",
-      descriptionAr: data.description_ar ?? "",
-    } : item));
+  const updateExperience = async (id: string, item: Partial<Experience>) => {
+    const saved = await updateRecord("portfolio_experience", id, experiencePayload(item), mapExperience);
+    setExperience((current) => current.map((entry) => (entry.id === id ? saved : entry)));
   };
-
   const deleteExperience = async (id: string) => {
-    if (!supabase) throw new Error("Supabase not configured");
-    const { error } = await supabase.from("portfolio_experience").delete().eq("id", id);
-    if (error) throw new Error(error.message);
-    setExperience((prev) => prev.filter((e) => e.id !== id));
+    await deleteRecord("portfolio_experience", id);
+    setExperience((current) => current.filter((item) => item.id !== id));
   };
 
-  const addEducation = async (e: Omit<Education, "id">) => {
-    if (!supabase) throw new Error("Supabase not configured");
-    const { data, error } = await supabase
-      .from("portfolio_education")
-      .insert({
-        institution: e.institution,
-        institution_ar: e.institutionAr,
-        degree: e.degree,
-        degree_ar: e.degreeAr,
-        field: e.field,
-        field_ar: e.fieldAr,
-        period: e.period,
-        gpa: e.gpa,
-        description: e.description,
-        description_ar: e.descriptionAr,
-      })
-      .select()
-      .single();
-    if (error) throw new Error(error.message);
-    setEducation((prev) => [...prev, {
-      id: data.id,
-      institution: data.institution ?? "",
-      institutionAr: data.institution_ar ?? "",
-      degree: data.degree ?? "",
-      degreeAr: data.degree_ar ?? "",
-      field: data.field ?? "",
-      fieldAr: data.field_ar ?? "",
-      period: data.period ?? "",
-      gpa: data.gpa ?? "",
-      description: data.description ?? "",
-      descriptionAr: data.description_ar ?? "",
-    }]);
+  const addEducation = async (item: Omit<Education, "id">) => {
+    const saved = await insertRecord("portfolio_education", educationPayload(item), mapEducation);
+    setEducation((current) => [...current, saved]);
   };
-
-  const updateEducation = async (id: string, e: Partial<Education>) => {
-    if (!supabase) throw new Error("Supabase not configured");
-    const { data, error } = await supabase
-      .from("portfolio_education")
-      .update({
-        institution: e.institution,
-        institution_ar: e.institutionAr,
-        degree: e.degree,
-        degree_ar: e.degreeAr,
-        field: e.field,
-        field_ar: e.fieldAr,
-        period: e.period,
-        gpa: e.gpa,
-        description: e.description,
-        description_ar: e.descriptionAr,
-      })
-      .eq("id", id)
-      .select()
-      .single();
-    if (error) throw new Error(error.message);
-    setEducation((prev) => prev.map((item) => item.id === id ? {
-      id: data.id,
-      institution: data.institution ?? "",
-      institutionAr: data.institution_ar ?? "",
-      degree: data.degree ?? "",
-      degreeAr: data.degree_ar ?? "",
-      field: data.field ?? "",
-      fieldAr: data.field_ar ?? "",
-      period: data.period ?? "",
-      gpa: data.gpa ?? "",
-      description: data.description ?? "",
-      descriptionAr: data.description_ar ?? "",
-    } : item));
+  const updateEducation = async (id: string, item: Partial<Education>) => {
+    const saved = await updateRecord("portfolio_education", id, educationPayload(item), mapEducation);
+    setEducation((current) => current.map((entry) => (entry.id === id ? saved : entry)));
   };
-
   const deleteEducation = async (id: string) => {
-    if (!supabase) throw new Error("Supabase not configured");
-    const { error } = await supabase.from("portfolio_education").delete().eq("id", id);
-    if (error) throw new Error(error.message);
-    setEducation((prev) => prev.filter((e) => e.id !== id));
+    await deleteRecord("portfolio_education", id);
+    setEducation((current) => current.filter((item) => item.id !== id));
   };
 
-  const addCertificate = async (c: Omit<Certificate, "id">) => {
-    if (!supabase) throw new Error("Supabase not configured");
-    const { data, error } = await supabase
-      .from("portfolio_certificates")
-      .insert({
-        title: c.title,
-        title_ar: c.titleAr,
-        issuer: c.issuer,
-        issuer_ar: c.issuerAr,
-        date: c.date,
-        credential_url: c.credentialUrl,
-        badge_color: c.badgeColor,
-        sort_order: certificates.length,
-      })
-      .select()
-      .single();
-    if (error) throw new Error(error.message);
-    setCertificates((prev) => [...prev, {
-      id: data.id,
-      sortOrder: data.sort_order ?? 0,
-      title: data.title ?? "",
-      titleAr: data.title_ar ?? "",
-      issuer: data.issuer ?? "",
-      issuerAr: data.issuer_ar ?? "",
-      date: data.date ?? "",
-      credentialUrl: data.credential_url ?? "",
-      badgeColor: data.badge_color ?? "#6C63FF",
-    }]);
+  const addCertificate = async (item: Omit<Certificate, "id">) => {
+    const saved = await insertRecord("portfolio_certificates", certificatePayload({ ...item, sortOrder: certificates.length }), mapCertificate);
+    setCertificates((current) => [...current, saved]);
   };
-
-  const updateCertificate = async (id: string, c: Partial<Certificate>) => {
-    if (!supabase) throw new Error("Supabase not configured");
-    const { data, error } = await supabase
-      .from("portfolio_certificates")
-      .update({
-        title: c.title,
-        title_ar: c.titleAr,
-        issuer: c.issuer,
-        issuer_ar: c.issuerAr,
-        date: c.date,
-        credential_url: c.credentialUrl,
-        badge_color: c.badgeColor,
-        sort_order: c.sortOrder,
-      })
-      .eq("id", id)
-      .select()
-      .single();
-    if (error) throw new Error(error.message);
-    setCertificates((prev) => prev.map((item) => item.id === id ? {
-      id: data.id,
-      sortOrder: data.sort_order ?? 0,
-      title: data.title ?? "",
-      titleAr: data.title_ar ?? "",
-      issuer: data.issuer ?? "",
-      issuerAr: data.issuer_ar ?? "",
-      date: data.date ?? "",
-      credentialUrl: data.credential_url ?? "",
-      badgeColor: data.badge_color ?? "#6C63FF",
-    } : item));
+  const updateCertificate = async (id: string, item: Partial<Certificate>) => {
+    const saved = await updateRecord("portfolio_certificates", id, certificatePayload(item), mapCertificate);
+    setCertificates((current) => current.map((entry) => (entry.id === id ? saved : entry)));
   };
-
   const deleteCertificate = async (id: string) => {
-    if (!supabase) throw new Error("Supabase not configured");
-    const { error } = await supabase.from("portfolio_certificates").delete().eq("id", id);
-    if (error) throw new Error(error.message);
-    setCertificates((prev) => prev.filter((c) => c.id !== id));
+    await deleteRecord("portfolio_certificates", id);
+    setCertificates((current) => current.filter((item) => item.id !== id));
   };
 
-  const addTestimonial = async (t: Omit<Testimonial, "id">) => {
-    if (!supabase) throw new Error("Supabase not configured");
-    const { data, error } = await supabase
-      .from("portfolio_testimonials")
-      .insert({
-        name: t.name,
-        name_ar: t.nameAr,
-        role: t.role,
-        role_ar: t.roleAr,
-        company: t.company,
-        company_ar: t.companyAr,
-        country_code: t.countryCode,
-        text: t.text,
-        text_ar: t.textAr,
-        highlight: t.highlight,
-        highlight_ar: t.highlightAr,
-        rating: t.rating,
-        image_url: t.imageUrl,
-        sort_order: testimonials.length,
-      })
-      .select()
-      .single();
-    if (error) throw new Error(error.message);
-    setTestimonials((prev) => [...prev, {
-      id: data.id,
-      sortOrder: data.sort_order ?? 0,
-      name: data.name ?? "",
-      nameAr: data.name_ar ?? "",
-      role: data.role ?? "",
-      roleAr: data.role_ar ?? "",
-      company: data.company ?? "",
-      companyAr: data.company_ar ?? "",
-      countryCode: data.country_code === "SY" ? "SY" : "SA",
-      text: data.text ?? "",
-      textAr: data.text_ar ?? "",
-      highlight: data.highlight ?? "",
-      highlightAr: data.highlight_ar ?? "",
-      rating: data.rating ?? 5,
-      imageUrl: data.image_url ?? "",
-    }]);
+  const addTestimonial = async (item: Omit<Testimonial, "id">) => {
+    const saved = await insertRecord("portfolio_testimonials", testimonialPayload({ ...item, sortOrder: testimonials.length }), mapTestimonial);
+    setTestimonials((current) => [...current, saved]);
   };
-
-  const updateTestimonial = async (id: string, t: Partial<Testimonial>) => {
-    if (!supabase) throw new Error("Supabase not configured");
-    const { data, error } = await supabase
-      .from("portfolio_testimonials")
-      .update({
-        name: t.name,
-        name_ar: t.nameAr,
-        role: t.role,
-        role_ar: t.roleAr,
-        company: t.company,
-        company_ar: t.companyAr,
-        country_code: t.countryCode,
-        text: t.text,
-        text_ar: t.textAr,
-        highlight: t.highlight,
-        highlight_ar: t.highlightAr,
-        rating: t.rating,
-        image_url: t.imageUrl,
-        sort_order: t.sortOrder,
-      })
-      .eq("id", id)
-      .select()
-      .single();
-    if (error) throw new Error(error.message);
-    setTestimonials((prev) => prev.map((item) => item.id === id ? {
-      id: data.id,
-      sortOrder: data.sort_order ?? 0,
-      name: data.name ?? "",
-      nameAr: data.name_ar ?? "",
-      role: data.role ?? "",
-      roleAr: data.role_ar ?? "",
-      company: data.company ?? "",
-      companyAr: data.company_ar ?? "",
-      countryCode: data.country_code === "SY" ? "SY" : "SA",
-      text: data.text ?? "",
-      textAr: data.text_ar ?? "",
-      highlight: data.highlight ?? "",
-      highlightAr: data.highlight_ar ?? "",
-      rating: data.rating ?? 5,
-      imageUrl: data.image_url ?? "",
-    } : item));
+  const updateTestimonial = async (id: string, item: Partial<Testimonial>) => {
+    const saved = await updateRecord("portfolio_testimonials", id, testimonialPayload(item), mapTestimonial);
+    setTestimonials((current) => current.map((entry) => (entry.id === id ? saved : entry)));
   };
-
   const deleteTestimonial = async (id: string) => {
-    if (!supabase) throw new Error("Supabase not configured");
-    const { error } = await supabase.from("portfolio_testimonials").delete().eq("id", id);
-    if (error) throw new Error(error.message);
-    setTestimonials((prev) => prev.filter((t) => t.id !== id));
+    await deleteRecord("portfolio_testimonials", id);
+    setTestimonials((current) => current.filter((item) => item.id !== id));
   };
 
   return (
-    <PortfolioContext.Provider value={{
-      isLoading,
-      language, setLanguage,
-      personalInfo, setPersonalInfo,
-      projects, setProjects, addProject, updateProject, deleteProject,
-      experience, setExperience, addExperience, updateExperience, deleteExperience,
-      education, setEducation, addEducation, updateEducation, deleteEducation,
-      certificates, setCertificates, addCertificate, updateCertificate, deleteCertificate,
-      testimonials, setTestimonials, addTestimonial, updateTestimonial, deleteTestimonial,
-    }}>
+    <PortfolioContext.Provider
+      value={{
+        isLoading,
+        language,
+        setLanguage,
+        personalInfo,
+        setPersonalInfo,
+        projects,
+        setProjects,
+        addProject,
+        updateProject,
+        deleteProject,
+        experience,
+        setExperience,
+        addExperience,
+        updateExperience,
+        deleteExperience,
+        education,
+        setEducation,
+        addEducation,
+        updateEducation,
+        deleteEducation,
+        certificates,
+        setCertificates,
+        addCertificate,
+        updateCertificate,
+        deleteCertificate,
+        testimonials,
+        setTestimonials,
+        addTestimonial,
+        updateTestimonial,
+        deleteTestimonial,
+      }}
+    >
       {children}
     </PortfolioContext.Provider>
   );
