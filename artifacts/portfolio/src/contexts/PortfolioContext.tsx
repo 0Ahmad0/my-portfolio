@@ -63,8 +63,13 @@ export type Testimonial = {
   nameAr: string;
   role: string;
   roleAr: string;
+  company: string;
+  companyAr: string;
+  countryCode: "SA" | "SY";
   text: string;
   textAr: string;
+  highlight: string;
+  highlightAr: string;
   rating: number;
   imageUrl: string;
 };
@@ -419,8 +424,13 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
           nameAr: row.name_ar ?? "",
           role: row.role ?? "",
           roleAr: row.role_ar ?? "",
+          company: row.company ?? "",
+          companyAr: row.company_ar ?? "",
+          countryCode: row.country_code === "SY" ? "SY" : "SA",
           text: row.text ?? "",
           textAr: row.text_ar ?? "",
+          highlight: row.highlight ?? "",
+          highlightAr: row.highlight_ar ?? "",
           rating: row.rating ?? 5,
           imageUrl: row.image_url ?? "",
         })));
@@ -852,8 +862,13 @@ const addProject = async (p: Omit<Project, "id">) => {
         name_ar: t.nameAr,
         role: t.role,
         role_ar: t.roleAr,
+        company: t.company,
+        company_ar: t.companyAr,
+        country_code: t.countryCode,
         text: t.text,
         text_ar: t.textAr,
+        highlight: t.highlight,
+        highlight_ar: t.highlightAr,
         rating: t.rating,
         image_url: t.imageUrl,
         sort_order: testimonials.length,
@@ -868,8 +883,13 @@ const addProject = async (p: Omit<Project, "id">) => {
       nameAr: data.name_ar ?? "",
       role: data.role ?? "",
       roleAr: data.role_ar ?? "",
+      company: data.company ?? "",
+      companyAr: data.company_ar ?? "",
+      countryCode: data.country_code === "SY" ? "SY" : "SA",
       text: data.text ?? "",
       textAr: data.text_ar ?? "",
+      highlight: data.highlight ?? "",
+      highlightAr: data.highlight_ar ?? "",
       rating: data.rating ?? 5,
       imageUrl: data.image_url ?? "",
     }]);
@@ -884,8 +904,13 @@ const addProject = async (p: Omit<Project, "id">) => {
         name_ar: t.nameAr,
         role: t.role,
         role_ar: t.roleAr,
+        company: t.company,
+        company_ar: t.companyAr,
+        country_code: t.countryCode,
         text: t.text,
         text_ar: t.textAr,
+        highlight: t.highlight,
+        highlight_ar: t.highlightAr,
         rating: t.rating,
         image_url: t.imageUrl,
         sort_order: t.sortOrder,
@@ -901,8 +926,13 @@ const addProject = async (p: Omit<Project, "id">) => {
       nameAr: data.name_ar ?? "",
       role: data.role ?? "",
       roleAr: data.role_ar ?? "",
+      company: data.company ?? "",
+      companyAr: data.company_ar ?? "",
+      countryCode: data.country_code === "SY" ? "SY" : "SA",
       text: data.text ?? "",
       textAr: data.text_ar ?? "",
+      highlight: data.highlight ?? "",
+      highlightAr: data.highlight_ar ?? "",
       rating: data.rating ?? 5,
       imageUrl: data.image_url ?? "",
     } : item));
