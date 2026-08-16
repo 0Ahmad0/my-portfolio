@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { usePortfolio, type Certificate, type Education, type Experience, type Project, type Testimonial } from "@/contexts/PortfolioContext";
 import { translations } from "@/lib/i18n";
+import { countryName, countryNames, countryValue } from "@/lib/countries";
 import { Award, Briefcase, CheckCircle2, Code2, Eye, Globe, GraduationCap, MessageCircle, Sparkles, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -487,7 +488,7 @@ export function TestimonialDialog({
     setLocal(initial ?? blankTestimonial());
     setSaving(false);
   }, [open, initial]);
-  const isValid = local.name.trim() && local.role.trim() && local.text.trim();
+  const isValid = local.name.trim() && local.role.trim() && local.text.trim() && local.countryCode.trim();
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-xl max-h-[90vh]">
@@ -566,15 +567,18 @@ export function TestimonialDialog({
               </Select>
             </Field>
             <Field label={labels.country} required>
-              <Select value={local.countryCode} onValueChange={(countryCode: "SA" | "SY") => setLocal((l) => ({ ...l, countryCode }))}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="SA">{labels.saudiArabia}</SelectItem>
-                  <SelectItem value="SY">{labels.syria}</SelectItem>
-                </SelectContent>
-              </Select>
+              <Input
+                list="testimonial-countries"
+                value={countryName(local.countryCode, language)}
+                onChange={(e) => setLocal((l) => ({ ...l, countryCode: countryValue(e.target.value, language) }))}
+                dir={language === "ar" ? "rtl" : "ltr"}
+                placeholder={labels.placeholderCountry}
+              />
+              <datalist id="testimonial-countries">
+                {countryNames(language).map((name) => (
+                  <option key={name} value={name} />
+                ))}
+              </datalist>
             </Field>
           </FieldRow>
           <Field label={labels.imageUrl}>
@@ -592,7 +596,7 @@ export function TestimonialDialog({
             onClick={async () => {
               setSaving(true);
               try {
-                await onSave(local);
+                await onSave({ ...local, countryCode: local.countryCode.trim() });
                 onClose();
               } catch {
                 setSaving(false);

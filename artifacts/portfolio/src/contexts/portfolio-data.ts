@@ -62,7 +62,8 @@ export type Testimonial = {
   roleAr: string;
   company: string;
   companyAr: string;
-  countryCode: "SA" | "SY";
+  /** ISO 3166-1 alpha-2 code, or a custom country name typed in the dashboard. */
+  countryCode: string;
   text: string;
   textAr: string;
   highlight: string;
@@ -422,7 +423,7 @@ export const mapTestimonial = (row: Row): Testimonial => ({
   roleAr: row.role_ar ?? "",
   company: row.company ?? "",
   companyAr: row.company_ar ?? "",
-  countryCode: row.country_code === "SY" ? "SY" : "SA",
+  countryCode: row.country_code || "SA",
   text: row.text ?? "",
   textAr: row.text_ar ?? "",
   highlight: row.highlight ?? "",
