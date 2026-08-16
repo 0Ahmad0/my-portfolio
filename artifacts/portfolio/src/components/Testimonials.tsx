@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight, MapPin, Quote, Star } from "lucide-react";
 import { usePortfolio, type Testimonial } from "@/contexts/PortfolioContext";
 import { translations } from "@/lib/i18n";
+import { countryName } from "@/lib/countries";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function Testimonials() {
@@ -20,9 +21,7 @@ export default function Testimonials() {
     company: language === "ar" ? testimonial.companyAr || testimonial.company : testimonial.company,
     text: language === "ar" ? testimonial.textAr || testimonial.text : testimonial.text,
     highlight: language === "ar" ? testimonial.highlightAr || testimonial.highlight : testimonial.highlight,
-    country: testimonial.countryCode === "SY"
-      ? (language === "ar" ? "سوريا" : "Syria")
-      : (language === "ar" ? "المملكة العربية السعودية" : "Saudi Arabia"),
+    country: countryName(testimonial.countryCode, language),
   });
 
   const goTo = (index: number) => {
@@ -160,14 +159,15 @@ export default function Testimonials() {
           })}
         </div>
 
-        <div className="flex items-center justify-center gap-3 mt-7" dir="ltr">
+        {/* No dir override: in RTL the row flips, so "previous" sits on the right — where Arabic readers expect it. */}
+        <div className="flex items-center justify-center gap-3 mt-7">
           <button
             type="button"
             onClick={() => goTo(current - 1)}
             aria-label={language === "ar" ? "التقييم السابق" : "Previous testimonial"}
             className="w-11 h-11 rounded-full border border-primary/30 bg-background/70 text-primary flex items-center justify-center hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors"
           >
-            <ChevronLeft aria-hidden="true" className="w-5 h-5" />
+            {language === "ar" ? <ChevronRight aria-hidden="true" className="w-5 h-5" /> : <ChevronLeft aria-hidden="true" className="w-5 h-5" />}
           </button>
           <span className="min-w-14 text-center text-sm text-muted-foreground" aria-live="polite">
             {current + 1} / {testimonials.length}
@@ -178,7 +178,7 @@ export default function Testimonials() {
             aria-label={language === "ar" ? "التقييم التالي" : "Next testimonial"}
             className="w-11 h-11 rounded-full border border-primary/30 bg-background/70 text-primary flex items-center justify-center hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors"
           >
-            <ChevronRight aria-hidden="true" className="w-5 h-5" />
+            {language === "ar" ? <ChevronLeft aria-hidden="true" className="w-5 h-5" /> : <ChevronRight aria-hidden="true" className="w-5 h-5" />}
           </button>
         </div>
       </div>
