@@ -6,6 +6,7 @@ export const translations = {
             experience: "Experience",
             education: "Education",
             certificates: "Certificates",
+            testimonials: "Testimonials",
             contact: "Contact",
             dashboard: "Dashboard"
         },
@@ -381,6 +382,7 @@ export const translations = {
             experience: "الخبرات",
             education: "التعليم",
             certificates: "الشهادات",
+            testimonials: "آراء العملاء",
             contact: "اتصل بي",
             dashboard: "لوحة التحكم"
         },

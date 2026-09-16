@@ -23,7 +23,7 @@ function ExperienceItem({
         <>
           {/* Content Card - Left */}
           <div className="hidden md:flex md:w-[calc(50%-40px)] md:justify-end md:pr-8 group/card">
-            <div className="glass rounded-2xl p-6 w-full group-hover/card:border-primary/50 group-hover/card:shadow-lg group-hover/card:shadow-primary/20 transition-all duration-300 border-l-2 border-primary/30">
+            <div className="engineering-card p-6 w-full group-hover/card:border-primary/50 group-hover/card:shadow-lg group-hover/card:shadow-primary/15 transition-all duration-300">
               <span className="text-xs font-mono text-primary/80 uppercase tracking-widest">
                 {exp.period}
               </span>
@@ -71,7 +71,7 @@ function ExperienceItem({
 
           {/* Content Card - Right */}
           <div className="hidden md:flex md:w-[calc(50%-40px)] md:justify-start md:pl-8 group/card">
-            <div className="glass rounded-2xl p-6 w-full group-hover/card:border-primary/50 group-hover/card:shadow-lg group-hover/card:shadow-primary/20 transition-all duration-300 border-r-2 border-primary/30">
+            <div className="engineering-card p-6 w-full group-hover/card:border-primary/50 group-hover/card:shadow-lg group-hover/card:shadow-primary/15 transition-all duration-300">
               <span className="text-xs font-mono text-primary/80 uppercase tracking-widest">
                 {exp.period}
               </span>
@@ -90,11 +90,11 @@ function ExperienceItem({
       )}
 
       {/* Mobile layout — styled like Education */}
-      <div className="md:hidden glass rounded-2xl p-6 group hover:border-primary/40 transition-all duration-300">
+      <div className="engineering-card md:hidden p-6 group hover:border-primary/40 transition-all duration-300">
         <div className="flex gap-4">
           {/* Icon */}
           <div className="flex-shrink-0">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+            <div className="w-12 h-12 chamfer rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
               <Briefcase className="w-6 h-6 text-primary" />
             </div>
           </div>
@@ -132,7 +132,7 @@ export default function Experience() {
     <section id="experience" className="py-28 relative">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <span className="inline-block py-1 px-3 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-wider mb-4">
+          <span className="inline-block py-1 px-3 chamfer rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-wider mb-4">
             {language === "ar" ? "مسيرتي المهنية" : "CAREER PATH"}
           </span>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight">

@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function Testimonials() {
-  const { language, testimonials } = usePortfolio();
+  const { language, testimonials, isLoading } = usePortfolio();
   const [selected, setSelected] = useState<Testimonial | null>(null);
   const [current, setCurrent] = useState(0);
   const reviewTrigger = useRef<HTMLButtonElement | null>(null);
@@ -64,7 +64,26 @@ export default function Testimonials() {
     });
   };
 
-  if (testimonials.length === 0) return null;
+  if (testimonials.length === 0) {
+    return (
+      <section id="testimonials" className="py-20 relative">
+        <div className="container mx-auto px-6 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            {t.testimonials.title}
+          </h2>
+          <p role="status" className="text-muted-foreground">
+            {isLoading
+              ? language === "ar"
+                ? "جارٍ تحميل آراء العملاء…"
+                : "Loading client testimonials…"
+              : language === "ar"
+                ? "لا توجد آراء للعرض حالياً."
+                : "No testimonials to display at the moment."}
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="testimonials" className="py-20 relative overflow-hidden">
@@ -73,7 +92,7 @@ export default function Testimonials() {
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-10">
-          <span className="inline-block py-1 px-3 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-wider mb-4">
+          <span className="inline-block py-1 px-3 chamfer rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-wider mb-4">
             {language === "ar" ? "الآراء" : "FEEDBACK"}
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
@@ -115,7 +134,7 @@ export default function Testimonials() {
             return (
               <article
                 key={testimonial.id}
-                className="w-full md:w-[calc((100%-1.5rem)/2)] xl:w-[calc((100%-3rem)/3)] flex-none snap-start min-h-[350px] rounded-3xl border border-primary/25 bg-background/65 backdrop-blur-xl p-5 flex flex-col shadow-lg shadow-primary/5 hover:border-primary/50 transition-colors"
+                className="engineering-card w-full md:w-[calc((100%-1.5rem)/2)] xl:w-[calc((100%-3rem)/3)] flex-none snap-start min-h-[350px] p-5 flex flex-col hover:border-primary/50 transition-[transform,border-color,box-shadow]"
               >
                 <div className="flex items-center justify-between gap-4 mb-5">
                   <div
@@ -131,7 +150,7 @@ export default function Testimonials() {
                       />
                     ))}
                   </div>
-                  <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/60 border border-border/60 rounded-full px-2.5 py-1">
+                  <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/60 border border-border/60 chamfer rounded-full px-2.5 py-1">
                     <MapPin
                       aria-hidden="true"
                       className="w-3.5 h-3.5 text-primary"
@@ -172,7 +191,7 @@ export default function Testimonials() {
                         {highlights.map((highlight) => (
                           <span
                             key={highlight}
-                            className="text-xs rounded-full bg-primary/10 text-primary border border-primary/20 px-2.5 py-1"
+                            className="text-xs chamfer rounded-full bg-primary/10 text-primary border border-primary/20 px-2.5 py-1"
                           >
                             {highlight}
                           </span>
@@ -221,7 +240,7 @@ export default function Testimonials() {
             aria-label={
               language === "ar" ? "التقييم السابق" : "Previous testimonial"
             }
-            className="w-11 h-11 rounded-full border border-primary/30 bg-background/70 text-primary flex items-center justify-center hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors"
+            className="w-11 h-11 chamfer rounded-full border border-primary/30 bg-background/70 text-primary flex items-center justify-center hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors"
           >
             {language === "ar" ? (
               <ChevronRight aria-hidden="true" className="w-5 h-5" />
@@ -241,7 +260,7 @@ export default function Testimonials() {
             aria-label={
               language === "ar" ? "التقييم التالي" : "Next testimonial"
             }
-            className="w-11 h-11 rounded-full border border-primary/30 bg-background/70 text-primary flex items-center justify-center hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors"
+            className="w-11 h-11 chamfer rounded-full border border-primary/30 bg-background/70 text-primary flex items-center justify-center hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors"
           >
             {language === "ar" ? (
               <ChevronLeft aria-hidden="true" className="w-5 h-5" />

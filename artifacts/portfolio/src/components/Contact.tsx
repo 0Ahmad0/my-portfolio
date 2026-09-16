@@ -133,12 +133,12 @@ function ContactDetails() {
   ].filter((link) => link.href);
 
   return (
-    <div className="lg:col-span-2 glass rounded-3xl p-6 sm:p-8 space-y-7">
+    <div className="engineering-card lg:col-span-2 h-full p-6 sm:p-8 flex flex-col gap-7">
       <h3 className="text-xl font-semibold">
         {language === "ar" ? "خلّينا على تواصل" : "Stay in touch"}
       </h3>
       <div className="flex items-start gap-4">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+        <div className="w-10 h-10 chamfer rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
           <Mail className="w-5 h-5 text-primary" />
         </div>
         <div>
@@ -156,7 +156,7 @@ function ContactDetails() {
       </div>
 
       <div className="flex items-start gap-4">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+        <div className="w-10 h-10 chamfer rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
           <MapPin className="w-5 h-5 text-primary" />
         </div>
         <div>
@@ -171,7 +171,7 @@ function ContactDetails() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
+      <div className="chamfer rounded-2xl border border-primary/20 bg-primary/5 p-5">
         <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
           {language === "ar" ? "وقت الاستجابة" : "Response Time"}
         </p>
@@ -180,7 +180,7 @@ function ContactDetails() {
         </p>
       </div>
 
-      <div className="border-t border-border pt-6">
+      <div className="mt-auto border-t border-border pt-6">
         <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3">
           {t.contact.socialLinks}
         </p>
@@ -191,7 +191,7 @@ function ContactDetails() {
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className={`w-11 h-11 rounded-lg flex items-center justify-center transition-colors ${className}`}
+              className={`w-11 h-11 chamfer rounded-lg flex items-center justify-center transition-colors ${className}`}
               aria-label={title}
               title={title}
             >
@@ -205,7 +205,7 @@ function ContactDetails() {
         <a
           href={personalInfo.cvUrl}
           download
-          className="rounded-xl border border-border p-4 flex items-center justify-center gap-3 hover:border-primary/40 hover:text-primary transition-colors group"
+          className="chamfer rounded-xl border border-border p-4 flex items-center justify-center gap-3 hover:border-primary/40 hover:text-primary transition-colors group"
         >
           <Download className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
           <span className="font-semibold">{t.contact.downloadCV}</span>
@@ -254,9 +254,9 @@ function ContactForm() {
   };
 
   return (
-    <div className="lg:col-span-3 rounded-3xl border border-border bg-card p-6 sm:p-9 shadow-xl shadow-primary/5 dark:[--input:240_5%_45%] dark:[--destructive:0_85%_72%]">
+    <div className="engineering-card lg:col-span-3 h-full p-6 sm:p-9 dark:[--input:240_5%_45%] dark:[--destructive:0_85%_72%]">
       <div className="mb-8">
-        <div className="mb-5 grid size-12 place-items-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
+        <div className="mb-5 grid size-12 place-items-center chamfer rounded-2xl border border-primary/20 bg-primary/10 text-primary">
           <Mail aria-hidden="true" className="size-6" />
         </div>
         <h3 className="text-2xl font-bold tracking-tight">
@@ -293,7 +293,7 @@ function ContactForm() {
                         required
                         placeholder={t.contact.namePlaceholder}
                         {...field}
-                        className="h-13 rounded-xl bg-background/60 px-4 md:text-base focus-visible:border-primary focus-visible:ring-2 aria-invalid:border-destructive"
+                        className="h-13 rounded-xl bg-background/60 px-4 md:text-base focus-visible:[--line:hsl(var(--primary))] focus-visible:ring-2 aria-invalid:[--line:hsl(var(--destructive))]"
                         data-testid="input-contact-name"
                       />
                     </FormControl>
@@ -317,7 +317,7 @@ function ContactForm() {
                         placeholder={t.contact.emailPlaceholder}
                         type="email"
                         {...field}
-                        className="h-13 rounded-xl bg-background/60 px-4 md:text-base focus-visible:border-primary focus-visible:ring-2 aria-invalid:border-destructive"
+                        className="h-13 rounded-xl bg-background/60 px-4 md:text-base focus-visible:[--line:hsl(var(--primary))] focus-visible:ring-2 aria-invalid:[--line:hsl(var(--destructive))]"
                         data-testid="input-contact-email"
                       />
                     </FormControl>
@@ -342,7 +342,7 @@ function ContactForm() {
                           : "What would you like to build? Tell me about your idea and what you need…"
                       }
                       required
-                      className="min-h-[180px] resize-y rounded-xl bg-background/60 p-4 leading-relaxed md:text-base focus-visible:border-primary focus-visible:ring-2 aria-invalid:border-destructive"
+                      className="min-h-[180px] resize-y rounded-xl bg-background/60 p-4 leading-relaxed md:text-base focus-visible:[--line:hsl(var(--primary))] focus-visible:ring-2 aria-invalid:[--line:hsl(var(--destructive))]"
                       {...field}
                       data-testid="input-contact-message"
                     />
@@ -386,7 +386,7 @@ function ContactForm() {
           </fieldset>
           <div role="status" aria-live="polite" aria-atomic="true">
             {submitStatus === "success" && (
-              <p className="mt-5 flex items-start gap-3 rounded-xl border border-primary/25 bg-primary/10 p-4 text-sm text-foreground">
+              <p className="mt-5 flex items-start gap-3 chamfer rounded-xl border border-primary/25 bg-primary/10 p-4 text-sm text-foreground">
                 <CheckCircle2
                   aria-hidden="true"
                   className="size-5 shrink-0 text-primary"
@@ -397,7 +397,7 @@ function ContactForm() {
               </p>
             )}
             {submitStatus === "error" && (
-              <p className="mt-5 rounded-xl border border-destructive/40 bg-destructive/5 p-4 text-sm text-foreground">
+              <p className="mt-5 chamfer rounded-xl border border-destructive/40 bg-destructive/5 p-4 text-sm text-foreground">
                 {language === "ar"
                   ? "تعذّر الإرسال. رسالتك محفوظة هنا؛ حاول مرة أخرى أو تواصل عبر البريد الإلكتروني."
                   : "Could not send. Your message is still here; try again or use the email link."}
@@ -419,7 +419,7 @@ export default function Contact() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent pointer-events-none" />
       <div className="container mx-auto px-5 sm:px-6 max-w-6xl relative z-10">
         <div className="text-center mb-16">
-          <span className="inline-block py-1 px-3 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-wider mb-4">
+          <span className="inline-block py-1 px-3 chamfer rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-wider mb-4">
             {language === "ar" ? "تواصل معي" : "GET IN TOUCH"}
           </span>
           <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
@@ -430,7 +430,7 @@ export default function Contact() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 items-start gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 items-stretch gap-6 lg:gap-8">
           <ContactForm />
           <ContactDetails />
         </div>
