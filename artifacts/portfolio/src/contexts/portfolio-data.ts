@@ -91,6 +91,8 @@ export type PersonalInfo = {
   avatarUrl: string;
   floatingSkills: string[];
   coreSkills: string[];
+  primaryColor: string;
+  colorRotationEnabled: boolean;
 };
 
 export const defaultFloatingSkills = ["Flutter", "Firebase", "C++", "React", "Git", "Dart"];
@@ -134,6 +136,8 @@ export const defaultPersonalInfo: PersonalInfo = {
   avatarUrl: "/avatar.jpg",
   floatingSkills: defaultFloatingSkills,
   coreSkills: defaultCoreSkills,
+  primaryColor: "#6D28D9",
+  colorRotationEnabled: false,
 };
 
 export const defaultProjects: Project[] = [
@@ -285,6 +289,8 @@ export const mapPersonalInfo = (row: Row): PersonalInfo => ({
   avatarUrl: row.avatar_url ?? "",
   floatingSkills: row.floating_skills ?? defaultFloatingSkills,
   coreSkills: row.core_skills ?? defaultCoreSkills,
+  primaryColor: row.primary_color ?? "#6D28D9",
+  colorRotationEnabled: row.color_rotation_enabled ?? false,
 });
 
 export const personalInfoPayload = (info: PersonalInfo) => ({
@@ -306,6 +312,8 @@ export const personalInfoPayload = (info: PersonalInfo) => ({
   avatar_url: info.avatarUrl,
   floating_skills: info.floatingSkills,
   core_skills: info.coreSkills,
+  primary_color: info.primaryColor,
+  color_rotation_enabled: info.colorRotationEnabled,
 });
 
 export const mapProject = (row: Row): Project => ({

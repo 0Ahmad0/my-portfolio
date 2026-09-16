@@ -6,6 +6,7 @@ export default function AnimatedBackground() {
     >
       <div className="aurora-orb aurora-orb-one" />
       <div className="aurora-orb aurora-orb-two" />
+      <div className="aurora-particles absolute inset-0" />
       <div className="absolute inset-0 aurora-grid" />
     </div>
   );

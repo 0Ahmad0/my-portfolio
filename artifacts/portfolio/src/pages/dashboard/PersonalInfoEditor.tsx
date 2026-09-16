@@ -2,12 +2,18 @@ import { useEffect, useState } from "react";
 import { type PersonalInfo, usePortfolio } from "@/contexts/PortfolioContext";
 import { defaultCoreSkills as DEFAULT_CORE_SKILLS, defaultFloatingSkills as DEFAULT_FLOATING_SKILLS } from "@/contexts/portfolio-data";
 import { translations } from "@/lib/i18n";
-import { ArrowDown, ArrowUp, CheckCircle2, Code2, Download, Globe, Sparkles, Trash2, User } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, CheckCircle2, Clock3, Code2, Download, Globe, Palette, Sparkles, Trash2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import {
+  applyThemeColor,
+  CURATED_THEME_COLORS,
+  getEffectiveThemeColor,
+  normalizeThemeColor,
+} from "@/lib/theme-colors";
 import { Field, FieldRow } from "./DashboardEditors";
 
 /* ─── Personal Info editor (inline, saves in place) ─── */
@@ -31,6 +37,22 @@ export function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSav
       coreSkills: info.coreSkills?.length ? info.coreSkills : DEFAULT_CORE_SKILLS,
     });
   }, [info]);
+
+  useEffect(() => {
+    applyThemeColor(
+      getEffectiveThemeColor(local.primaryColor, local.colorRotationEnabled),
+    );
+    return () => {
+      applyThemeColor(
+        getEffectiveThemeColor(info.primaryColor, info.colorRotationEnabled),
+      );
+    };
+  }, [
+    info.primaryColor,
+    info.colorRotationEnabled,
+    local.primaryColor,
+    local.colorRotationEnabled,
+  ]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -107,6 +129,124 @@ export function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSav
         <Field label={labels.bioAr}>
           <Textarea value={local.bioAr} onChange={(e) => setLocal((l) => ({ ...l, bioAr: e.target.value }))} className="h-24 resize-none" dir="rtl" />
         </Field>
+
+        <div className="border-t border-border pt-5">
+          <div className="mb-5 flex items-start gap-3">
+            <div className="grid size-10 shrink-0 place-items-center rounded-xl border border-primary/20 bg-primary/10">
+              <Palette className="size-5 text-primary" />
+            </div>
+            <div>
+              <p className="font-semibold">
+                {language === "ar" ? "هوية ألوان الموقع" : "Website color identity"}
+              </p>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                {language === "ar"
+                  ? "اختر لونًا ثابتًا، أو فعّل التبديل التلقائي بين 10 ألوان متناسقة كل 6 ساعات."
+                  : "Choose a fixed color, or rotate through 10 curated colors every 6 hours."}
+              </p>
+            </div>
+          </div>
+
+          <div className="mb-5 grid gap-3 sm:grid-cols-2">
+            <button
+              type="button"
+              aria-pressed={!local.colorRotationEnabled}
+              onClick={() => setLocal((current) => ({ ...current, colorRotationEnabled: false }))}
+              className={`rounded-2xl border p-4 text-start transition-colors ${!local.colorRotationEnabled ? "border-primary bg-primary/10 ring-1 ring-primary/30" : "border-border bg-background hover:border-primary/40"}`}
+            >
+              <span className="font-semibold">
+                {language === "ar" ? "لون ثابت" : "Fixed color"}
+              </span>
+              <span className="mt-1 block text-xs text-muted-foreground">
+                {language === "ar" ? "يبقى اللون الذي تختاره." : "Keep the color you select."}
+              </span>
+            </button>
+            <button
+              type="button"
+              aria-pressed={local.colorRotationEnabled}
+              onClick={() => setLocal((current) => ({ ...current, colorRotationEnabled: true }))}
+              className={`rounded-2xl border p-4 text-start transition-colors ${local.colorRotationEnabled ? "border-primary bg-primary/10 ring-1 ring-primary/30" : "border-border bg-background hover:border-primary/40"}`}
+            >
+              <span className="flex items-center gap-2 font-semibold">
+                <Clock3 className="size-4 text-primary" />
+                {language === "ar" ? "تلقائي كل 6 ساعات" : "Automatic every 6 hours"}
+              </span>
+              <span className="mt-1 block text-xs text-muted-foreground">
+                {language === "ar" ? "يتنقل بين الألوان العشرة." : "Cycle through all ten colors."}
+              </span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
+            {CURATED_THEME_COLORS.map((color) => {
+              const selected =
+                !local.colorRotationEnabled &&
+                normalizeThemeColor(local.primaryColor) === color.value;
+              return (
+                <button
+                  key={color.value}
+                  type="button"
+                  title={language === "ar" ? color.nameAr : color.nameEn}
+                  aria-label={language === "ar" ? color.nameAr : color.nameEn}
+                  aria-pressed={selected}
+                  onClick={() =>
+                    setLocal((current) => ({
+                      ...current,
+                      primaryColor: color.value,
+                      colorRotationEnabled: false,
+                    }))
+                  }
+                  className="grid aspect-square min-h-10 place-items-center rounded-xl border-2 border-white/70 shadow-sm transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  style={{ backgroundColor: color.value }}
+                >
+                  {selected && <Check className="size-5 text-white drop-shadow" />}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="mt-5 flex flex-col gap-3 rounded-2xl border border-border bg-muted/35 p-4 sm:flex-row sm:items-center">
+            <div
+              className="size-12 shrink-0 rounded-xl border-2 border-white shadow-sm"
+              style={{
+                backgroundColor: getEffectiveThemeColor(
+                  local.primaryColor,
+                  local.colorRotationEnabled,
+                ),
+              }}
+            />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium">
+                {local.colorRotationEnabled
+                  ? language === "ar"
+                    ? "اللون التلقائي الحالي"
+                    : "Current automatic color"
+                  : language === "ar"
+                    ? "لون مخصص"
+                    : "Custom color"}
+              </p>
+              <p className="font-mono text-xs uppercase text-muted-foreground">
+                {getEffectiveThemeColor(local.primaryColor, local.colorRotationEnabled)}
+              </p>
+            </div>
+            <label className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-3 rounded-xl border border-border bg-background px-4 text-sm font-medium hover:border-primary/50">
+              <Palette className="size-4 text-primary" />
+              {language === "ar" ? "اختيار لون" : "Pick a color"}
+              <input
+                type="color"
+                value={normalizeThemeColor(local.primaryColor)}
+                onChange={(event) =>
+                  setLocal((current) => ({
+                    ...current,
+                    primaryColor: event.target.value.toUpperCase(),
+                    colorRotationEnabled: false,
+                  }))
+                }
+                className="sr-only"
+              />
+            </label>
+          </div>
+        </div>
 
         <div className="border-t border-border pt-5">
           <p className="text-sm font-semibold mb-4 flex items-center gap-2">
@@ -289,7 +429,7 @@ export function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSav
           </Field>
         </div>
         <div className="flex justify-end pt-2">
-          <Button onClick={handleSave} disabled={saving} className="gap-2 min-w-[140px]">
+          <Button onClick={handleSave} disabled={saving} className="gap-2 min-w-35">
             {saving ? (
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
             ) : saved ? (

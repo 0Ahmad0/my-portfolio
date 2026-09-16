@@ -17,7 +17,9 @@ insert into portfolio_personal_info (
   cv_url,
   avatar_url,
   floating_skills,
-  core_skills
+  core_skills,
+  primary_color,
+  color_rotation_enabled
 ) values (
   true,
   'Ahmad Alhariri',
@@ -37,7 +39,9 @@ insert into portfolio_personal_info (
   '#',
   '/avatar.jpg',
   array['Flutter','Firebase','C++','React','Git','Dart'],
-  array['React','Flutter','Next.js','TypeScript','Node.js','Python','C++','Dart','Android','Kotlin','Swift','Figma','Tailwind','Docker','MongoDB','PostgreSQL','Firebase','Git']
+  array['React','Flutter','Next.js','TypeScript','Node.js','Python','C++','Dart','Android','Kotlin','Swift','Figma','Tailwind','Docker','MongoDB','PostgreSQL','Firebase','Git'],
+  '#6D28D9',
+  false
 );
 
 insert into portfolio_projects (

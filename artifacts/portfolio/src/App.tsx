@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import { PortfolioProvider } from "@/contexts/PortfolioContext";
+import PrimaryColorController from "@/components/PrimaryColorController";
 import { ThemeProvider } from "next-themes";
 import NotFound from "@/pages/not-found";
 import Portfolio from "@/pages/Portfolio";
@@ -34,6 +35,7 @@ function App() {
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <PortfolioProvider>
+        <PrimaryColorController />
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
           <Router />
         </WouterRouter>

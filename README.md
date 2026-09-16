@@ -1,415 +1,374 @@
-# 🚀 My Portfolio — Pro Max Personal Portfolio Website
+# معرض أعمال أحمد الحريري
 
-A cutting-edge, fully responsive personal portfolio website featuring advanced animations, dark/light mode support, English/Arabic (RTL) localization, and a password-protected admin dashboard for managing portfolio content.
+موقع شخصي ثنائي اللغة لعرض المشاريع والخبرات والتعليم والشهادات وآراء العملاء، مع لوحة تحكم محمية لإدارة المحتوى وإعدادات هوية الموقع.
 
-For image optimization, accessibility checks and production performance verification, see [Performance maintenance](artifacts/portfolio/PERFORMANCE.md).
+الموقع مبني باستخدام React وTypeScript وVite، ويستخدم Supabase للمحتوى والمصادقة ورسائل التواصل.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
-![React](https://img.shields.io/badge/React-19.1.0-61dafb.svg)
-![Vite](https://img.shields.io/badge/Vite-7.3.2-646cff.svg)
+## المميزات
 
----
+- دعم كامل للغتين العربية والإنجليزية.
+- اتجاه `RTL` للعربية و`LTR` للإنجليزية.
+- وضع فاتح وداكن.
+- تصميم متجاوب مع الهاتف والتابلت وسطح المكتب.
+- قائمة هاتف جانبية تفتح من اليمين بالعربية ومن اليسار بالإنجليزية.
+- لوحة تحكم تعتمد على Supabase Auth وRLS.
+- إدارة المشاريع والخبرات والتعليم والشهادات وآراء العملاء.
+- إدارة البيانات الشخصية وروابط التواصل والسيرة الذاتية.
+- إدارة المهارات الأساسية والأيقونات المتحركة حول الصورة الشخصية.
+- نموذج تواصل مع تحقق من المدخلات ورسائل نجاح وفشل واضحة.
+- صور WebP متجاوبة وخطوط محلية وتحسينات للأداء والوصول.
 
-## ✨ Features
+## آخر التحديثات
 
-### 🎨 Visual Design
-- **Aurora Background** - Lightweight CSS gradients with reduced-motion support
-- **Responsive Hero Section** - Animated typewriter roles with dynamic font sizing (mobile to desktop)
-- **Hexagon Profile Picture** - Responsive WebP avatar with surrounding skill icons
-- **Testimonials Carousel** - Accessible manual controls and full-review dialogs
+### نظام ألوان ديناميكي
 
-### 🌍 Localization
-- **Bilingual Support** - Full English/Arabic (RTL) support
-- **Dynamic Theme** - Dark/light mode with theme-aware opacity adjustments
-- **Responsive Typography** - Arabic text rendering optimized for ligatures and proper text flow
+أصبحت هوية الموقع قابلة للتخصيص من لوحة التحكم:
 
-### 🔐 Admin Dashboard
-- **Authenticated Access** - Dashboard at `/dashboard`, using the configured Supabase email/password account
-- **Editable Sections**:
-  - Projects (add/edit/delete with descriptions and links)
-  - Experience (manage work history with dates and descriptions)
-  - Education (track educational background)
-  - Certificates (showcase achievements)
-  - Testimonials (manage client/user feedback with ratings and images)
-  - Floating Skills (configure orbiting skill icons around profile picture)
+- 10 ألوان جاهزة ومتناسقة.
+- Color Picker لاختيار لون مخصص.
+- معاينة مباشرة قبل الحفظ.
+- وضع لون ثابت.
+- وضع تلقائي ينتقل بين الألوان العشرة كل 6 ساعات.
+- حساب تلقائي للون النص فوق اللون الأساسي لضمان التباين.
+- توليد درجات مناسبة للوضعين الفاتح والداكن من اللون المختار.
 
-### 📱 Mobile-First Responsive Design
-- Seamless experience from mobile to desktop
-- Named, touch-friendly carousel and navigation controls on mobile
-- Optimized performance metrics
+يعتمد النظام على الحقلين التاليين في جدول `portfolio_personal_info`:
 
----
+- `primary_color`
+- `color_rotation_enabled`
 
-## 🛠️ Tech Stack
+### تحسين الوضع الفاتح
 
-### Frontend Framework
-- **React** `19.1.0` - UI library
-- **Vite** `7.3.2` - Lightning-fast build tool and dev server
-- **TypeScript** - Type-safe development
+تمت إعادة تصميم درجات الوضع الفاتح لتوفير:
 
-### Styling & Animation
-- **Tailwind CSS** `4.1.14` - Utility-first CSS framework
-- **Framer Motion** `12.23.24` - Advanced animation library
-- **Class Variance Authority** - Component styling patterns
-- **TailwindMerge** - Intelligent CSS class merging
+- خلفية هادئة تفصل المحتوى عن البطاقات.
+- بطاقات بيضاء وحدود واضحة وغير ثقيلة.
+- حقول إدخال أكثر وضوحًا.
+- ظلال متوازنة.
+- نصوص ثانوية بتباين أفضل.
+- ألوان focus وaccent مرتبطة باللون الأساسي المختار.
 
-### UI Components
-- **Radix UI** - Unstyled, accessible component primitives
-- **shadcn/ui** - High-quality React components built on Radix UI
-- **Lucide React** `0.545.0` - Beautiful SVG icon library
+### حركة أيقونات الصورة الشخصية
 
-### Theming & Localization
-- **next-themes** `0.4.6` - Next.js-like theme management for React
-- **wouter** `3.3.5` - Lightweight client-side router
+تتحرك أيقونات المهارات حول الصورة بحركة CSS خفيفة تشمل الارتفاع والانخفاض والدوران. تتوقف الحركة تلقائيًا عند تفعيل `prefers-reduced-motion` في نظام المستخدم.
 
-### Form & Validation
-- **React Hook Form** - Performant, flexible form management
-- **Zod** `3.25.76` - TypeScript-first schema validation
-- **@hookform/resolvers** - Zod resolver for React Hook Form
+### قائمة الهاتف الجانبية
 
-### Data Management
-- **Supabase** - Portfolio content, authentication and contact messages
-- **LocalStorage** - Theme, language and visitor preferences
+- تفتح من الجهة المناسبة للغة.
+- تدعم الإغلاق من زر الإغلاق، أو خارج القائمة، أو زر `Escape`، أو رابط التنقل.
+- تحصر تركيز لوحة المفاتيح داخلها أثناء فتحها.
+- تعيد التركيز إلى زر القائمة بعد الإغلاق.
+- تغلق تلقائيًا عند الانتقال إلى عرض سطح المكتب.
 
-### Development Tools
-- **TypeScript** `^5.x` - Static type checking
-- **Tailwind CSS Vite Plugin** - Fast CSS compilation
-- **@vitejs/plugin-react** - Fast refresh and optimizations
+## التقنيات المستخدمة
 
----
+- React 19
+- TypeScript 5
+- Vite 7
+- Tailwind CSS 4
+- Radix UI
+- Framer Motion
+- React Hook Form وZod
+- Supabase Auth وPostgreSQL وRLS
+- pnpm workspaces
+- Vercel
 
-## 📋 Requirements
+## بنية المشروع
 
-### System Requirements
-- **Node.js** `^18.0.0` or higher
-- **pnpm** `^8.0.0` or higher (package manager)
-- **Git** `^2.30.0` (for version control)
+```text
+my-portfolio/
+├── artifacts/
+│   ├── portfolio/                 تطبيق الواجهة الرئيسي
+│   │   ├── public/                الصور والخطوط والملفات العامة
+│   │   ├── scripts/               تحسين الصور واختبارات المشروع
+│   │   └── src/
+│   │       ├── components/        مكونات الواجهة
+│   │       ├── contexts/          البيانات وحالة الموقع
+│   │       ├── hooks/             React hooks
+│   │       ├── lib/               الترجمة والأدوات ونظام الألوان
+│   │       └── pages/             الموقع ولوحة التحكم
+│   └── api-server/                خادم API اختياري
+├── lib/                           حزم مشتركة وقاعدة بيانات الخادم
+├── supabase/
+│   ├── migrations/               تغييرات مخطط Supabase
+│   ├── config.toml               إعداد Supabase المحلي
+│   └── seed.sql                  بيانات البداية
+├── README.md                     دليل المشروع
+├── supabase-schema.md            مرجع مخطط قاعدة البيانات
+├── pnpm-workspace.yaml           إعداد مساحة العمل
+└── vercel.json                   إعداد النشر من جذر المستودع
+```
 
-### Browser Support
-- Chrome/Edge (latest 2 versions)
-- Firefox (latest 2 versions)
-- Safari (latest 2 versions)
-- Mobile browsers (iOS Safari, Chrome Mobile)
+## المتطلبات
 
-### Optional for Deployment
-- **GitHub Account** - For version control and Actions
-- **Vercel Account** - For seamless deployment (recommended)
-- **Netlify Account** - Alternative deployment option
+- Node.js `20.19` أو أحدث.
+- pnpm بالإصدار المحدد في `package.json`، حاليًا `10.33.2`.
+- Git.
+- مشروع Supabase.
+- حساب Vercel عند النشر على Vercel.
 
-### Supabase Required Files
-- `supabase-schema.md` - Full database schema reference.
-- `supabase/migrations/20260510011500_portfolio_schema.sql` - Base Supabase schema, including `portfolio_personal_info.core_skills`.
-- `supabase/migrations/20260627120000_add_core_skills.sql` - Adds `core_skills` to existing databases.
-- `supabase/seed.sql` - Starter portfolio data, including `core_skills` values.
-
----
-
-## 🚀 Getting Started
-
-### 1. Clone the Repository
+## تثبيت المشروع
 
 ```bash
 git clone https://github.com/0Ahmad0/my-portfolio.git
 cd my-portfolio
-```
-
-### 2. Install Dependencies
-
-```bash
-# Using pnpm (recommended)
-pnpm install
-
-# Or using npm
-npm install
-
-# Or using yarn
-yarn install
-```
-
-### 3. Start Development Server
-
-```bash
-pnpm --filter @workspace/portfolio run dev
-```
-
-The portfolio will be available at `http://localhost:5173` (or the assigned PORT if in Replit).
-
-### 4. Access Admin Dashboard
-
-Navigate to `/dashboard` and enter the password: `admin123`
-
----
-
-## 📂 Project Structure
-
-```
-my-portfolio/
-├── artifacts/
-│   ├── portfolio/                    # Main portfolio application
-│   │   ├── src/
-│   │   │   ├── components/          # Reusable React components
-│   │   │   │   ├── Hero.tsx         # Hero section with typewriter
-│   │   │   │   ├── About.tsx        # About section with hexagon avatar
-│   │   │   │   ├── Testimonials.tsx # Carousel testimonials
-│   │   │   │   ├── AnimatedBackground.tsx
-│   │   │   │   └── ui/              # shadcn/ui components
-│   │   │   ├── pages/
-│   │   │   │   ├── Portfolio.tsx    # Main portfolio page
-│   │   │   │   └── Dashboard.tsx    # Admin dashboard
-│   │   │   ├── contexts/
-│   │   │   │   └── PortfolioContext.tsx # Global state management
-│   │   │   ├── hooks/               # Custom React hooks
-│   │   │   ├── lib/
-│   │   │   │   └── i18n.ts          # Translations (EN/AR)
-│   │   │   ├── App.tsx              # Root component
-│   │   │   ├── main.tsx             # Entry point
-│   │   │   └── index.css            # Global styles
-│   │   ├── public/                  # Static assets
-│   │   ├── vite.config.ts           # Vite config (Replit)
-│   │   ├── vite.config.deploy.ts    # Vite config (Production)
-│   │   └── tsconfig.json            # TypeScript config
-│   ├── api-server/                  # Backend API (Node.js/Express) - Optional
-│   └── mockup-sandbox/              # Component preview server
-├── lib/                             # Shared libraries
-├── .github/
-│   └── workflows/                   # GitHub Actions CI/CD
-├── vercel.json                      # Vercel deployment config
-├── netlify.toml                     # Netlify deployment config
-├── pnpm-workspace.yaml              # Workspace configuration
-├── tsconfig.json                    # Root TypeScript config
-└── README.md                        # This file
-```
-
----
-
-## 🎯 Key Components
-
-### Hero Component (`src/components/Hero.tsx`)
-- Animated typewriter effect for role display
-- Responsive font sizing (text-3xl to text-8xl)
-- Optimized Arabic text rendering
-- Smooth scroll button with chevron animation
-
-### Testimonials Carousel (`src/components/Testimonials.tsx`)
-- Auto-scrolling every 5 seconds
-- 3D rotation animations on slide transitions
-- Spring physics for natural motion
-- Staggered animations for quote, stars, author
-- Dot indicators for manual navigation
-- Hidden navigation arrows on mobile
-
-### Hexagon Avatar (`src/components/About.tsx`)
-- Animated hexagon shape with pulsing border-radius
-- 6 configurable floating skill icons
-- Configurable from dashboard
-- Smooth orbital animations
-
-### Animated Background (`src/components/AnimatedBackground.tsx`)
-- 7 animated aurora orbs
-- 80+ floating particles (4 shape varieties)
-- Responsive opacity (65% reduced in light mode)
-- Layered depth effect
-
----
-
-## 🔧 Development Commands
-
-```bash
-# Start development server
-pnpm --filter @workspace/portfolio run dev
-
-# Build for production
-pnpm --filter @workspace/portfolio run build:deploy
-
-# Build for Replit
-pnpm --filter @workspace/portfolio run build
-
-# Type checking
-pnpm --filter @workspace/portfolio run typecheck
-
-# Preview production build
-pnpm --filter @workspace/portfolio run serve
-```
-
----
-
-## 🎨 Customization
-
-### Change Dashboard Password
-Edit `src/pages/Dashboard.tsx`:
-```typescript
-const PASSWORD = "your-new-password";
-```
-
-### Add/Edit Testimonials
-1. Navigate to `/dashboard`
-2. Go to "Testimonials" tab
-3. Click "Add Testimonial" or edit existing ones
-4. Data is saved to browser localStorage
-
-### Configure Floating Skills
-1. Go to Dashboard → "Profile" or "About" tab
-2. Add/edit skill icons around the hexagon
-3. Changes persist in localStorage
-
-### Change Theme Colors
-Modify Tailwind config in `tailwind.config.js` or edit CSS variables in `src/index.css`
-
-### Toggle Language
-Click the language switcher (EN/AR) in the navigation bar
-
----
-
-## 🚀 Deployment
-
-### Option 1: Vercel (Recommended) ⭐
-
-1. **Push to GitHub** (already done)
-2. **Connect Vercel**:
-   - Go to [vercel.com](https://vercel.com)
-   - Click "Add New Project"
-   - Select your repository
-   - Vercel auto-detects `vercel.json` configuration
-   - Click "Deploy"
-
-3. **Your site will be live in ~1 minute** at `https://my-portfolio.vercel.app`
-
-### Option 2: Netlify
-
-1. **Push to GitHub**
-2. **Connect Netlify**:
-   - Go to [netlify.com](https://netlify.com)
-   - Click "New site from Git"
-   - Select your GitHub repo
-   - Netlify auto-detects `netlify.toml`
-   - Click "Deploy"
-
-### Option 3: GitHub Pages
-
-```bash
-# Add to package.json
-"deploy": "pnpm run build:deploy && echo 'my-portfolio.github.io' > dist/CNAME && git add dist && git commit -m 'Deploy' && git subtree push --prefix dist origin gh-pages"
-
-pnpm run deploy
-```
-
----
-
-## 📊 Performance Optimizations
-
-- ✅ Image optimization (PNG/WebP)
-- ✅ Code splitting with Vite
-- ✅ CSS minification with Tailwind
-- ✅ Component lazy loading ready
-- ✅ Efficient animations with Framer Motion
-- ✅ LocalStorage caching for instant load
-
----
-
-## 🔐 Security
-
-- ✅ No API keys exposed in code
-- ✅ Session-based dashboard auth (stored in sessionStorage)
-- ✅ Input validation with Zod
-- ✅ XSS protection via React sanitization
-- ✅ CSRF protection ready for backend integration
-
----
-
-## 🐛 Troubleshooting
-
-### Port Already in Use
-```bash
-# Kill process on port 5173
-lsof -ti:5173 | xargs kill -9
-```
-
-### Clear Cache & Reinstall
-```bash
-rm -rf node_modules pnpm-lock.yaml
+corepack enable
 pnpm install
 ```
 
-### Build Fails
-```bash
-# Clear build artifacts
-rm -rf artifacts/portfolio/dist
-pnpm --filter @workspace/portfolio run build:deploy
+استخدم pnpm فقط؛ يحتوي المشروع على فحص يمنع التثبيت باستخدام npm أو Yarn.
+
+## متغيرات البيئة
+
+أنشئ ملفًا محليًا باسم:
+
+```text
+artifacts/portfolio/.env.local
 ```
 
-### Dashboard Not Accessible
-- Ensure you're at the correct password-protected route (`/dashboard`)
-- Try clearing browser cache and localStorage
-- Password is case-sensitive: `admin123`
+وأضف:
 
-### Supabase `core_skills` Schema Cache Error
-If Supabase returns `Could not find the 'core_skills' column of 'portfolio_personal_info' in the schema cache`, run:
+```env
+VITE_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_OR_ANON_KEY
+```
+
+متغير اختياري عند استخدام خادم منفصل لنموذج التواصل:
+
+```env
+VITE_API_URL=https://api.example.com
+```
+
+إذا لم يوجد `VITE_API_URL` يرسل نموذج التواصل مباشرة إلى جدول `contact_messages` في Supabase.
+
+> لا تضع `service_role` أو أي مفتاح سري داخل متغير يبدأ بـ `VITE_`، لأن متغيرات Vite تصبح متاحة داخل المتصفح.
+
+## إعداد Supabase
+
+### مشروع جديد
+
+طبّق ملفات `supabase/migrations` بالترتيب، ثم أضف بيانات البداية عند الحاجة من `supabase/seed.sql`.
+
+عند استخدام Supabase CLI بعد ربط المشروع:
+
+```bash
+supabase db push
+```
+
+يمكن أيضًا فتح Supabase Dashboard ثم SQL Editor وتشغيل ملفات migrations بالترتيب.
+
+### تحديث مشروع موجود لنظام الألوان
+
+طبّق الملف التالي:
+
+```text
+supabase/migrations/20260916120000_add_theme_color_settings.sql
+```
+
+يضيف الملف:
+
+- `primary_color` مع تحقق من صيغة اللون `#RRGGBB`.
+- `color_rotation_enabled` لتفعيل التغيير التلقائي.
+
+لن يتمكن زر الحفظ في لوحة التحكم من حفظ إعدادات اللون الجديدة قبل تطبيق هذا migration على قاعدة البيانات المنشورة.
+
+### إعداد مستخدم لوحة التحكم
+
+1. أنشئ المستخدم من Supabase Dashboard ضمن Authentication.
+2. انسخ `user_id` الخاص به.
+3. أضفه إلى جدول `portfolio_admins`:
 
 ```sql
-alter table portfolio_personal_info
-  add column if not exists core_skills text[] not null default '{}'::text[];
+insert into portfolio_admins (user_id)
+values ('USER_UUID_HERE')
+on conflict (user_id) do nothing;
 ```
 
-Then refresh/restart the Supabase API/PostgREST schema cache and retry.
+لا توجد كلمة مرور ثابتة داخل الكود. تسجيل الدخول يتم بواسطة Supabase Auth، وسياسات RLS تسمح بالكتابة للمستخدمين المسجلين في `portfolio_admins` فقط.
 
----
+## تشغيل المشروع
 
-## 📈 Future Enhancements
+### تشغيل الواجهة للتطوير
 
-- [ ] Backend integration (Node.js/Express API)
-- [ ] Database (PostgreSQL/MongoDB)
-- [ ] Email contact form submission
-- [ ] Blog section with markdown support
-- [ ] Dark mode image optimization
-- [ ] Performance monitoring (Sentry)
-- [ ] SEO optimization (Meta tags, JSON-LD)
-- [ ] PWA capabilities (offline support)
+```bash
+pnpm --filter @workspace/portfolio run dev
+```
 
----
+العنوان الافتراضي:
 
-## 📄 License
+```text
+http://localhost:5173
+```
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+لوحة التحكم:
 
----
+```text
+http://localhost:5173/dashboard
+```
 
-## 👤 Author
+### فحص TypeScript
 
-**Ahmad** - [@0Ahmad0](https://github.com/0Ahmad0)
+```bash
+pnpm run typecheck
+```
 
----
+### تشغيل اختبارات الواجهة الأساسية
 
-## 🤝 Contributing
+```bash
+pnpm --filter @workspace/portfolio test
+```
 
-Contributions, issues, and feature requests are welcome!
+### بناء نسخة التطوير
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+```bash
+pnpm --filter @workspace/portfolio run build
+```
 
----
+### بناء نسخة النشر
 
-## 📞 Support
+```bash
+pnpm run build:deploy
+```
 
-For questions or issues:
-- Open an issue on [GitHub Issues](https://github.com/0Ahmad0/my-portfolio/issues)
-- Contact: [Your contact info]
+يُشغّل بناء النشر تحسين الصور أولًا، ثم يضع الناتج داخل:
 
----
+```text
+artifacts/portfolio/dist
+```
 
-## 🙏 Acknowledgments
+## تحسين الصور
 
-- React & Vite teams for incredible tooling
-- Framer Motion for smooth animations
-- Radix UI & shadcn/ui for component foundations
-- Tailwind CSS for utility-first styling
-- Next.js theming inspiration
+لتحسين الصور الجديدة وإنشاء نسخ WebP متجاوبة:
 
----
+```bash
+pnpm --filter @workspace/portfolio run images:optimize
+```
 
-**Made with ❤️ by Ahmad-Alhariri| Last Updated: May 2026**
+إذا تغيرت الصورة مع بقاء الرابط نفسه:
 
+```bash
+pnpm --filter @workspace/portfolio run images:optimize --refresh
+```
 
+راجع تغييرات `src/assets/images.json` و`public/images` قبل رفعها. توجد تفاصيل إضافية في `artifacts/portfolio/PERFORMANCE.md`.
+
+## إدارة لون الموقع
+
+1. افتح `/dashboard` وسجّل الدخول.
+2. انتقل إلى قسم المعلومات الشخصية.
+3. ابحث عن قسم **هوية ألوان الموقع**.
+4. اختر أحد الألوان العشرة أو استخدم Color Picker.
+5. اختر بين اللون الثابت والتبديل التلقائي كل 6 ساعات.
+6. راجع المعاينة المباشرة.
+7. اضغط زر حفظ التغييرات.
+
+في الوضع التلقائي يستخدم الموقع فترة زمنية مشتركة مدتها 6 ساعات، لذلك يظهر اللون نفسه لجميع الزوار خلال الفترة نفسها.
+
+## النشر على Vercel
+
+إعداد `vercel.json` في جذر المشروع يستخدم:
+
+- أمر التثبيت: `corepack enable && pnpm install --no-frozen-lockfile`
+- أمر البناء: `pnpm run build:deploy`
+- مجلد الناتج: `artifacts/portfolio/dist`
+
+خطوات النشر:
+
+1. ارفع المستودع إلى GitHub.
+2. أضف مشروعًا جديدًا في Vercel واربط المستودع.
+3. اترك Root Directory على جذر المستودع عند استخدام `vercel.json` الحالي.
+4. أضف `VITE_SUPABASE_URL` و`VITE_SUPABASE_PUBLISHABLE_KEY` في Environment Variables.
+5. انشر المشروع.
+6. اختبر الصفحة الرئيسية و`/dashboard` ونموذج التواصل بعد النشر.
+
+## قائمة تحقق قبل الرفع إلى GitHub
+
+```bash
+pnpm install --frozen-lockfile
+pnpm run typecheck
+pnpm --filter @workspace/portfolio test
+pnpm run build:deploy
+git diff --check
+git status --short
+```
+
+تحقق يدويًا من التالي:
+
+- تطبيق migrations الجديدة على Supabase أو تجهيزها لتُطبق قبل نشر الواجهة.
+- عدم وجود `.env` أو مفاتيح أو كلمات مرور ضمن الملفات المراد رفعها.
+- عدم رفع `node_modules` أو `dist` أو `tmp` أو `.pnpm-store`.
+- مراجعة الوضعين الفاتح والداكن.
+- تجربة العربية والإنجليزية.
+- تجربة قائمة الهاتف ونموذج التواصل.
+- التأكد من أن حفظ اللون يعمل بعد تطبيق migration.
+- مراجعة أي صور محسنة أضافها `build:deploy`.
+
+يوجد دليل محلي مؤقت أكثر تفصيلًا في:
+
+```text
+tmp/README_BEFORE_GITHUB_AR.md
+```
+
+هذا الملف داخل `tmp`، لذلك لن يُرفع إلى GitHub.
+
+## الأمان
+
+- تعتمد لوحة التحكم على Supabase Auth، وليس على كلمة مرور مكتوبة داخل الواجهة.
+- تعتمد صلاحيات الكتابة على RLS وجدول `portfolio_admins`.
+- يتحقق نموذج التواصل من البيانات باستخدام Zod.
+- لا يجب استخدام مفتاح Supabase `service_role` في الواجهة.
+- ملفات `.env` متجاهلة بواسطة Git.
+- توجد رؤوس حماية أساسية ضمن `vercel.json`.
+
+## الأداء والوصول
+
+- صور WebP متجاوبة مع أبعاد محفوظة.
+- خطوط Inter وCairo مستضافة محليًا.
+- تحميل كسول للوحة التحكم ونموذج التواصل.
+- دعم لوحة المفاتيح وإدارة التركيز في الحوارات وقائمة الهاتف.
+- احترام `prefers-reduced-motion`.
+- تخزين مؤقت طويل للصور والخطوط والملفات ذات الأسماء المشفرة على Vercel.
+
+راجع `artifacts/portfolio/PERFORMANCE.md` لمعلومات القياس والصيانة.
+
+## حل المشكلات
+
+### فشل حفظ إعدادات اللون
+
+تأكد من تطبيق:
+
+```text
+supabase/migrations/20260916120000_add_theme_color_settings.sql
+```
+
+ثم تحقق من وجود العمودين `primary_color` و`color_rotation_enabled` داخل `portfolio_personal_info`.
+
+### عدم ظهور بيانات الموقع
+
+- تحقق من متغيرات Supabase.
+- راجع Network وConsole في المتصفح.
+- تأكد من تطبيق migrations وسياسات القراءة العامة.
+
+### تعذر تسجيل الدخول أو الحفظ
+
+- تحقق من وجود المستخدم في Supabase Auth.
+- تحقق من إضافة `user_id` إلى `portfolio_admins`.
+- راجع سياسات RLS.
+
+### فشل البناء
+
+```bash
+pnpm install --frozen-lockfile
+pnpm run typecheck
+pnpm run build:deploy
+```
+
+إذا كانت المشكلة في صورة خارجية، راجع المضيف والرابط وقواعد تحسين الصور في `artifacts/portfolio/PERFORMANCE.md`.
+
+## صاحب المشروع
+
+أحمد الحريري — [GitHub @0Ahmad0](https://github.com/0Ahmad0)
+
+## الترخيص
+
+المشروع معرّف بترخيص MIT في ملفات الحزم. أضف ملف `LICENSE` مستقلًا إذا كنت تريد إظهار نص الترخيص كاملًا في GitHub.

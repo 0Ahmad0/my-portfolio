@@ -31,6 +31,9 @@ create table if not exists portfolio_personal_info (
   avatar_url text,
   floating_skills text[] not null default '{}'::text[],
   core_skills text[] not null default '{}'::text[],
+  primary_color text not null default '#6D28D9'
+    check (primary_color ~ '^#[0-9A-Fa-f]{6}$'),
+  color_rotation_enabled boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );

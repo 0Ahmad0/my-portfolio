@@ -1,4 +1,5 @@
 import ResponsiveImage from "@/components/ResponsiveImage";
+import type { CSSProperties } from "react";
 import { Code2 } from "lucide-react";
 
 import { usePortfolio } from "@/contexts/PortfolioContext";
@@ -110,14 +111,20 @@ function HexAvatar({
         return (
           <div
             key={`${skill.label}-${i}`}
-            className="absolute w-12 h-12 rounded-lg bg-background/60 border border-primary/20 backdrop-blur-sm flex items-center justify-center hover:bg-primary/10 hover:border-primary/40 transition-all group"
-            style={{
-              left: "50%",
-              top: "50%",
-              marginLeft: "-24px",
-              marginTop: "-24px",
-              transform: `translate(${x}px, ${y}px)`,
-            }}
+            className="floating-skill absolute w-12 h-12 rounded-lg bg-background/60 border border-primary/20 backdrop-blur-sm flex items-center justify-center hover:bg-primary/10 hover:border-primary/40 transition-[background-color,border-color] group"
+            style={
+              {
+                left: "50%",
+                top: "50%",
+                marginLeft: "-24px",
+                marginTop: "-24px",
+                transform: `translate(${x}px, ${y}px)`,
+                "--skill-x": `${x}px`,
+                "--skill-y": `${y}px`,
+                "--skill-delay": `${i * -0.7}s`,
+                "--skill-duration": `${18 + i * 1.5}s`,
+              } as CSSProperties
+            }
             aria-hidden="true"
             title={skill.label}
           >
