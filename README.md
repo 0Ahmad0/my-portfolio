@@ -2,6 +2,8 @@
 
 A cutting-edge, fully responsive personal portfolio website featuring advanced animations, dark/light mode support, English/Arabic (RTL) localization, and a password-protected admin dashboard for managing portfolio content.
 
+For image optimization, accessibility checks and production performance verification, see [Performance maintenance](artifacts/portfolio/PERFORMANCE.md).
+
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![React](https://img.shields.io/badge/React-19.1.0-61dafb.svg)
@@ -12,10 +14,10 @@ A cutting-edge, fully responsive personal portfolio website featuring advanced a
 ## ✨ Features
 
 ### 🎨 Visual Design
-- **Animated Aurora Background** - 7 animated aurora orbs with 80+ floating particles (4 different shapes)
+- **Aurora Background** - Lightweight CSS gradients with reduced-motion support
 - **Responsive Hero Section** - Animated typewriter roles with dynamic font sizing (mobile to desktop)
-- **Hexagon Profile Picture** - Animated avatar with pulsing border-radius and 6 orbiting skill icons
-- **Animated Testimonials Carousel** - 3D perspective animations with auto-scroll (5 seconds), spring physics, and staggered elements
+- **Hexagon Profile Picture** - Responsive WebP avatar with surrounding skill icons
+- **Testimonials Carousel** - Accessible manual controls and full-review dialogs
 
 ### 🌍 Localization
 - **Bilingual Support** - Full English/Arabic (RTL) support
@@ -23,7 +25,7 @@ A cutting-edge, fully responsive personal portfolio website featuring advanced a
 - **Responsive Typography** - Arabic text rendering optimized for ligatures and proper text flow
 
 ### 🔐 Admin Dashboard
-- **Password-Protected Access** - Dashboard accessible at `/dashboard` (password: `admin123`)
+- **Authenticated Access** - Dashboard at `/dashboard`, using the configured Supabase email/password account
 - **Editable Sections**:
   - Projects (add/edit/delete with descriptions and links)
   - Experience (manage work history with dates and descriptions)
@@ -34,8 +36,7 @@ A cutting-edge, fully responsive personal portfolio website featuring advanced a
 
 ### 📱 Mobile-First Responsive Design
 - Seamless experience from mobile to desktop
-- Touch-friendly navigation (dots for carousel on mobile)
-- Hidden navigation buttons on mobile devices
+- Named, touch-friendly carousel and navigation controls on mobile
 - Optimized performance metrics
 
 ---
@@ -68,8 +69,8 @@ A cutting-edge, fully responsive personal portfolio website featuring advanced a
 - **@hookform/resolvers** - Zod resolver for React Hook Form
 
 ### Data Management
-- **React Query** `5.90.21` - Server state management (ready for API integration)
-- **LocalStorage** - Client-side data persistence (configurable for backend)
+- **Supabase** - Portfolio content, authentication and contact messages
+- **LocalStorage** - Theme, language and visitor preferences
 
 ### Development Tools
 - **TypeScript** `^5.x` - Static type checking

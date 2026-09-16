@@ -5,14 +5,20 @@ const VISITOR_ID_KEY = "portfolio_visitor_id";
 const LOCAL_VISITORS_KEY = "portfolio_local_visitors";
 
 function getDeviceType(): string {
-  return /Mobi|Android|iPhone|iPad|iPod|Opera Mini|BlackBerry/i.test(navigator.userAgent) ? "mobile" : "desktop";
+  return /Mobi|Android|iPhone|iPad|iPod|Opera Mini|BlackBerry/i.test(
+    navigator.userAgent,
+  )
+    ? "mobile"
+    : "desktop";
 }
 
 function getVisitorId(): string {
   try {
     let id = localStorage.getItem(VISITOR_ID_KEY);
     if (!id) {
-      id = crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      id =
+        crypto.randomUUID?.() ??
+        `${Date.now()}-${Math.random().toString(36).slice(2)}`;
       localStorage.setItem(VISITOR_ID_KEY, id);
     }
     return id;
@@ -88,18 +94,30 @@ async function trackVisitor(): Promise<VisitorResult> {
         .select("*", { head: true, count: "exact" });
 
       if (error) throw error;
-      localStorage.setItem("portfolio_visitor_count_supabase", String(total ?? 0));
+      try {
+        localStorage.setItem(
+          "portfolio_visitor_count_supabase",
+          String(total ?? 0),
+        );
+      } catch {
+        /* Optional cache. */
+      }
       return { count: total ?? 0, isNewVisit, error: null };
     } catch (err) {
       const local = getLocalVisitorResult(visitorHash);
-      return { ...local, error: err instanceof Error ? err.message : "Visitor counter failed" };
+      return {
+        ...local,
+        error: err instanceof Error ? err.message : "Visitor counter failed",
+      };
     }
   }
 
   return { ...getLocalVisitorResult(visitorHash), error: null };
 }
 
-function getLocalVisitorResult(visitorHash: string): Omit<VisitorResult, "error"> {
+function getLocalVisitorResult(
+  visitorHash: string,
+): Omit<VisitorResult, "error"> {
   const localVisitors = getLocalVisitors();
   const isNewVisit = !localVisitors.has(visitorHash);
   if (isNewVisit) {
@@ -117,15 +135,20 @@ export function useVisitorCount() {
   useEffect(() => {
     let cancelled = false;
 
-    visitorResult ??= trackVisitor();
-    visitorResult.then((result) => {
-      if (cancelled) return;
-      setCount(result.count);
-      setIsNewVisit(result.isNewVisit);
-      setError(result.error);
-    });
+    const timer = window.setTimeout(() => {
+      visitorResult ??= trackVisitor();
+      visitorResult.then((result) => {
+        if (cancelled) return;
+        setCount(result.count);
+        setIsNewVisit(result.isNewVisit);
+        setError(result.error);
+      });
+    }, 1500);
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
   }, []);
 
   return { count, isNewVisit, error };

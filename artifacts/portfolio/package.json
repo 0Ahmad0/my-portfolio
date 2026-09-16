@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite --config vite.config.ts --host 0.0.0.0",
     "build": "vite build --config vite.config.ts",
-    "build:deploy": "vite build --config vite.config.deploy.ts",
+    "build:deploy": "node scripts/optimize-images.mjs && vite build --config vite.config.deploy.ts",
+    "images:optimize": "node scripts/optimize-images.mjs",
+    "test": "node --test scripts/portfolio.test.mjs",
     "serve": "vite preview --config vite.config.ts --host 0.0.0.0",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
@@ -46,6 +48,7 @@
     "@types/node": "^25.3.3",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "sharp": "0.34.5",
     "vite": "^7.3.2"
   }
 }

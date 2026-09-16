@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 import { supabase } from "@/utils/supabase";
 import {
   type Certificate,
@@ -27,7 +33,14 @@ import {
   testimonialPayload,
 } from "./portfolio-data";
 
-export type { Certificate, Education, Experience, PersonalInfo, Project, Testimonial } from "./portfolio-data";
+export type {
+  Certificate,
+  Education,
+  Experience,
+  PersonalInfo,
+  Project,
+  Testimonial,
+} from "./portfolio-data";
 
 type PortfolioContextType = {
   isLoading: boolean;
@@ -70,14 +83,32 @@ function requireSupabase() {
   return supabase;
 }
 
-async function insertRecord<T>(table: string, payload: Payload, map: (row: Row) => T) {
-  const { data, error } = await requireSupabase().from(table).insert(payload).select().single();
+async function insertRecord<T>(
+  table: string,
+  payload: Payload,
+  map: (row: Row) => T,
+) {
+  const { data, error } = await requireSupabase()
+    .from(table)
+    .insert(payload)
+    .select()
+    .single();
   if (error) throw new Error(error.message);
   return map(data);
 }
 
-async function updateRecord<T>(table: string, id: string, payload: Payload, map: (row: Row) => T) {
-  const { data, error } = await requireSupabase().from(table).update(payload).eq("id", id).select().single();
+async function updateRecord<T>(
+  table: string,
+  id: string,
+  payload: Payload,
+  map: (row: Row) => T,
+) {
+  const { data, error } = await requireSupabase()
+    .from(table)
+    .update(payload)
+    .eq("id", id)
+    .select()
+    .single();
   if (error) throw new Error(error.message);
   return map(data);
 }
@@ -87,88 +118,137 @@ async function deleteRecord(table: string, id: string) {
   if (error) throw new Error(error.message);
 }
 
-const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
+const PortfolioContext = createContext<PortfolioContextType | undefined>(
+  undefined,
+);
 
 export function PortfolioProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [language, setLanguageState] = useState<"en" | "ar">(() => {
     try {
-      return (localStorage.getItem("portfolio_lang") as "en" | "ar") || "en";
+      return localStorage.getItem("portfolio_lang") === "ar" ? "ar" : "en";
     } catch {
       return "en";
     }
   });
   const [personalInfoId, setPersonalInfoId] = useState<string | null>(null);
-  const [personalInfo, setPersonalInfoState] = useState<PersonalInfo>(defaultPersonalInfo);
-  const [projects, setProjects] = useState<Project[]>(defaultProjects);
-  const [experience, setExperience] = useState<Experience[]>(defaultExperience);
-  const [education, setEducation] = useState<Education[]>(defaultEducation);
-  const [certificates, setCertificates] = useState<Certificate[]>(defaultCertificates);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonials);
+  const [personalInfo, setPersonalInfoState] =
+    useState<PersonalInfo>(defaultPersonalInfo);
+  const [projects, setProjects] = useState<Project[]>(
+    supabase ? [] : defaultProjects,
+  );
+  const [experience, setExperience] = useState<Experience[]>(
+    supabase ? [] : defaultExperience,
+  );
+  const [education, setEducation] = useState<Education[]>(
+    supabase ? [] : defaultEducation,
+  );
+  const [certificates, setCertificates] = useState<Certificate[]>(
+    supabase ? [] : defaultCertificates,
+  );
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(
+    supabase ? [] : defaultTestimonials,
+  );
 
   useEffect(() => {
-    localStorage.setItem("portfolio_lang", language);
+    try {
+      localStorage.setItem("portfolio_lang", language);
+    } catch {
+      /* Storage may be disabled. */
+    }
     document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
     document.documentElement.lang = language;
   }, [language]);
 
   useEffect(() => {
-    let isMounted = true;
-    async function loadPortfolio() {
-      setIsLoading(true);
-      try {
-        if (!supabase) {
-          console.warn("Supabase not configured, using default data");
-          return;
-        }
-
-        const timeout = (ms: number) => new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`Request timed out after ${ms}ms`)), ms));
-        const queries = [
-          supabase.from("portfolio_personal_info").select("*").eq("is_primary", true).limit(1),
-          supabase.from("portfolio_projects").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
-          supabase.from("portfolio_experience").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
-          supabase.from("portfolio_education").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
-          supabase.from("portfolio_certificates").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
-          supabase.from("portfolio_testimonials").select("*").order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
-        ] as const;
-        const [personalRes, projectsRes, expRes, eduRes, certRes, testRes] = await Promise.race([Promise.all(queries), timeout(8000)]);
-
-        if (!isMounted) return;
-        const responses = [personalRes, projectsRes, expRes, eduRes, certRes, testRes];
-        const hasAuthError = responses.some((response) => {
-          const code = response.error?.code;
-          return code === "PGRST301" || code === "42501" || (response as any).status === 401 || (response as any).status === 403;
-        });
-        if (hasAuthError) {
-          console.warn("Supabase auth error - check your API key. Falling back to default data.");
-          return;
-        }
-
-        const labels = ["personal info", "projects", "experience", "education", "certificates", "testimonials"];
-        responses.forEach((response, index) => {
-          if (response.error) console.error(`Failed to load ${labels[index]}`, response.error);
-        });
-
-        const infoRow = personalRes.data?.[0];
-        if (infoRow) {
-          setPersonalInfoId(infoRow.id);
-          setPersonalInfoState(mapPersonalInfo(infoRow));
-        }
-        if (projectsRes.data) setProjects(projectsRes.data.map(mapProject));
-        if (expRes.data) setExperience(expRes.data.map(mapExperience));
-        if (eduRes.data) setEducation(eduRes.data.map(mapEducation));
-        if (certRes.data) setCertificates(certRes.data.map(mapCertificate));
-        if (testRes.data) setTestimonials(testRes.data.map(mapTestimonial));
-      } catch (err) {
-        console.error("Failed to load portfolio data", err);
-      } finally {
-        if (isMounted) setIsLoading(false);
-      }
+    if (!supabase) {
+      setIsLoading(false);
+      return;
     }
-
-    loadPortfolio();
+    const controller = new AbortController();
+    let active = true;
+    const timer = window.setTimeout(() => controller.abort(), 8000);
+    const load = async (
+      query: PromiseLike<{ data: Row[] | null; error: unknown }>,
+      apply: (rows: Row[]) => void,
+    ) => {
+      try {
+        const { data, error } = await query;
+        if (error) throw error;
+        if (active && data) apply(data);
+      } catch (error) {
+        if (active) console.error("Failed to load portfolio section", error);
+      }
+    };
+    // Each section can render as soon as its own request finishes.
+    Promise.all([
+      load(
+        supabase
+          .from("portfolio_personal_info")
+          .select("*")
+          .eq("is_primary", true)
+          .limit(1)
+          .abortSignal(controller.signal),
+        (rows) => {
+          if (rows[0]) {
+            setPersonalInfoId(rows[0].id);
+            setPersonalInfoState(mapPersonalInfo(rows[0]));
+          }
+        },
+      ),
+      load(
+        supabase
+          .from("portfolio_projects")
+          .select("*")
+          .order("sort_order")
+          .order("created_at", { ascending: false })
+          .abortSignal(controller.signal),
+        (rows) => setProjects(rows.map(mapProject)),
+      ),
+      load(
+        supabase
+          .from("portfolio_experience")
+          .select("*")
+          .order("sort_order")
+          .order("created_at", { ascending: false })
+          .abortSignal(controller.signal),
+        (rows) => setExperience(rows.map(mapExperience)),
+      ),
+      load(
+        supabase
+          .from("portfolio_education")
+          .select("*")
+          .order("sort_order")
+          .order("created_at", { ascending: false })
+          .abortSignal(controller.signal),
+        (rows) => setEducation(rows.map(mapEducation)),
+      ),
+      load(
+        supabase
+          .from("portfolio_certificates")
+          .select("*")
+          .order("sort_order")
+          .order("created_at", { ascending: false })
+          .abortSignal(controller.signal),
+        (rows) => setCertificates(rows.map(mapCertificate)),
+      ),
+      load(
+        supabase
+          .from("portfolio_testimonials")
+          .select("*")
+          .order("sort_order")
+          .order("created_at", { ascending: false })
+          .abortSignal(controller.signal),
+        (rows) => setTestimonials(rows.map(mapTestimonial)),
+      ),
+    ]).finally(() => {
+      window.clearTimeout(timer);
+      if (active) setIsLoading(false);
+    });
     return () => {
-      isMounted = false;
+      active = false;
+      window.clearTimeout(timer);
+      controller.abort();
     };
   }, []);
 
@@ -178,7 +258,12 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
     const client = requireSupabase();
     const payload = personalInfoPayload(info);
     const result = personalInfoId
-      ? await client.from("portfolio_personal_info").update(payload).eq("id", personalInfoId).select().single()
+      ? await client
+          .from("portfolio_personal_info")
+          .update(payload)
+          .eq("id", personalInfoId)
+          .select()
+          .single()
       : await client
           .from("portfolio_personal_info")
           .insert({ is_primary: true, ...payload })
@@ -202,8 +287,15 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
     setProjects((current) => [...current, saved]);
   };
   const updateProject = async (id: string, item: Partial<Project>) => {
-    const saved = await updateRecord("portfolio_projects", id, projectPayload(item), mapProject);
-    setProjects((current) => current.map((entry) => (entry.id === id ? saved : entry)));
+    const saved = await updateRecord(
+      "portfolio_projects",
+      id,
+      projectPayload(item),
+      mapProject,
+    );
+    setProjects((current) =>
+      current.map((entry) => (entry.id === id ? saved : entry)),
+    );
   };
   const deleteProject = async (id: string) => {
     await deleteRecord("portfolio_projects", id);
@@ -211,12 +303,23 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
   };
 
   const addExperience = async (item: Omit<Experience, "id">) => {
-    const saved = await insertRecord("portfolio_experience", experiencePayload({ ...item, sortOrder: experience.length }), mapExperience);
+    const saved = await insertRecord(
+      "portfolio_experience",
+      experiencePayload({ ...item, sortOrder: experience.length }),
+      mapExperience,
+    );
     setExperience((current) => [...current, saved]);
   };
   const updateExperience = async (id: string, item: Partial<Experience>) => {
-    const saved = await updateRecord("portfolio_experience", id, experiencePayload(item), mapExperience);
-    setExperience((current) => current.map((entry) => (entry.id === id ? saved : entry)));
+    const saved = await updateRecord(
+      "portfolio_experience",
+      id,
+      experiencePayload(item),
+      mapExperience,
+    );
+    setExperience((current) =>
+      current.map((entry) => (entry.id === id ? saved : entry)),
+    );
   };
   const deleteExperience = async (id: string) => {
     await deleteRecord("portfolio_experience", id);
@@ -224,12 +327,23 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
   };
 
   const addEducation = async (item: Omit<Education, "id">) => {
-    const saved = await insertRecord("portfolio_education", educationPayload(item), mapEducation);
+    const saved = await insertRecord(
+      "portfolio_education",
+      educationPayload(item),
+      mapEducation,
+    );
     setEducation((current) => [...current, saved]);
   };
   const updateEducation = async (id: string, item: Partial<Education>) => {
-    const saved = await updateRecord("portfolio_education", id, educationPayload(item), mapEducation);
-    setEducation((current) => current.map((entry) => (entry.id === id ? saved : entry)));
+    const saved = await updateRecord(
+      "portfolio_education",
+      id,
+      educationPayload(item),
+      mapEducation,
+    );
+    setEducation((current) =>
+      current.map((entry) => (entry.id === id ? saved : entry)),
+    );
   };
   const deleteEducation = async (id: string) => {
     await deleteRecord("portfolio_education", id);
@@ -237,12 +351,23 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
   };
 
   const addCertificate = async (item: Omit<Certificate, "id">) => {
-    const saved = await insertRecord("portfolio_certificates", certificatePayload({ ...item, sortOrder: certificates.length }), mapCertificate);
+    const saved = await insertRecord(
+      "portfolio_certificates",
+      certificatePayload({ ...item, sortOrder: certificates.length }),
+      mapCertificate,
+    );
     setCertificates((current) => [...current, saved]);
   };
   const updateCertificate = async (id: string, item: Partial<Certificate>) => {
-    const saved = await updateRecord("portfolio_certificates", id, certificatePayload(item), mapCertificate);
-    setCertificates((current) => current.map((entry) => (entry.id === id ? saved : entry)));
+    const saved = await updateRecord(
+      "portfolio_certificates",
+      id,
+      certificatePayload(item),
+      mapCertificate,
+    );
+    setCertificates((current) =>
+      current.map((entry) => (entry.id === id ? saved : entry)),
+    );
   };
   const deleteCertificate = async (id: string) => {
     await deleteRecord("portfolio_certificates", id);
@@ -250,12 +375,23 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
   };
 
   const addTestimonial = async (item: Omit<Testimonial, "id">) => {
-    const saved = await insertRecord("portfolio_testimonials", testimonialPayload({ ...item, sortOrder: testimonials.length }), mapTestimonial);
+    const saved = await insertRecord(
+      "portfolio_testimonials",
+      testimonialPayload({ ...item, sortOrder: testimonials.length }),
+      mapTestimonial,
+    );
     setTestimonials((current) => [...current, saved]);
   };
   const updateTestimonial = async (id: string, item: Partial<Testimonial>) => {
-    const saved = await updateRecord("portfolio_testimonials", id, testimonialPayload(item), mapTestimonial);
-    setTestimonials((current) => current.map((entry) => (entry.id === id ? saved : entry)));
+    const saved = await updateRecord(
+      "portfolio_testimonials",
+      id,
+      testimonialPayload(item),
+      mapTestimonial,
+    );
+    setTestimonials((current) =>
+      current.map((entry) => (entry.id === id ? saved : entry)),
+    );
   };
   const deleteTestimonial = async (id: string) => {
     await deleteRecord("portfolio_testimonials", id);
@@ -304,6 +440,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
 
 export function usePortfolio() {
   const context = useContext(PortfolioContext);
-  if (context === undefined) throw new Error("usePortfolio must be used within a PortfolioProvider");
+  if (context === undefined)
+    throw new Error("usePortfolio must be used within a PortfolioProvider");
   return context;
 }

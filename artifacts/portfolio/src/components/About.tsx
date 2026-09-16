@@ -1,197 +1,184 @@
-import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useSpring, useInView, animate } from "framer-motion";
+import ResponsiveImage from "@/components/ResponsiveImage";
 import { Code2 } from "lucide-react";
 
 import { usePortfolio } from "@/contexts/PortfolioContext";
 import { translations } from "@/lib/i18n";
 import {
-  SiReact, SiTypescript, SiNodedotjs, SiPython, SiFlutter, SiAndroid,
-  SiFigma, SiDocker, SiMongodb, SiPostgresql, SiFirebase, SiGit,
-  SiKotlin, SiSwift, SiCplusplus, SiNextdotjs, SiTailwindcss, SiDart
+  SiReact,
+  SiTypescript,
+  SiNodedotjs,
+  SiPython,
+  SiFlutter,
+  SiAndroid,
+  SiFigma,
+  SiDocker,
+  SiMongodb,
+  SiPostgresql,
+  SiFirebase,
+  SiGit,
+  SiKotlin,
+  SiSwift,
+  SiCplusplus,
+  SiNextdotjs,
+  SiTailwindcss,
+  SiDart,
 } from "react-icons/si";
 
 /* ─── Skills list ──────────────────────────────────────── */
 const SKILLS = [
-  { icon: SiReact,       label: "React",      color: "#61DAFB" },
-  { icon: SiFlutter,     label: "Flutter",    color: "#54C5F8" },
-  { icon: SiNextdotjs,   label: "Next.js",    color: "#ffffff" },
-  { icon: SiTypescript,  label: "TypeScript", color: "#3178C6" },
-  { icon: SiNodedotjs,   label: "Node.js",    color: "#6CC24A" },
-  { icon: SiPython,      label: "Python",     color: "#FFD43B" },
-  { icon: SiCplusplus,   label: "C++",        color: "#00599C" },
-  { icon: SiDart,        label: "Dart",       color: "#0175C2" },
-  { icon: SiAndroid,     label: "Android",    color: "#3DDC84" },
-  { icon: SiKotlin,      label: "Kotlin",     color: "#7F52FF" },
-  { icon: SiSwift,       label: "Swift",      color: "#FA7343" },
-  { icon: SiFigma,       label: "Figma",      color: "#F24E1E" },
-  { icon: SiTailwindcss, label: "Tailwind",   color: "#06B6D4" },
-  { icon: SiDocker,      label: "Docker",     color: "#2496ED" },
-  { icon: SiMongodb,     label: "MongoDB",    color: "#47A248" },
-  { icon: SiPostgresql,  label: "PostgreSQL", color: "#4169E1" },
-  { icon: SiFirebase,    label: "Firebase",   color: "#FFCA28" },
-  { icon: SiGit,         label: "Git",        color: "#F05032" },
+  { icon: SiReact, label: "React", color: "#61DAFB" },
+  { icon: SiFlutter, label: "Flutter", color: "#54C5F8" },
+  { icon: SiNextdotjs, label: "Next.js", color: "currentColor" },
+  { icon: SiTypescript, label: "TypeScript", color: "#3178C6" },
+  { icon: SiNodedotjs, label: "Node.js", color: "#6CC24A" },
+  { icon: SiPython, label: "Python", color: "#FFD43B" },
+  { icon: SiCplusplus, label: "C++", color: "#00599C" },
+  { icon: SiDart, label: "Dart", color: "#0175C2" },
+  { icon: SiAndroid, label: "Android", color: "#3DDC84" },
+  { icon: SiKotlin, label: "Kotlin", color: "#7F52FF" },
+  { icon: SiSwift, label: "Swift", color: "#FA7343" },
+  { icon: SiFigma, label: "Figma", color: "#F24E1E" },
+  { icon: SiTailwindcss, label: "Tailwind", color: "#06B6D4" },
+  { icon: SiDocker, label: "Docker", color: "#2496ED" },
+  { icon: SiMongodb, label: "MongoDB", color: "#47A248" },
+  { icon: SiPostgresql, label: "PostgreSQL", color: "#4169E1" },
+  { icon: SiFirebase, label: "Firebase", color: "#FFCA28" },
+  { icon: SiGit, label: "Git", color: "#F05032" },
 ];
 
 const getSkill = (label: string) =>
-  SKILLS.find(s => s.label.toLowerCase() === label.toLowerCase()) || {
+  SKILLS.find((s) => s.label.toLowerCase() === label.toLowerCase()) || {
     icon: Code2,
     label,
     color: "hsl(var(--primary))",
   };
 
-
-/* ─── Hexagon avatar with animated border radius ──────────────── */
+/* ─── Hexagon avatar ───────────────────────────────────── */
 const HEX = "polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)";
 
-function HexAvatar({ src, alt, floatingSkills }: { src: string; alt: string; floatingSkills: string[] }) {
-  const rotateX = useSpring(useMotionValue(0), { stiffness: 90, damping: 22 });
-  const rotateY = useSpring(useMotionValue(0), { stiffness: 90, damping: 22 });
-
-  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - r.left - r.width / 2) / (r.width / 2);
-    const y = (e.clientY - r.top - r.height / 2) / (r.height / 2);
-    rotateY.set(x * 12);
-    rotateX.set(-y * 12);
-  };
-  const onLeave = () => { rotateX.set(0); rotateY.set(0); };
-
+function HexAvatar({
+  src,
+  alt,
+  floatingSkills,
+}: {
+  src: string;
+  alt: string;
+  floatingSkills: string[];
+}) {
   return (
-    <motion.div
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      style={{ rotateX, rotateY, transformStyle: "preserve-3d", perspective: 900 }}
-      className="relative w-64 h-64 md:w-72 md:h-72 mx-auto select-none"
-    >
-      {/* outer glow pulse */}
-      <motion.div
-        animate={{ scale: [1, 1.08, 1], opacity: [0.3, 0.55, 0.3] }}
-        transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+    <div className="relative w-64 h-64 md:w-72 md:h-72 mx-auto select-none">
+      {/* outer glow */}
+      <div
         className="absolute inset-[-8px] bg-primary/30 blur-2xl -z-10"
         style={{ clipPath: HEX }}
       />
 
-      {/* spinning conic border */}
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+      {/* conic border */}
+      <div
         className="absolute inset-0"
         style={{
           clipPath: HEX,
-          background: "conic-gradient(from 0deg, hsl(250 89% 70%), hsl(180 89% 70%), hsl(290 89% 70%), hsl(250 89% 70%))",
+          background:
+            "conic-gradient(from 0deg, hsl(250 89% 70%), hsl(180 89% 70%), hsl(290 89% 70%), hsl(250 89% 70%))",
         }}
       />
 
-      {/* image inset with animated border radius */}
-      <motion.div
-        animate={{ borderRadius: ["0%", "25%", "0%"] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      {/* image inset */}
+      <div
         className="absolute inset-[4px] overflow-hidden"
         style={{ clipPath: HEX }}
       >
-        <img
+        <ResponsiveImage
           src={src}
+          sizes="(min-width: 768px) 288px, 256px"
           alt={alt}
-          className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 scale-110"
+          className="w-full h-full object-cover grayscale hover:grayscale-0 transition-[filter] duration-300 scale-110"
           data-testid="img-avatar"
         />
-      </motion.div>
+      </div>
 
       {/* floating skill icons from personalInfo */}
       {floatingSkills.map((skillName, i) => {
         const skill = getSkill(skillName);
-        
+
         const Icon = skill.icon;
         const angle = (i / floatingSkills.length) * Math.PI * 2;
         const distance = 140;
         const x = Math.cos(angle) * distance;
         const y = Math.sin(angle) * distance;
-        
+
         return (
-          <motion.div
+          <div
             key={`${skill.label}-${i}`}
-            animate={{ 
-              rotate: 360,
-              x: [x, x * 1.15, x],
-              y: [y, y * 1.15, y],
-            }}
-            transition={{ 
-              rotate: { duration: 20, repeat: Infinity, ease: "linear" },
-              x: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-              y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-            }}
             className="absolute w-12 h-12 rounded-lg bg-background/60 border border-primary/20 backdrop-blur-sm flex items-center justify-center hover:bg-primary/10 hover:border-primary/40 transition-all group"
-            style={{ left: "50%", top: "50%", marginLeft: "-24px", marginTop: "-24px" }}
+            style={{
+              left: "50%",
+              top: "50%",
+              marginLeft: "-24px",
+              marginTop: "-24px",
+              transform: `translate(${x}px, ${y}px)`,
+            }}
+            aria-hidden="true"
             title={skill.label}
           >
-            <Icon style={{ color: skill.color, fontSize: 20 }} className="group-hover:scale-110 transition-transform" />
-          </motion.div>
+            <Icon
+              aria-hidden="true"
+              style={{ color: skill.color, fontSize: 20 }}
+              className="group-hover:scale-110 transition-transform"
+            />
+          </div>
         );
       })}
-    </motion.div>
-  );
-}
-
-/* ─── Animated counter ─────────────────────────────────── */
-function CountUp({ to, suffix = "" }: { to: number; suffix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.5 });
-  const motionVal = useMotionValue(0);
-  const [display, setDisplay] = useState("0");
-
-  useEffect(() => {
-    if (!inView) return;
-    const ctrl = animate(motionVal, to, {
-      duration: 2,
-      ease: [0.16, 1, 0.3, 1],
-      onUpdate: (v) => setDisplay(Math.round(v).toString()),
-    });
-    return ctrl.stop;
-  }, [inView, to, motionVal]);
-
-  return (
-    <span ref={ref} className="tabular-nums">
-      {display}{suffix}
-    </span>
+    </div>
   );
 }
 
 /* ─── Stat card ────────────────────────────────────────── */
-function StatCard({ to, suffix, label, delay }: { to: number; suffix: string; label: string; delay: number }) {
+function StatCard({
+  to,
+  suffix,
+  label,
+}: {
+  to: number;
+  suffix: string;
+  label: string;
+}) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.5 }}
-      transition={{ duration: 0.6, delay, ease: "easeOut" }}
-      className="flex flex-col items-center px-6 py-4 rounded-2xl border border-primary/20 bg-primary/5 backdrop-blur-sm hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 group"
-    >
+    <div className="flex flex-col items-center px-6 py-4 rounded-2xl border border-primary/20 bg-primary/5 backdrop-blur-sm hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 group">
       <p className="text-3xl font-extrabold text-primary leading-none group-hover:scale-110 transition-transform duration-300">
-        <CountUp to={to} suffix={suffix} />
+        <span className="tabular-nums">
+          {to}
+          {suffix}
+        </span>
       </p>
       <p className="text-[10px] text-muted-foreground uppercase tracking-[0.15em] mt-2 text-center leading-tight">
         {label}
       </p>
-    </motion.div>
+    </div>
   );
 }
 
 /* ─── Skill icon ───────────────────────────────────────── */
-function SkillIcon({ icon: Icon, label, color, index }: { icon: any; label: string; color: string; index: number }) {
+function SkillIcon({
+  icon: Icon,
+  label,
+  color,
+}: {
+  icon: any;
+  label: string;
+  color: string;
+}) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16, scale: 0.8 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.35, delay: index * 0.04, type: "spring", stiffness: 220, damping: 22 }}
-      whileHover={{ y: -4, scale: 1.1 }}
-      className="flex flex-col items-center gap-2 p-3 rounded-xl border border-border/40 bg-background/40 backdrop-blur-sm hover:border-primary/40 hover:bg-primary/5 transition-colors group cursor-default"
-    >
-      <Icon style={{ color, fontSize: 26 }} className="transition-transform group-hover:scale-110 drop-shadow-sm" />
+    <div className="flex flex-col items-center gap-2 p-3 rounded-xl border border-border/40 bg-background/40 backdrop-blur-sm hover:border-primary/40 hover:bg-primary/5 transition-colors group cursor-default">
+      <Icon
+        aria-hidden="true"
+        style={{ color, fontSize: 26 }}
+        className="transition-transform group-hover:scale-110 drop-shadow-sm"
+      />
       <span className="text-[10px] font-medium text-muted-foreground group-hover:text-foreground transition-colors tracking-wide leading-none">
         {label}
       </span>
-    </motion.div>
+    </div>
   );
 }
 
@@ -200,7 +187,9 @@ export default function About() {
   const { language, personalInfo } = usePortfolio();
   const t = translations[language];
   const bio = t.about.description;
-  const floatingSkills = personalInfo.floatingSkills.filter(Boolean).slice(0, 6);
+  const floatingSkills = personalInfo.floatingSkills
+    .filter(Boolean)
+    .slice(0, 6);
   const coreSkills = personalInfo.coreSkills.filter(Boolean);
 
   return (
@@ -211,39 +200,34 @@ export default function About() {
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-
           {/* Left — avatar + stats */}
-          <motion.div
-            initial={{ opacity: 0, x: language === "ar" ? 60 : -60 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="flex flex-col items-center gap-8"
-          >
-            <HexAvatar src={personalInfo.avatarUrl} alt={personalInfo.name} floatingSkills={floatingSkills} />
+          <div className="flex flex-col items-center gap-8">
+            <HexAvatar
+              src={personalInfo.avatarUrl}
+              alt={personalInfo.name}
+              floatingSkills={floatingSkills}
+            />
 
-            {/* Animated stat counters */}
+            {/* Experience statistics */}
             <div className="grid grid-cols-3 gap-3 w-full max-w-sm">
-              <StatCard to={4}  suffix="+" label={t.about.yearsExp}      delay={0.1} />
-              <StatCard to={20} suffix="+" label={t.about.projectsDone}  delay={0.2} />
-              <StatCard to={15} suffix="+" label={t.about.happyClients}  delay={0.3} />
+              <StatCard to={4} suffix="+" label={t.about.yearsExp} />
+              <StatCard to={20} suffix="+" label={t.about.projectsDone} />
+              <StatCard to={15} suffix="+" label={t.about.happyClients} />
             </div>
-          </motion.div>
+          </div>
 
           {/* Right — content */}
-          <motion.div
-            initial={{ opacity: 0, x: language === "ar" ? -60 : 60 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.9, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
-          >
+          <div>
             <span className="inline-block py-1 px-3 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-wider mb-5">
               {language === "ar" ? "من أنا" : "ABOUT ME"}
             </span>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-5 leading-tight">
               {t.about.title}
             </h2>
-            <p className="text-base text-muted-foreground mb-10 leading-relaxed" data-testid="text-bio">
+            <p
+              className="text-base text-muted-foreground mb-10 leading-relaxed"
+              data-testid="text-bio"
+            >
               {bio}
             </p>
 
@@ -256,11 +240,14 @@ export default function About() {
               </h3>
               <div className="grid grid-cols-6 gap-2">
                 {coreSkills.map((skillName, i) => (
-                  <SkillIcon key={`${skillName}-${i}`} {...getSkill(skillName)} index={i} />
+                  <SkillIcon
+                    key={`${skillName}-${i}`}
+                    {...getSkill(skillName)}
+                  />
                 ))}
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

@@ -3,7 +3,8 @@ import App from "./App";
 import "./index.css";
 
 try {
-  const savedLanguage = (localStorage.getItem("portfolio_lang") as "en" | "ar") || "en";
+  const savedLanguage =
+    localStorage.getItem("portfolio_lang") === "ar" ? "ar" : "en";
   document.documentElement.dir = savedLanguage === "ar" ? "rtl" : "ltr";
   document.documentElement.lang = savedLanguage;
 } catch {

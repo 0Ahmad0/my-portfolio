@@ -16,16 +16,5 @@ export default defineConfig({
   build: {
     outDir: "dist",
     emptyOutDir: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          react: ["react", "react-dom"],
-          ui: ["@radix-ui/react-dialog", "@radix-ui/react-select", "@radix-ui/react-tabs", "@radix-ui/react-toast", "@radix-ui/react-tooltip", "@radix-ui/react-label", "@radix-ui/react-slot"],
-          motion: ["framer-motion"],
-          query: ["@tanstack/react-query"],
-          icons: ["lucide-react", "react-icons"],
-        },
-      },
-    },
   },
 });

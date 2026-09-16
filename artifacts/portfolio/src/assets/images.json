@@ -1,0 +1,590 @@
+{
+  "/avatar.jpg": [
+    {
+      "src": "/images/598a705a1d4e-320.webp",
+      "width": 320,
+      "height": 480
+    },
+    {
+      "src": "/images/598a705a1d4e-640.webp",
+      "width": 640,
+      "height": 960
+    }
+  ],
+  "https://github.com/0Ahmad0/quran_tele/blob/main/images/ward1.png?raw=true": [
+    {
+      "src": "/images/fde751656c92-480.webp",
+      "width": 480,
+      "height": 270
+    },
+    {
+      "src": "/images/fde751656c92-960.webp",
+      "width": 960,
+      "height": 540
+    }
+  ],
+  "https://github.com/0Ahmad0/quran_tele/blob/main/images/ward2.png?raw=true": [
+    {
+      "src": "/images/8cada9a420dd-480.webp",
+      "width": 480,
+      "height": 270
+    },
+    {
+      "src": "/images/8cada9a420dd-960.webp",
+      "width": 960,
+      "height": 540
+    }
+  ],
+  "https://github.com/0Ahmad0/quran_tele/blob/main/images/ward3.png?raw=true": [
+    {
+      "src": "/images/f6708b8a5a13-480.webp",
+      "width": 480,
+      "height": 270
+    },
+    {
+      "src": "/images/f6708b8a5a13-960.webp",
+      "width": 960,
+      "height": 540
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/sande-shop/11.webp?raw=true": [
+    {
+      "src": "/images/943b5e725269-480.webp",
+      "width": 400,
+      "height": 400
+    },
+    {
+      "src": "/images/943b5e725269-960.webp",
+      "width": 400,
+      "height": 400
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/sande-shop/2.webp?raw=true": [
+    {
+      "src": "/images/d08413d8490d-480.webp",
+      "width": 333,
+      "height": 592
+    },
+    {
+      "src": "/images/d08413d8490d-960.webp",
+      "width": 333,
+      "height": 592
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/sande-shop/3.webp?raw=true": [
+    {
+      "src": "/images/50768b758bb6-480.webp",
+      "width": 333,
+      "height": 592
+    },
+    {
+      "src": "/images/50768b758bb6-960.webp",
+      "width": 333,
+      "height": 592
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/sande-shop/4.webp?raw=true": [
+    {
+      "src": "/images/5b6743bbd9f1-480.webp",
+      "width": 333,
+      "height": 592
+    },
+    {
+      "src": "/images/5b6743bbd9f1-960.webp",
+      "width": 333,
+      "height": 592
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/sande-shop/5.webp?raw=true": [
+    {
+      "src": "/images/202195bf3aae-480.webp",
+      "width": 333,
+      "height": 592
+    },
+    {
+      "src": "/images/202195bf3aae-960.webp",
+      "width": 333,
+      "height": 592
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/sande-shop/6.webp?raw=true": [
+    {
+      "src": "/images/a4ec320a2083-480.webp",
+      "width": 333,
+      "height": 592
+    },
+    {
+      "src": "/images/a4ec320a2083-960.webp",
+      "width": 333,
+      "height": 592
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/sande-shop/7.webp?raw=true": [
+    {
+      "src": "/images/828c4145ae6e-480.webp",
+      "width": 333,
+      "height": 592
+    },
+    {
+      "src": "/images/828c4145ae6e-960.webp",
+      "width": 333,
+      "height": 592
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/sande-shop/8.webp?raw=true": [
+    {
+      "src": "/images/c298849d463f-480.webp",
+      "width": 333,
+      "height": 592
+    },
+    {
+      "src": "/images/c298849d463f-960.webp",
+      "width": 333,
+      "height": 592
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/sande-shop/1.webp?raw=true": [
+    {
+      "src": "/images/5edb7098f1f2-480.webp",
+      "width": 480,
+      "height": 480
+    },
+    {
+      "src": "/images/5edb7098f1f2-960.webp",
+      "width": 480,
+      "height": 480
+    }
+  ],
+  "https://raw.githubusercontent.com/is2001is/project_images/refs/heads/main/Daraa-Gov-Site/1.png": [
+    {
+      "src": "/images/22d739033bbc-480.webp",
+      "width": 480,
+      "height": 231
+    },
+    {
+      "src": "/images/22d739033bbc-960.webp",
+      "width": 960,
+      "height": 463
+    }
+  ],
+  "https://raw.githubusercontent.com/is2001is/project_images/refs/heads/main/Daraa-Gov-Site/2.png": [
+    {
+      "src": "/images/a52610eaa6cc-480.webp",
+      "width": 480,
+      "height": 231
+    },
+    {
+      "src": "/images/a52610eaa6cc-960.webp",
+      "width": 960,
+      "height": 461
+    }
+  ],
+  "https://raw.githubusercontent.com/is2001is/project_images/refs/heads/main/Daraa-Gov-Site/3.png": [
+    {
+      "src": "/images/629e324e50b5-480.webp",
+      "width": 480,
+      "height": 229
+    },
+    {
+      "src": "/images/629e324e50b5-960.webp",
+      "width": 960,
+      "height": 458
+    }
+  ],
+  "https://raw.githubusercontent.com/is2001is/project_images/refs/heads/main/Daraa-Gov-Site/4.png": [
+    {
+      "src": "/images/8bc3103f4df0-480.webp",
+      "width": 480,
+      "height": 230
+    },
+    {
+      "src": "/images/8bc3103f4df0-960.webp",
+      "width": 960,
+      "height": 460
+    }
+  ],
+  "https://raw.githubusercontent.com/is2001is/project_images/refs/heads/main/Daraa-Gov-Site/5.png": [
+    {
+      "src": "/images/0f5e0bb21eef-480.webp",
+      "width": 480,
+      "height": 232
+    },
+    {
+      "src": "/images/0f5e0bb21eef-960.webp",
+      "width": 960,
+      "height": 464
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/tigre/1.png?raw=true": [
+    {
+      "src": "/images/53d6c6962c85-480.webp",
+      "width": 480,
+      "height": 509
+    },
+    {
+      "src": "/images/53d6c6962c85-960.webp",
+      "width": 960,
+      "height": 1019
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/tigre/2.webp?raw=true": [
+    {
+      "src": "/images/551ed374dcd8-480.webp",
+      "width": 273,
+      "height": 592
+    },
+    {
+      "src": "/images/551ed374dcd8-960.webp",
+      "width": 273,
+      "height": 592
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/tigre/3.webp?raw=true": [
+    {
+      "src": "/images/a6220152f69b-480.webp",
+      "width": 273,
+      "height": 592
+    },
+    {
+      "src": "/images/a6220152f69b-960.webp",
+      "width": 273,
+      "height": 592
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/tigre/4.webp?raw=true": [
+    {
+      "src": "/images/302eac43c9e4-480.webp",
+      "width": 273,
+      "height": 592
+    },
+    {
+      "src": "/images/302eac43c9e4-960.webp",
+      "width": 273,
+      "height": 592
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/tigre/5.webp?raw=true": [
+    {
+      "src": "/images/0ba49f816ab9-480.webp",
+      "width": 273,
+      "height": 592
+    },
+    {
+      "src": "/images/0ba49f816ab9-960.webp",
+      "width": 273,
+      "height": 592
+    }
+  ],
+  "https://raw.githubusercontent.com/is2001is/project_images/refs/heads/main/Map-key/6.png": [
+    {
+      "src": "/images/a39169c65883-480.webp",
+      "width": 480,
+      "height": 231
+    },
+    {
+      "src": "/images/a39169c65883-960.webp",
+      "width": 960,
+      "height": 462
+    }
+  ],
+  "https://raw.githubusercontent.com/is2001is/project_images/refs/heads/main/Map-key/1.png": [
+    {
+      "src": "/images/64ea5cbd26a1-480.webp",
+      "width": 480,
+      "height": 230
+    },
+    {
+      "src": "/images/64ea5cbd26a1-960.webp",
+      "width": 960,
+      "height": 459
+    }
+  ],
+  "https://raw.githubusercontent.com/is2001is/project_images/refs/heads/main/Map-key/2.png": [
+    {
+      "src": "/images/0fbecd9f69bd-480.webp",
+      "width": 480,
+      "height": 231
+    },
+    {
+      "src": "/images/0fbecd9f69bd-960.webp",
+      "width": 960,
+      "height": 463
+    }
+  ],
+  "https://raw.githubusercontent.com/is2001is/project_images/refs/heads/main/Map-key/3.png": [
+    {
+      "src": "/images/0f3ec53f2ba0-480.webp",
+      "width": 480,
+      "height": 231
+    },
+    {
+      "src": "/images/0f3ec53f2ba0-960.webp",
+      "width": 960,
+      "height": 462
+    }
+  ],
+  "https://raw.githubusercontent.com/is2001is/project_images/refs/heads/main/Map-key/4.png": [
+    {
+      "src": "/images/90fe4a36cb62-480.webp",
+      "width": 480,
+      "height": 231
+    },
+    {
+      "src": "/images/90fe4a36cb62-960.webp",
+      "width": 960,
+      "height": 461
+    }
+  ],
+  "https://raw.githubusercontent.com/is2001is/project_images/refs/heads/main/Map-key/5.png": [
+    {
+      "src": "/images/c1f290a54bfc-480.webp",
+      "width": 480,
+      "height": 231
+    },
+    {
+      "src": "/images/c1f290a54bfc-960.webp",
+      "width": 960,
+      "height": 461
+    }
+  ],
+  "https://raw.githubusercontent.com/is2001is/project_images/refs/heads/main/Map-key/7.png": [
+    {
+      "src": "/images/76831c1a6221-480.webp",
+      "width": 480,
+      "height": 230
+    },
+    {
+      "src": "/images/76831c1a6221-960.webp",
+      "width": 960,
+      "height": 460
+    }
+  ],
+  "https://raw.githubusercontent.com/is2001is/project_images/refs/heads/main/Portal-Dawam-web/1.png": [
+    {
+      "src": "/images/0e0194f852c7-480.webp",
+      "width": 480,
+      "height": 236
+    },
+    {
+      "src": "/images/0e0194f852c7-960.webp",
+      "width": 960,
+      "height": 472
+    }
+  ],
+  "https://raw.githubusercontent.com/is2001is/project_images/refs/heads/main/Portal-Dawam-web/6.png": [
+    {
+      "src": "/images/8671dac3e6fa-480.webp",
+      "width": 480,
+      "height": 300
+    },
+    {
+      "src": "/images/8671dac3e6fa-960.webp",
+      "width": 960,
+      "height": 600
+    }
+  ],
+  "https://raw.githubusercontent.com/is2001is/project_images/refs/heads/main/Portal-Dawam-web/3.png": [
+    {
+      "src": "/images/a032cdfdf2f5-480.webp",
+      "width": 480,
+      "height": 231
+    },
+    {
+      "src": "/images/a032cdfdf2f5-960.webp",
+      "width": 960,
+      "height": 462
+    }
+  ],
+  "https://raw.githubusercontent.com/is2001is/project_images/refs/heads/main/Portal-Dawam-web/4.png": [
+    {
+      "src": "/images/73171d88aa85-480.webp",
+      "width": 480,
+      "height": 253
+    },
+    {
+      "src": "/images/73171d88aa85-960.webp",
+      "width": 960,
+      "height": 506
+    }
+  ],
+  "https://raw.githubusercontent.com/is2001is/project_images/refs/heads/main/Portal-Dawam-web/5.png": [
+    {
+      "src": "/images/2c01179ea127-480.webp",
+      "width": 480,
+      "height": 232
+    },
+    {
+      "src": "/images/2c01179ea127-960.webp",
+      "width": 960,
+      "height": 464
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/vivafone/1.webp?raw=true": [
+    {
+      "src": "/images/882dc001eee9-480.webp",
+      "width": 400,
+      "height": 400
+    },
+    {
+      "src": "/images/882dc001eee9-960.webp",
+      "width": 400,
+      "height": 400
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/vivafone/Screenshot%202026-06-28%20001926.png?raw=true": [
+    {
+      "src": "/images/87c7b5b9f06e-480.webp",
+      "width": 480,
+      "height": 246
+    },
+    {
+      "src": "/images/87c7b5b9f06e-960.webp",
+      "width": 960,
+      "height": 493
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/vivafone/2.webp?raw=true": [
+    {
+      "src": "/images/4fe348c5ce64-480.webp",
+      "width": 333,
+      "height": 592
+    },
+    {
+      "src": "/images/4fe348c5ce64-960.webp",
+      "width": 333,
+      "height": 592
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/vivafone/3.webp?raw=true": [
+    {
+      "src": "/images/98bf1f7e3e28-480.webp",
+      "width": 333,
+      "height": 592
+    },
+    {
+      "src": "/images/98bf1f7e3e28-960.webp",
+      "width": 333,
+      "height": 592
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/vivafone/4.webp?raw=true": [
+    {
+      "src": "/images/d8e06ee9e685-480.webp",
+      "width": 333,
+      "height": 592
+    },
+    {
+      "src": "/images/d8e06ee9e685-960.webp",
+      "width": 333,
+      "height": 592
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/vivafone/5.webp?raw=true": [
+    {
+      "src": "/images/919cc6d16b53-480.webp",
+      "width": 333,
+      "height": 592
+    },
+    {
+      "src": "/images/919cc6d16b53-960.webp",
+      "width": 333,
+      "height": 592
+    }
+  ],
+  "https://github.com/is2001is/project_images/blob/main/vivafone/6.webp?raw=true": [
+    {
+      "src": "/images/0bdf28fdcc05-480.webp",
+      "width": 333,
+      "height": 592
+    },
+    {
+      "src": "/images/0bdf28fdcc05-960.webp",
+      "width": 333,
+      "height": 592
+    }
+  ],
+  "https://github.com/0Ahmad0/SOFT-STORE/blob/main/temp-iamges/3.png?raw=true": [
+    {
+      "src": "/images/d2ad7f3e6a7a-480.webp",
+      "width": 480,
+      "height": 239
+    },
+    {
+      "src": "/images/d2ad7f3e6a7a-960.webp",
+      "width": 960,
+      "height": 479
+    }
+  ],
+  "https://github.com/0Ahmad0/SOFT-STORE/blob/main/temp-iamges/2.png?raw=true": [
+    {
+      "src": "/images/595ddb2c984e-480.webp",
+      "width": 480,
+      "height": 244
+    },
+    {
+      "src": "/images/595ddb2c984e-960.webp",
+      "width": 960,
+      "height": 488
+    }
+  ],
+  "https://github.com/0Ahmad0/SOFT-STORE/blob/main/temp-iamges/4.png?raw=true": [
+    {
+      "src": "/images/ec707b504cd7-480.webp",
+      "width": 480,
+      "height": 245
+    },
+    {
+      "src": "/images/ec707b504cd7-960.webp",
+      "width": 960,
+      "height": 489
+    }
+  ],
+  "https://github.com/0Ahmad0/SOFT-STORE/blob/main/temp-iamges/6.png?raw=true": [
+    {
+      "src": "/images/45075d290a3a-480.webp",
+      "width": 480,
+      "height": 243
+    },
+    {
+      "src": "/images/45075d290a3a-960.webp",
+      "width": 960,
+      "height": 486
+    }
+  ],
+  "https://github.com/0Ahmad0/SOFT-STORE/blob/main/temp-iamges/5.png?raw=true": [
+    {
+      "src": "/images/26c4c6f7ce7f-480.webp",
+      "width": 480,
+      "height": 181
+    },
+    {
+      "src": "/images/26c4c6f7ce7f-960.webp",
+      "width": 960,
+      "height": 361
+    }
+  ],
+  "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&auto=format&fit=crop&q=60": [
+    {
+      "src": "/images/0f24201fbd49-480.webp",
+      "width": 480,
+      "height": 320
+    },
+    {
+      "src": "/images/0f24201fbd49-960.webp",
+      "width": 800,
+      "height": 533
+    }
+  ],
+  "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&auto=format&fit=crop&q=60": [
+    {
+      "src": "/images/267243c9095e-480.webp",
+      "width": 480,
+      "height": 339
+    },
+    {
+      "src": "/images/267243c9095e-960.webp",
+      "width": 800,
+      "height": 565
+    }
+  ]
+}

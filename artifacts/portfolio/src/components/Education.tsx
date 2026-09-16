@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { usePortfolio } from "@/contexts/PortfolioContext";
 import { translations } from "@/lib/i18n";
 import { GraduationCap, Calendar, Award } from "lucide-react";
@@ -10,29 +9,19 @@ export default function Education() {
   return (
     <section id="education" className="py-28 relative bg-muted/20">
       <div className="container mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
+        <div className="text-center mb-16">
           <span className="inline-block py-1 px-3 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-wider mb-4">
             {language === "ar" ? "الخلفية الأكاديمية" : "ACADEMIC BACKGROUND"}
           </span>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
             {t.education.title}
           </h2>
-        </motion.div>
+        </div>
 
         <div className="max-w-4xl mx-auto space-y-6">
           {education.map((edu, index) => (
-            <motion.div
+            <div
               key={edu.id}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.6, delay: index * 0.15 }}
               className="glass rounded-2xl p-8 group hover:border-primary/40 transition-all duration-300"
               data-testid={`education-${edu.id}`}
             >
@@ -49,10 +38,14 @@ export default function Education() {
                       <h3 className="text-xl font-bold">
                         {language === "ar" ? edu.degreeAr : edu.degree}
                         {" — "}
-                        <span className="text-primary">{language === "ar" ? edu.fieldAr : edu.field}</span>
+                        <span className="text-primary">
+                          {language === "ar" ? edu.fieldAr : edu.field}
+                        </span>
                       </h3>
                       <p className="text-muted-foreground font-medium mt-1">
-                        {language === "ar" ? edu.institutionAr : edu.institution}
+                        {language === "ar"
+                          ? edu.institutionAr
+                          : edu.institution}
                       </p>
                     </div>
                     <div className="flex items-center gap-4 shrink-0">
@@ -73,7 +66,7 @@ export default function Education() {
                   </p>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
