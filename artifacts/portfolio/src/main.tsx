@@ -7,6 +7,8 @@ try {
     localStorage.getItem("portfolio_lang") === "ar" ? "ar" : "en";
   document.documentElement.dir = savedLanguage === "ar" ? "rtl" : "ltr";
   document.documentElement.lang = savedLanguage;
+  if (localStorage.getItem("portfolio_corners") === "rounded")
+    document.documentElement.dataset.corners = "rounded";
 } catch {
   document.documentElement.dir = "ltr";
   document.documentElement.lang = "en";

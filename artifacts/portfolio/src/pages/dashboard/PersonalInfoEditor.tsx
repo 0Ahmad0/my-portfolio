@@ -54,6 +54,13 @@ export function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSav
     local.colorRotationEnabled,
   ]);
 
+  useEffect(() => {
+    document.documentElement.dataset.corners = local.cornerStyle;
+    return () => {
+      document.documentElement.dataset.corners = info.cornerStyle;
+    };
+  }, [info.cornerStyle, local.cornerStyle]);
+
   const handleSave = async () => {
     setSaving(true);
     setSaveError("");
@@ -141,8 +148,8 @@ export function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSav
               </p>
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                 {language === "ar"
-                  ? "اختر لونًا ثابتًا، أو فعّل التبديل التلقائي بين 10 ألوان متناسقة كل 6 ساعات."
-                  : "Choose a fixed color, or rotate through 10 curated colors every 6 hours."}
+                  ? "اختر لونًا ثابتًا، أو فعّل التبديل التلقائي بين 10 ألوان متناسقة كل دقيقة."
+                  : "Choose a fixed color, or rotate through 10 curated colors every minute."}
               </p>
             </div>
           </div>
@@ -169,7 +176,7 @@ export function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSav
             >
               <span className="flex items-center gap-2 font-semibold">
                 <Clock3 className="size-4 text-primary" />
-                {language === "ar" ? "تلقائي كل 6 ساعات" : "Automatic every 6 hours"}
+                {language === "ar" ? "تلقائي كل دقيقة" : "Automatic every minute"}
               </span>
               <span className="mt-1 block text-xs text-muted-foreground">
                 {language === "ar" ? "يتنقل بين الألوان العشرة." : "Cycle through all ten colors."}
@@ -245,6 +252,35 @@ export function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSav
                 className="sr-only"
               />
             </label>
+          </div>
+        </div>
+
+        <div className="border-t border-border pt-5">
+          <p className="font-semibold">
+            {language === "ar" ? "شكل الزوايا" : "Corner style"}
+          </p>
+          <p className="mt-1 mb-4 text-sm leading-relaxed text-muted-foreground">
+            {language === "ar"
+              ? "يُطبَّق على البطاقات والأزرار والحقول في الموقع كله."
+              : "Applies to cards, buttons, and fields across the whole site."}
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {(
+              [
+                ["cut", "زوايا مقصوصة", "Cut corners"],
+                ["rounded", "زوايا دائرية", "Rounded corners"],
+              ] as const
+            ).map(([style, nameAr, nameEn]) => (
+              <button
+                key={style}
+                type="button"
+                aria-pressed={local.cornerStyle === style}
+                onClick={() => setLocal((current) => ({ ...current, cornerStyle: style }))}
+                className={`rounded-2xl border p-4 text-start font-semibold transition-colors ${local.cornerStyle === style ? "border-primary bg-primary/10 ring-1 ring-primary/30" : "border-border bg-background hover:border-primary/40"}`}
+              >
+                {language === "ar" ? nameAr : nameEn}
+              </button>
+            ))}
           </div>
         </div>
 

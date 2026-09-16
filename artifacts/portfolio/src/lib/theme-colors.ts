@@ -1,4 +1,4 @@
-export const THEME_ROTATION_INTERVAL = 6 * 60 * 60 * 1000;
+export const THEME_ROTATION_INTERVAL = 60 * 1000;
 export const DEFAULT_PRIMARY_COLOR = "#6D28D9";
 
 export const CURATED_THEME_COLORS = [

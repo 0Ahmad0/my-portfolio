@@ -93,6 +93,7 @@ export type PersonalInfo = {
   coreSkills: string[];
   primaryColor: string;
   colorRotationEnabled: boolean;
+  cornerStyle: "cut" | "rounded";
 };
 
 export const defaultFloatingSkills = ["Flutter", "Firebase", "C++", "React", "Git", "Dart"];
@@ -138,6 +139,7 @@ export const defaultPersonalInfo: PersonalInfo = {
   coreSkills: defaultCoreSkills,
   primaryColor: "#6D28D9",
   colorRotationEnabled: false,
+  cornerStyle: "cut",
 };
 
 export const defaultProjects: Project[] = [
@@ -291,6 +293,7 @@ export const mapPersonalInfo = (row: Row): PersonalInfo => ({
   coreSkills: row.core_skills ?? defaultCoreSkills,
   primaryColor: row.primary_color ?? "#6D28D9",
   colorRotationEnabled: row.color_rotation_enabled ?? false,
+  cornerStyle: row.corner_style === "rounded" ? "rounded" : "cut",
 });
 
 export const personalInfoPayload = (info: PersonalInfo) => ({
@@ -314,6 +317,7 @@ export const personalInfoPayload = (info: PersonalInfo) => ({
   core_skills: info.coreSkills,
   primary_color: info.primaryColor,
   color_rotation_enabled: info.colorRotationEnabled,
+  corner_style: info.cornerStyle,
 });
 
 export const mapProject = (row: Row): Project => ({

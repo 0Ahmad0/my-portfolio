@@ -53,7 +53,7 @@ export default function Hero() {
   return (
     <section className="relative min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden pt-24 pb-20">
       <div className="container px-6 z-10 text-center flex flex-col items-center relative">
-        <span className="mb-6 inline-block py-1.5 px-5 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-widest">
+        <span className="mb-6 inline-block py-1.5 px-5 chamfer rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-widest">
           {language === "ar" ? "مرحباً، أنا" : "HELLO, I'M"}
         </span>
         <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl xl:text-[7rem] font-extrabold mb-6 leading-tight">
@@ -63,23 +63,26 @@ export default function Hero() {
           <Typewriter key={language} words={t.hero.roles} />
         </div>
         <div className="flex flex-col sm:flex-row gap-4 items-center">
-          <Button
-            asChild
-            size="lg"
-            className="rounded-full px-8 py-6 text-base font-semibold group shadow-xl shadow-primary/30"
-            data-testid="button-hero-cta"
-          >
-            <a href="#projects">
-              {t.hero.viewWork}
-              <ArrowRight
-                aria-hidden="true"
-                className="ms-2 h-5 w-5 group-hover:translate-x-1 transition-transform"
-              />
-            </a>
-          </Button>
+          {/* glow lives on a wrapper: clip-path on the button would cut a box-shadow */}
+          <span className="drop-shadow-xl drop-shadow-primary/40">
+            <Button
+              asChild
+              size="lg"
+              className="rounded-full px-8 py-6 text-base font-semibold group"
+              data-testid="button-hero-cta"
+            >
+              <a href="#projects">
+                {t.hero.viewWork}
+                <ArrowRight
+                  aria-hidden="true"
+                  className="ms-2 h-5 w-5 group-hover:translate-x-1 transition-transform"
+                />
+              </a>
+            </Button>
+          </span>
           <a
             href="#contact"
-            className="px-8 py-3 rounded-full border border-border bg-background/40 text-base font-medium hover:border-primary/60 hover:text-primary transition-colors"
+            className="px-8 py-3 chamfer rounded-full border border-border bg-background/40 text-base font-medium hover:border-primary/60 hover:text-primary transition-colors"
           >
             {language === "ar" ? "تواصل معي" : "Contact Me"}
           </a>
@@ -88,7 +91,7 @@ export default function Hero() {
           {skills.map((tech) => (
             <span
               key={tech}
-              className="text-xs font-mono text-muted-foreground border border-border bg-background/40 px-3 py-1 rounded-full"
+              className="text-xs font-mono text-muted-foreground border border-border bg-background/40 px-3 py-1 chamfer rounded-full"
             >
               {tech}
             </span>

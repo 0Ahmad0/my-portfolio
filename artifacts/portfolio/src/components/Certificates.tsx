@@ -10,7 +10,7 @@ export default function Certificates() {
     <section id="certificates" className="py-28 relative">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <span className="inline-block py-1 px-3 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-wider mb-4">
+          <span className="inline-block py-1 px-3 chamfer rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-wider mb-4">
             {language === "ar"
               ? "الإنجازات والشهادات"
               : "ACHIEVEMENTS & CREDENTIALS"}
@@ -24,51 +24,81 @@ export default function Certificates() {
           {certificates.map((cert, index) => (
             <div
               key={cert.id}
-              className="glass rounded-2xl p-6 group relative overflow-hidden cursor-default"
+              className="engineering-card p-6 sm:p-7 group flex flex-col"
               data-testid={`certificate-${cert.id}`}
             >
-              {/* Colored top accent */}
-              <div
-                className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl"
-                style={{ background: cert.badgeColor }}
-              />
-
-              <div className="flex items-start justify-between gap-3 mb-4 mt-2">
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                  style={{
-                    background: `${cert.badgeColor}20`,
-                    border: `1px solid ${cert.badgeColor}40`,
-                  }}
-                >
-                  <ShieldCheck
-                    className="w-6 h-6"
-                    style={{ color: cert.badgeColor }}
-                  />
+              <div className="flex items-center justify-between gap-3 mb-6 mt-2">
+                <div className="certificate-mark size-16 bg-primary/10 grid place-items-center shrink-0 text-primary">
+                  <ShieldCheck aria-hidden="true" className="size-7" />
                 </div>
-                {cert.credentialUrl && cert.credentialUrl !== "#" && (
-                  <a
-                    href={cert.credentialUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center min-h-11 min-w-11 transition-colors p-2 rounded-lg hover:bg-muted"
-                    aria-label={`${t.certificates.verify}: ${language === "ar" ? cert.titleAr : cert.title}`}
-                    data-testid={`cert-link-${cert.id}`}
-                  >
-                    <ExternalLink className="w-4 h-4 text-muted-foreground" />
-                  </a>
-                )}
+                <span
+                  aria-hidden="true"
+                  className="font-mono text-xs tracking-widest text-muted-foreground me-4"
+                >
+                  {String(index + 1).padStart(2, "0")}
+                </span>
               </div>
 
-              <h3 className="font-bold text-base leading-snug mb-1">
+              <h3 className="font-bold text-lg leading-snug mb-2">
                 {language === "ar" ? cert.titleAr : cert.title}
               </h3>
               <p className="text-sm text-muted-foreground mb-3">
                 {language === "ar" ? cert.issuerAr : cert.issuer}
               </p>
-              <span className="inline-block text-xs font-mono px-2 py-0.5 rounded bg-muted text-muted-foreground">
+              <span className="text-xs font-mono text-muted-foreground mb-6">
                 {cert.date}
               </span>
+              <div className="mt-auto border-t border-border pt-4">
+                {cert.credentialUrl?.trim() &&
+                cert.credentialUrl.trim() !== "#" ? (
+                  <a
+                    href={cert.credentialUrl.trim()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between gap-3 min-h-12 chamfer rounded-lg px-3 bg-primary/10 text-primary font-semibold text-sm hover:bg-primary/20 transition-colors"
+                    aria-label={`${language === "ar" ? "عرض الشهادة" : "View certificate"}: ${language === "ar" ? cert.titleAr : cert.title}`}
+                    data-testid={`cert-link-${cert.id}`}
+                  >
+                    <span>
+                      {language === "ar" ? "عرض الشهادة" : "View certificate"}
+                    </span>
+                    <ExternalLink
+                      aria-hidden="true"
+                      className="size-5 shrink-0 rtl:-scale-x-100"
+                    />
+                  </a>
+                ) : (
+                  <div>
+                    <button
+                      type="button"
+                      disabled
+                      aria-describedby={`cert-unavailable-${cert.id}`}
+                      className="flex w-full min-h-12 items-center justify-between gap-3 chamfer rounded-lg bg-muted px-3 text-sm font-medium text-muted-foreground cursor-not-allowed"
+                    >
+                      <span>
+                        {language === "ar" ? "عرض الشهادة" : "View certificate"}
+                      </span>
+                      <ExternalLink
+                        aria-hidden="true"
+                        className="size-5 shrink-0 rtl:-scale-x-100"
+                      />
+                    </button>
+                  </div>
+                )}
+                <p
+                  id={`cert-unavailable-${cert.id}`}
+                  className="mt-2 text-xs leading-relaxed text-muted-foreground"
+                >
+                  {cert.credentialUrl?.trim() &&
+                  cert.credentialUrl.trim() !== "#"
+                    ? language === "ar"
+                      ? "يفتح في تبويب جديد"
+                      : "Opens in a new tab"
+                    : language === "ar"
+                      ? "لم يُضف رابط الشهادة بعد"
+                      : "Certificate link not added yet"}
+                </p>
+              </div>
             </div>
           ))}
         </div>

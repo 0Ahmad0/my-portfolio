@@ -16,6 +16,7 @@ import {
   BriefcaseBusiness,
   GraduationCap,
   BadgeCheck,
+  MessageSquareQuote,
   Mail,
   ChevronRight,
   Languages,
@@ -63,6 +64,11 @@ export default function Navbar() {
     { name: t.nav.experience, id: "experience", icon: BriefcaseBusiness },
     { name: t.nav.education, id: "education", icon: GraduationCap },
     { name: t.nav.certificates, id: "certificates", icon: BadgeCheck },
+    {
+      name: t.nav.testimonials,
+      id: "testimonials",
+      icon: MessageSquareQuote,
+    },
     { name: t.nav.contact, id: "contact", icon: Mail },
   ];
 
@@ -99,8 +105,8 @@ export default function Navbar() {
           </a>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-6">
-            <ul className="flex items-center gap-5 text-sm font-medium">
+          <nav className="hidden lg:flex items-center gap-4">
+            <ul className="flex items-center gap-4 text-sm font-medium">
               {navLinks.map((link) => (
                 <li key={link.id}>
                   <a
@@ -232,9 +238,9 @@ export default function Navbar() {
                   <Dialog.Close asChild>
                     <a
                       href={`#${id}`}
-                      className="group flex min-h-14 items-center gap-3 rounded-2xl px-3 py-2 text-start font-medium hover:bg-primary/10 hover:text-primary focus-visible:bg-primary/10 focus-visible:outline-offset-[-2px] transition-colors"
+                      className="group flex min-h-14 items-center gap-3 chamfer rounded-2xl px-3 py-2 text-start font-medium hover:bg-primary/10 hover:text-primary focus-visible:bg-primary/10 focus-visible:outline-offset-[-2px] transition-colors"
                     >
-                      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+                      <span className="grid size-10 shrink-0 place-items-center chamfer rounded-xl bg-primary/10 text-primary">
                         <Icon aria-hidden="true" className="size-5" />
                       </span>
                       <span className="flex-1">{name}</span>

@@ -111,7 +111,7 @@ function HexAvatar({
         return (
           <div
             key={`${skill.label}-${i}`}
-            className="floating-skill absolute w-12 h-12 rounded-lg bg-background/60 border border-primary/20 backdrop-blur-sm flex items-center justify-center hover:bg-primary/10 hover:border-primary/40 transition-[background-color,border-color] group"
+            className="floating-skill absolute w-12 h-12 chamfer rounded-lg bg-background/60 border border-primary/20 backdrop-blur-sm flex items-center justify-center hover:bg-primary/10 hover:border-primary/40 transition-[background-color,border-color] group"
             style={
               {
                 left: "50%",
@@ -151,7 +151,7 @@ function StatCard({
   label: string;
 }) {
   return (
-    <div className="flex flex-col items-center px-6 py-4 rounded-2xl border border-primary/20 bg-primary/5 backdrop-blur-sm hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 group">
+    <div className="engineering-card engineering-card-sm flex flex-col items-center px-6 py-4 group">
       <p className="text-3xl font-extrabold text-primary leading-none group-hover:scale-110 transition-transform duration-300">
         <span className="tabular-nums">
           {to}
@@ -176,7 +176,7 @@ function SkillIcon({
   color: string;
 }) {
   return (
-    <div className="flex flex-col items-center gap-2 p-3 rounded-xl border border-border/40 bg-background/40 backdrop-blur-sm hover:border-primary/40 hover:bg-primary/5 transition-colors group cursor-default">
+    <div className="engineering-card engineering-card-sm flex flex-col items-center gap-2 p-3 group cursor-default">
       <Icon
         aria-hidden="true"
         style={{ color, fontSize: 26 }}
@@ -225,7 +225,7 @@ export default function About() {
 
           {/* Right — content */}
           <div>
-            <span className="inline-block py-1 px-3 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-wider mb-5">
+            <span className="inline-block py-1 px-3 chamfer rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-wider mb-5">
               {language === "ar" ? "من أنا" : "ABOUT ME"}
             </span>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-5 leading-tight">
@@ -245,7 +245,7 @@ export default function About() {
                 {t.about.skills}
                 <span className="w-4 h-px bg-primary/60 inline-block" />
               </h3>
-              <div className="grid grid-cols-6 gap-2">
+              <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
                 {coreSkills.map((skillName, i) => (
                   <SkillIcon
                     key={`${skillName}-${i}`}

@@ -7,7 +7,7 @@ import {
 } from "@/lib/theme-colors";
 
 export default function PrimaryColorController() {
-  const { personalInfo } = usePortfolio();
+  const { personalInfo, isLoading } = usePortfolio();
   const [rotationTick, setRotationTick] = useState(() => Date.now());
   const color = useMemo(
     () =>
@@ -22,6 +22,15 @@ export default function PrimaryColorController() {
   useEffect(() => {
     applyThemeColor(color);
   }, [color]);
+
+  // Wait for saved settings so the style main.tsx restored doesn't flash back to the default
+  useEffect(() => {
+    if (isLoading) return;
+    document.documentElement.dataset.corners = personalInfo.cornerStyle;
+    try {
+      localStorage.setItem("portfolio_corners", personalInfo.cornerStyle);
+    } catch {}
+  }, [isLoading, personalInfo.cornerStyle]);
 
   useEffect(() => {
     if (!personalInfo.colorRotationEnabled) return;

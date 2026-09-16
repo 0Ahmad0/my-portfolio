@@ -57,7 +57,7 @@ function Carousel({
                 ? `الصورة السابقة: ${title}`
                 : `Previous image: ${title}`
             }
-            className="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/75 text-white flex items-center justify-center hover:bg-black"
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 chamfer rounded-full bg-black/75 text-white flex items-center justify-center hover:bg-black"
           >
             <ChevronLeft aria-hidden="true" className="w-5 h-5" />
           </button>
@@ -69,12 +69,12 @@ function Carousel({
                 ? `الصورة التالية: ${title}`
                 : `Next image: ${title}`
             }
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/75 text-white flex items-center justify-center hover:bg-black"
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 chamfer rounded-full bg-black/75 text-white flex items-center justify-center hover:bg-black"
           >
             <ChevronRight aria-hidden="true" className="w-5 h-5" />
           </button>
           <span
-            className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-black/75 text-white text-xs px-3 py-1 tabular-nums"
+            className="absolute bottom-2 left-1/2 -translate-x-1/2 chamfer rounded-full bg-black/75 text-white text-xs px-3 py-1 tabular-nums"
             aria-live={large ? "polite" : "off"}
           >
             {index + 1} / {total}
@@ -153,7 +153,7 @@ export default function Projects() {
     <section id="projects" className="py-28 relative bg-muted/20">
       <div className="container mx-auto px-6">
         <div className="text-center mb-6">
-          <span className="inline-block py-1 px-3 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-wider mb-4">
+          <span className="inline-block py-1 px-3 chamfer rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-wider mb-4">
             {language === "ar" ? "معرض الأعمال" : "PORTFOLIO"}
           </span>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
@@ -171,7 +171,7 @@ export default function Projects() {
               type="button"
               onClick={() => setFilter(cat.id)}
               aria-pressed={filter === cat.id}
-              className={`min-h-11 px-5 py-2 rounded-full text-sm font-medium transition-colors ${filter === cat.id ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25" : "text-muted-foreground hover:bg-muted hover:text-foreground border border-border"}`}
+              className={`min-h-11 px-5 py-2 chamfer rounded-full text-sm font-medium transition-colors ${filter === cat.id ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25" : "text-muted-foreground hover:bg-muted hover:text-foreground border border-border"}`}
               data-testid={`filter-${cat.id.toLowerCase()}`}
             >
               {cat.label}
@@ -182,7 +182,7 @@ export default function Projects() {
           {visible.map((project) => (
             <article
               key={project.id}
-              className="group glass rounded-2xl overflow-hidden flex flex-col hover:border-primary/40 transition-colors"
+              className="engineering-card group flex flex-col transition-[transform,border-color,box-shadow] hover:border-primary/50"
               data-testid={`project-card-${project.id}`}
             >
               <Carousel
@@ -221,7 +221,7 @@ export default function Projects() {
                   {project.tags.slice(0, 4).map((tag) => (
                     <span
                       key={tag}
-                      className="text-xs font-mono text-primary bg-primary/10 px-2 py-1 rounded-full"
+                      className="text-xs font-mono text-primary bg-primary/10 px-2 py-1 chamfer rounded-full"
                     >
                       {tag}
                     </span>
@@ -281,7 +281,7 @@ export default function Projects() {
               {selected.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="text-xs font-mono text-primary bg-primary/10 px-3 py-1 rounded-full"
+                  className="text-xs font-mono text-primary bg-primary/10 px-3 py-1 chamfer rounded-full"
                 >
                   {tag}
                 </span>
@@ -295,7 +295,7 @@ export default function Projects() {
                     src={src}
                     alt={`${titleOf(selected)} — ${i + 1}`}
                     sizes="(min-width: 640px) 230px, 42vw"
-                    className="aspect-video w-full object-cover rounded-xl"
+                    className="aspect-video w-full object-cover chamfer rounded-xl"
                   />
                 ))}
               </div>

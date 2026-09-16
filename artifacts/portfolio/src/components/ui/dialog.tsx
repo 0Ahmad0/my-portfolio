@@ -54,13 +54,13 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          "relative z-50 flex flex-col w-full max-w-lg max-h-[90dvh] border bg-background shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:rounded-lg",
+          "relative z-50 flex flex-col w-full max-w-lg max-h-[90dvh] border bg-background shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 chamfer [--cut:24px] sm:rounded-lg",
           className,
         )}
         {...props}
       >
         <div className="flex-1 min-h-0 overflow-y-auto p-6">{children}</div>
-        <DialogPrimitive.Close className="absolute right-2 top-2 w-11 h-11 flex items-center justify-center rounded-full bg-background/95 ring-offset-background transition-colors hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none z-10">
+        <DialogPrimitive.Close className="absolute right-2 top-2 w-11 h-11 flex items-center justify-center chamfer rounded-full bg-background/95 ring-offset-background transition-colors hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none z-10">
           <X className="h-4 w-4" />
           <span className="sr-only">{closeLabel}</span>
         </DialogPrimitive.Close>

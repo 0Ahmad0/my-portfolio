@@ -29,7 +29,7 @@ export default function Footer() {
                 href={personalInfo.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 rounded-full hover:bg-muted transition-colors"
+                className="p-3 chamfer rounded-full hover:bg-muted transition-colors"
                 aria-label="GitHub"
                 data-testid="link-github"
               >
@@ -41,7 +41,7 @@ export default function Footer() {
                 href={personalInfo.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 rounded-full hover:bg-muted transition-colors text-[#0A66C2]"
+                className="p-3 chamfer rounded-full hover:bg-muted transition-colors text-[#0A66C2]"
                 aria-label="LinkedIn"
                 data-testid="link-linkedin"
               >
@@ -53,7 +53,7 @@ export default function Footer() {
                 href={personalInfo.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 rounded-full hover:bg-muted transition-colors"
+                className="p-3 chamfer rounded-full hover:bg-muted transition-colors"
                 aria-label="X (Twitter)"
                 data-testid="link-twitter"
               >

@@ -10,7 +10,7 @@ export default function Education() {
     <section id="education" className="py-28 relative bg-muted/20">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <span className="inline-block py-1 px-3 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-wider mb-4">
+          <span className="inline-block py-1 px-3 chamfer rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium tracking-wider mb-4">
             {language === "ar" ? "الخلفية الأكاديمية" : "ACADEMIC BACKGROUND"}
           </span>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
@@ -22,12 +22,12 @@ export default function Education() {
           {education.map((edu, index) => (
             <div
               key={edu.id}
-              className="glass rounded-2xl p-8 group hover:border-primary/40 transition-all duration-300"
+              className="engineering-card p-8 group hover:border-primary/50 transition-all duration-300"
               data-testid={`education-${edu.id}`}
             >
               <div className="flex flex-col md:flex-row md:items-start gap-6">
                 <div className="flex-shrink-0">
-                  <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <div className="w-14 h-14 chamfer rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                     <GraduationCap className="w-7 h-7 text-primary" />
                   </div>
                 </div>
@@ -50,7 +50,7 @@ export default function Education() {
                     </div>
                     <div className="flex items-center gap-4 shrink-0">
                       {edu.gpa && (
-                        <span className="flex items-center gap-1.5 text-sm font-mono bg-primary/10 text-primary px-3 py-1 rounded-full">
+                        <span className="flex items-center gap-1.5 text-sm font-mono bg-primary/10 text-primary px-3 py-1 chamfer rounded-full">
                           <Award className="w-3.5 h-3.5" />
                           {t.education.gpa}: {edu.gpa}
                         </span>

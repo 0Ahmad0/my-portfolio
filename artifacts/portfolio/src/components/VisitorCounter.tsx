@@ -8,7 +8,7 @@ export default function VisitorCounter() {
   const label = language === "ar" ? "الزوار" : "Unique visitors";
   return (
     <div
-      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-primary/5 border border-primary/15 text-xs text-muted-foreground min-w-16"
+      className="flex items-center gap-1.5 px-2.5 py-1.5 chamfer rounded-full bg-primary/5 border border-primary/15 text-xs text-muted-foreground min-w-16"
       title={label}
     >
       <Eye aria-hidden="true" className="w-3 h-3" />

@@ -4,6 +4,15 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
+import { THEME_ROTATION_INTERVAL, CURATED_THEME_COLORS, getEffectiveThemeColor } from "../src/lib/theme-colors.ts";
+
+test("automatic colors advance once per minute while fixed colors stay selected", () => {
+  assert.equal(THEME_ROTATION_INTERVAL, 60_000);
+  assert.equal(getEffectiveThemeColor("#123456", true, 59_999), CURATED_THEME_COLORS[0].value);
+  assert.equal(getEffectiveThemeColor("#123456", true, 60_000), CURATED_THEME_COLORS[1].value);
+  assert.equal(getEffectiveThemeColor("#123456", true, 600_000), CURATED_THEME_COLORS[0].value);
+  assert.equal(getEffectiveThemeColor("#123456", false, 60_000), "#123456");
+});
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 test("every responsive image points to a real WebP with accurate srcset dimensions", async () => {
