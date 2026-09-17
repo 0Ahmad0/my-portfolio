@@ -101,7 +101,7 @@ function ExperienceItem({
 
           {/* Content */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2 mb-2">
+            <div className="flex items-start justify-between gap-2 mb-2 pe-8">
               <div>
                 <h3 className="text-lg font-bold">
                   {language === "ar" ? exp.roleAr : exp.role}

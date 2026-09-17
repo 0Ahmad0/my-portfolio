@@ -78,7 +78,9 @@ function hexToHsl(hex: string) {
 
 export function themeColorVariables(hex: string) {
   const { hue, saturation, lightness } = hexToHsl(hex);
-  const vividSaturation = clamp(saturation, 55, 92);
+  // A gray has no real hue (it reads as 0 = red), so keep it neutral instead of boosting it
+  const neutral = saturation < 10;
+  const vividSaturation = neutral ? saturation : clamp(saturation, 55, 92);
   const lightPrimary = clamp(lightness, 30, 44);
   const darkPrimary = clamp(lightness + 24, 66, 76);
   return {
@@ -94,11 +96,29 @@ export function themeColorVariables(hex: string) {
       vividSaturation,
       darkPrimary,
     ),
-    "--brand-accent-light": `${hue} ${clamp(vividSaturation - 8, 48, 82)}% 92%`,
+    "--brand-accent-light": `${hue} ${neutral ? saturation : clamp(vividSaturation - 8, 48, 82)}% 92%`,
     "--brand-accent-foreground-light": `${hue} ${vividSaturation}% 28%`,
-    "--brand-accent-dark": `${hue} ${clamp(vividSaturation - 10, 45, 82)}% 18%`,
+    "--brand-accent-dark": `${hue} ${neutral ? saturation : clamp(vividSaturation - 10, 45, 82)}% 18%`,
     "--brand-accent-foreground-dark": `${hue} ${vividSaturation}% 88%`,
   } as const;
+}
+
+type Look = {
+  primaryColor: string;
+  colorRotationEnabled: boolean;
+  cornerStyle: "cut" | "rounded";
+};
+
+// Applies the saved appearance and remembers it, so the next visit starts with it
+export function applyLook({ primaryColor, colorRotationEnabled, cornerStyle }: Look) {
+  applyThemeColor(getEffectiveThemeColor(primaryColor, colorRotationEnabled));
+  document.documentElement.dataset.corners = cornerStyle;
+  try {
+    localStorage.setItem(
+      "portfolio_look",
+      JSON.stringify({ primaryColor, colorRotationEnabled, cornerStyle }),
+    );
+  } catch {}
 }
 
 export function applyThemeColor(hex: string) {

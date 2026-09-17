@@ -4,7 +4,14 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
-import { THEME_ROTATION_INTERVAL, CURATED_THEME_COLORS, getEffectiveThemeColor } from "../src/lib/theme-colors.ts";
+import { THEME_ROTATION_INTERVAL, CURATED_THEME_COLORS, getEffectiveThemeColor, themeColorVariables } from "../src/lib/theme-colors.ts";
+
+test("gray theme colors stay neutral instead of turning red", () => {
+  const gray = themeColorVariables("#BABABA");
+  assert.equal(gray["--brand-primary-light"], "0 0% 44%");
+  assert.equal(gray["--brand-accent-dark"], "0 0% 18%");
+  assert.equal(themeColorVariables("#B45309")["--brand-primary-light"], "26 90% 37%");
+});
 
 test("automatic colors advance once per minute while fixed colors stay selected", () => {
   assert.equal(THEME_ROTATION_INTERVAL, 60_000);

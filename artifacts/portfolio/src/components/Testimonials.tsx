@@ -87,8 +87,8 @@ export default function Testimonials() {
 
   return (
     <section id="testimonials" className="py-20 relative overflow-hidden">
-      <div className="absolute top-1/4 right-1/3 w-[600px] h-[600px] bg-gradient-to-br from-violet-500/15 via-primary/10 to-transparent rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] bg-gradient-to-tl from-cyan-500/10 via-primary/8 to-transparent rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/4 right-1/3 w-[600px] h-[600px] bg-gradient-to-br from-primary/15 via-primary/10 to-transparent rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] bg-gradient-to-tl from-primary/10 via-primary/8 to-transparent rounded-full blur-[100px] pointer-events-none" />
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-10">
@@ -150,7 +150,7 @@ export default function Testimonials() {
                       />
                     ))}
                   </div>
-                  <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/60 border border-border/60 chamfer rounded-full px-2.5 py-1">
+                  <span className="me-10 inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/60 border border-border/60 chamfer rounded-full px-2.5 py-1">
                     <MapPin
                       aria-hidden="true"
                       className="w-3.5 h-3.5 text-primary"
