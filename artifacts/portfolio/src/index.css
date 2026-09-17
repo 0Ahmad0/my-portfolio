@@ -328,9 +328,12 @@ html[dir="rtl"] {
     @apply bg-white/85 border border-border shadow-sm dark:bg-white/5 dark:border-white/10 dark:backdrop-blur-md dark:shadow-none;
   }
 
-  /* Shared cut-corner shape (top-right + bottom-left), sized by --cut */
+  /* Shared cut-corner shape, sized by --cut: cuts sit at the top-end and
+     bottom-start corners (mirrored in RTL) so they stay clear of where content starts */
   .engineering-card,
   .chamfer {
+    --cut-top: top right;
+    --cut-bottom: bottom left;
     clip-path: polygon(
       0 0,
       calc(100% - var(--cut)) 0,
@@ -338,6 +341,18 @@ html[dir="rtl"] {
       100% 100%,
       var(--cut) 100%,
       0 calc(100% - var(--cut))
+    );
+  }
+  [dir="rtl"] :is(.engineering-card, .chamfer) {
+    --cut-top: top left;
+    --cut-bottom: bottom right;
+    clip-path: polygon(
+      var(--cut) 0,
+      100% 0,
+      100% calc(100% - var(--cut)),
+      calc(100% - var(--cut)) 100%,
+      0 100%,
+      0 var(--cut)
     );
   }
 
@@ -360,6 +375,10 @@ html[dir="rtl"] {
     transform-origin: 0 0;
     pointer-events: none;
   }
+  [dir="rtl"] .chamfer::before {
+    transform: skewY(-45deg);
+    transform-origin: 100% 0;
+  }
 
   /* Form fields can't have ::before, so their cut edges are painted from --line */
   input.chamfer,
@@ -368,21 +387,19 @@ html[dir="rtl"] {
     border-color: var(--line);
     background-image:
       linear-gradient(
-        to bottom left,
+        to var(--cut-bottom),
         transparent 50%,
         var(--line) 50% calc(50% + 1px),
         transparent 0
       ),
       linear-gradient(
-        to top right,
+        to var(--cut-top),
         transparent 50%,
         var(--line) 50% calc(50% + 1px),
         transparent 0
       );
     background-size: var(--cut) var(--cut);
-    background-position:
-      top right,
-      bottom left;
+    background-position: var(--cut-top), var(--cut-bottom);
     background-repeat: no-repeat;
     background-origin: border-box;
   }
@@ -442,7 +459,7 @@ html[dir="rtl"] {
     clip-path: inherit;
     background:
       radial-gradient(
-        ellipse at 100% 0,
+        ellipse at var(--cut-top),
         hsl(var(--primary) / 0.09),
         transparent 55%
       ),
@@ -453,7 +470,7 @@ html[dir="rtl"] {
     content: "";
     position: absolute;
     top: 12px;
-    right: 12px;
+    inset-inline-end: 12px;
     width: 40px;
     height: 40px;
     z-index: -1;
@@ -464,6 +481,9 @@ html[dir="rtl"] {
       transparent 2px 8px
     );
     clip-path: polygon(0 0, 100% 0, 100% 100%);
+  }
+  [dir="rtl"] .engineering-card::after {
+    transform: scaleX(-1);
   }
 
   @media (hover: hover) {
@@ -479,9 +499,9 @@ html[dir="rtl"] {
   }
   .engineering-card-sm::after {
     top: 6px;
-    right: 6px;
-    width: 20px;
-    height: 20px;
+    inset-inline-end: 6px;
+    width: 14px;
+    height: 14px;
   }
   /* Regular hexagon in a square box: height = width × √3/2, so rows sit at 50% ± 43.3% */
   .certificate-mark {
@@ -547,7 +567,11 @@ main[id] {
   position: absolute;
   width: 75vw;
   height: 75vh;
-  background: radial-gradient(ellipse, rgb(124 92 246 / 0.24), transparent 65%);
+  background: radial-gradient(
+    ellipse,
+    hsl(var(--primary) / 0.24),
+    transparent 65%
+  );
 }
 .aurora-orb-one {
   top: -15%;
@@ -556,7 +580,11 @@ main[id] {
 .aurora-orb-two {
   right: -15%;
   bottom: -15%;
-  background: radial-gradient(ellipse, rgb(56 139 253 / 0.2), transparent 65%);
+  background: radial-gradient(
+    ellipse,
+    hsl(var(--primary) / 0.16),
+    transparent 65%
+  );
 }
 .aurora-particles {
   color: hsl(var(--primary) / 0.5);
@@ -573,8 +601,8 @@ main[id] {
 .aurora-grid {
   opacity: 0.08;
   background-image:
-    linear-gradient(#8b5cf6 1px, transparent 1px),
-    linear-gradient(90deg, #8b5cf6 1px, transparent 1px);
+    linear-gradient(hsl(var(--primary)) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px);
   background-size: 52px 52px;
 }
 .typing-cursor {

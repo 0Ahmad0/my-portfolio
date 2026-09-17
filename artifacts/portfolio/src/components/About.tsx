@@ -80,7 +80,7 @@ function HexAvatar({
         style={{
           clipPath: HEX,
           background:
-            "conic-gradient(from 0deg, hsl(250 89% 70%), hsl(180 89% 70%), hsl(290 89% 70%), hsl(250 89% 70%))",
+            "conic-gradient(from 0deg, hsl(var(--primary)), color-mix(in oklab, hsl(var(--primary)), white 45%), hsl(var(--primary) / 0.55), color-mix(in oklab, hsl(var(--primary)), white 45%), hsl(var(--primary)))",
         }}
       />
 
@@ -152,7 +152,7 @@ function StatCard({
 }) {
   return (
     <div className="engineering-card engineering-card-sm flex flex-col items-center px-6 py-4 group">
-      <p className="text-3xl font-extrabold text-primary leading-none group-hover:scale-110 transition-transform duration-300">
+      <p className="text-2xl sm:text-3xl font-extrabold text-primary leading-none group-hover:scale-110 transition-transform duration-300">
         <span className="tabular-nums">
           {to}
           {suffix}
@@ -203,7 +203,7 @@ export default function About() {
     <section id="about" className="py-28 relative overflow-hidden">
       {/* Soft ambient glow */}
       <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-primary/6 rounded-full blur-[120px] pointer-events-none -translate-y-1/2" />
-      <div className="absolute top-1/3 right-1/4 w-[350px] h-[350px] bg-violet-500/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/3 right-1/4 w-[350px] h-[350px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">

@@ -23,6 +23,16 @@
     <meta property="og:image" content="https://ahmadalhariri.dev/avatar.jpg" />
     <meta name="twitter:card" content="summary" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      // Fetch the saved theme while the app downloads, so the first render uses it
+      window.savedLook = fetch(
+        "%VITE_SUPABASE_URL%/rest/v1/portfolio_personal_info?select=primary_color,color_rotation_enabled,corner_style&is_primary=eq.true&limit=1",
+        { headers: { apikey: "%VITE_SUPABASE_PUBLISHABLE_KEY%" } },
+      )
+        .then((response) => (response.ok ? response.json() : []))
+        .then((rows) => rows[0])
+        .catch(() => undefined);
+    </script>
     <link
       rel="preload"
       href="/fonts/3100e775e861.woff2"
