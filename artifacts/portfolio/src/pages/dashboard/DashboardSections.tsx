@@ -28,8 +28,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
+import Loader from "@/components/Loader";
 import { EmptyState, ItemCard, SectionHeader } from "./DashboardParts";
 import { PersonalInfoEditor } from "./PersonalInfoEditor";
+
+/* 10px text in a 15px box was untappable on a phone — these are real 40px targets now */
+const PROJECT_LINK =
+  "inline-flex items-center gap-1 min-h-10 px-1.5 text-[11px] hover:underline sm:min-h-6";
 
 export type ContactMessage = {
   id: string;
@@ -168,18 +173,27 @@ export function ProjectsSection({ onAdd, onEdit }: { onAdd: () => void; onEdit: 
                       }
                     }}
                   >
-                    <div className="flex items-center gap-3">
-                      <img src={p.imageUrl || (p.images?.[0] ?? "")} alt="" className="w-14 h-12 rounded-xl object-cover bg-muted shrink-0 border border-border/40" />
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="font-semibold truncate">{p.title}</h3>
-                          <Badge variant="secondary" className="text-[10px] shrink-0">
+                    <div className="flex items-start gap-3">
+                      <img
+                        src={p.imageUrl || (p.images?.[0] ?? "")}
+                        alt=""
+                        width={56}
+                        height={56}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-14 h-14 chamfer [--cut:8px] object-cover bg-muted shrink-0 border border-border/40"
+                      />
+                      <div className="min-w-0 flex-1">
+                        {/* title on its own line — wrapping it with the badges made a ragged block */}
+                        <h3 className="font-semibold leading-tight truncate">{p.title}</h3>
+                        <div className="flex items-center gap-1.5 flex-wrap mt-0.5 -ms-1">
+                          <Badge variant="secondary" className="text-[10px] shrink-0 ms-1">
                             {categoryLabels[p.category] ?? p.category}
                           </Badge>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-7 gap-1.5 px-2 text-[11px]"
+                            className="min-h-11 gap-1.5 px-2 text-[11px] sm:min-h-7"
                             title={p.isPublished ? (language === "ar" ? "إخفاء المشروع" : "Hide project") : language === "ar" ? "إظهار المشروع" : "Show project"}
                             onClick={async () => {
                               try {
@@ -205,30 +219,25 @@ export function ProjectsSection({ onAdd, onEdit }: { onAdd: () => void; onEdit: 
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground mt-0.5 truncate">{p.tags.slice(0, 4).join(" · ")}</p>
-                        <div className="flex gap-2 mt-1">
+                        <div className="flex flex-wrap gap-1 mt-1 -ms-1.5">
                           {p.liveUrl && p.liveUrl !== "#" && (
-                            <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline flex items-center gap-0.5">
-                              <ExternalLink className="w-2.5 h-2.5" /> {d.links.live}
+                            <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className={`${PROJECT_LINK} text-primary`}>
+                              <ExternalLink className="w-3 h-3" /> {d.links.live}
                             </a>
                           )}
                           {p.githubUrl && p.githubUrl !== "#" && (
-                            <a href={p.githubUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-muted-foreground hover:underline flex items-center gap-0.5">
-                              <Github className="w-2.5 h-2.5" /> {d.links.github}
+                            <a href={p.githubUrl} target="_blank" rel="noopener noreferrer" className={`${PROJECT_LINK} text-muted-foreground`}>
+                              <Github className="w-3 h-3" /> {d.links.github}
                             </a>
                           )}
                           {p.androidUrl && p.androidUrl !== "#" && (
-                            <a
-                              href={p.androidUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[10px] text-muted-foreground hover:underline flex items-center gap-0.5"
-                            >
-                              <Smartphone className="w-2.5 h-2.5" /> {d.links.android}
+                            <a href={p.androidUrl} target="_blank" rel="noopener noreferrer" className={`${PROJECT_LINK} text-muted-foreground`}>
+                              <Smartphone className="w-3 h-3" /> {d.links.android}
                             </a>
                           )}
                           {p.iosUrl && p.iosUrl !== "#" && (
-                            <a href={p.iosUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-muted-foreground hover:underline flex items-center gap-0.5">
-                              <Apple className="w-2.5 h-2.5" /> {d.links.ios}
+                            <a href={p.iosUrl} target="_blank" rel="noopener noreferrer" className={`${PROJECT_LINK} text-muted-foreground`}>
+                              <Apple className="w-3 h-3" /> {d.links.ios}
                             </a>
                           )}
                         </div>
@@ -332,12 +341,12 @@ export function ExperienceSection({ onAdd, onEdit }: { onAdd: () => void; onEdit
                     }}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
+                      <div className="w-10 h-10 chamfer [--cut:8px] bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
                         <Briefcase className="w-4.5 h-4.5 text-blue-500" />
                       </div>
-                      <div>
-                        <p className="font-semibold leading-none">{language === "ar" ? e.roleAr || e.role : e.role}</p>
-                        <p className="text-sm text-muted-foreground mt-1">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold leading-tight truncate">{language === "ar" ? e.roleAr || e.role : e.role}</p>
+                        <p className="text-sm text-muted-foreground mt-1 truncate">
                           {e.company} <span className="text-border">·</span> {e.period}
                         </p>
                       </div>
@@ -399,14 +408,14 @@ export function EducationSection({ onAdd, onEdit }: { onAdd: () => void; onEdit:
                 }}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 chamfer [--cut:8px] bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0">
                     <GraduationCap className="w-4.5 h-4.5 text-green-500" />
                   </div>
-                  <div>
-                    <p className="font-semibold leading-none">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold leading-tight truncate">
                       {language === "ar" ? e.degreeAr || e.degree : e.degree} {language === "ar" ? e.fieldAr || e.field : e.field}
                     </p>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className="text-sm text-muted-foreground mt-1 truncate">
                       {language === "ar" ? e.institutionAr || e.institution : e.institution} <span className="text-border">·</span> {e.period}
                       {e.gpa && (
                         <span className="ml-2 text-primary font-medium">
@@ -504,7 +513,7 @@ export function CertificatesSection({ onAdd, onEdit }: { onAdd: () => void; onEd
                   >
                     <div className="flex items-center gap-3">
                       <div
-                        className="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center"
+                        className="w-10 h-10 chamfer [--cut:8px] shrink-0 flex items-center justify-center"
                         style={{
                           background: `${c.badgeColor}20`,
                           border: `1px solid ${c.badgeColor}40`,
@@ -512,16 +521,16 @@ export function CertificatesSection({ onAdd, onEdit }: { onAdd: () => void; onEd
                       >
                         <Award className="w-4.5 h-4.5" style={{ color: c.badgeColor }} />
                       </div>
-                      <div>
+                      <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <p className="font-semibold leading-none">{language === "ar" ? c.titleAr || c.title : c.title}</p>
+                          <p className="font-semibold leading-tight truncate">{language === "ar" ? c.titleAr || c.title : c.title}</p>
                           {c.credentialUrl && (
-                            <a href={c.credentialUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/70">
+                            <a href={c.credentialUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/70 shrink-0">
                               <ExternalLink className="w-3 h-3" />
                             </a>
                           )}
                         </div>
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <p className="text-sm text-muted-foreground mt-1 truncate">
                           {language === "ar" ? c.issuerAr || c.issuer : c.issuer} <span className="text-border">·</span> {c.date}
                         </p>
                       </div>
@@ -561,7 +570,7 @@ export function MessagesSection({
       />
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+          <Loader />
         </div>
       ) : messages.length === 0 ? (
         <EmptyState
@@ -575,14 +584,14 @@ export function MessagesSection({
         <div className="space-y-3">
           {messages.map((msg, i) => (
             <motion.div key={msg.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, delay: i * 0.03 }}>
-              <Card className={`hover:border-primary/30 transition-colors ${msg.status === "new" ? "border-l-4 border-l-primary" : ""}`}>
-                <CardContent className="p-5">
-                  <div className="flex items-start justify-between gap-4">
+              <Card className={`chamfer hover:border-primary/40 transition-colors ${msg.status === "new" ? "border-s-4 border-s-primary" : ""}`}>
+                <CardContent className="p-4 sm:p-5">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
                         <span className="font-semibold">{msg.name}</span>
                         <span className="text-xs text-muted-foreground">·</span>
-                        <a href={`mailto:${msg.email}`} className="text-sm text-primary hover:underline">
+                        <a href={`mailto:${msg.email}`} className="text-sm text-primary hover:underline break-all">
                           {msg.email}
                         </a>
                         <Badge variant={msg.status === "new" ? "default" : msg.status === "read" ? "secondary" : "outline"} className="text-[10px]">
@@ -592,18 +601,18 @@ export function MessagesSection({
                       <p className="text-sm text-foreground/80 whitespace-pre-wrap mb-3">{msg.message}</p>
                       <p className="text-[11px] text-muted-foreground">{new Date(msg.created_at).toLocaleString(language === "ar" ? "ar-SA" : "en-US")}</p>
                     </div>
-                    <div className="flex gap-2 shrink-0">
-                      {msg.status === "new" && (
-                        <Button variant="outline" size="sm" className="gap-1.5" onClick={() => updateStatus(msg.id, "read")}>
-                          <CheckCircle2 className="w-3.5 h-3.5" /> {t.messages?.markRead || "Mark as Read"}
-                        </Button>
-                      )}
-                      {msg.status !== "archived" && (
-                        <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground" onClick={() => updateStatus(msg.id, "archived")}>
+                    {msg.status !== "archived" && (
+                      <div className="flex gap-2 justify-end border-t border-border/50 pt-3 sm:border-0 sm:pt-0 sm:shrink-0">
+                        {msg.status === "new" && (
+                          <Button variant="outline" size="sm" className="gap-1.5 min-h-11 sm:min-h-8" onClick={() => updateStatus(msg.id, "read")}>
+                            <CheckCircle2 className="w-3.5 h-3.5" /> {t.messages?.markRead || "Mark as Read"}
+                          </Button>
+                        )}
+                        <Button variant="ghost" size="sm" className="gap-1.5 min-h-11 text-muted-foreground sm:min-h-8" onClick={() => updateStatus(msg.id, "archived")}>
                           <Trash2 className="w-3.5 h-3.5" /> {t.messages?.markArchived || "Archive"}
                         </Button>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -694,7 +703,7 @@ export function TestimonialsSection({ onAdd, onEdit }: { onAdd: () => void; onEd
                   >
                     <div className="flex items-start gap-3">
                       {t.imageUrl ? (
-                        <img src={t.imageUrl} alt={t.name} className="w-10 h-10 rounded-full object-cover border border-border shrink-0" />
+                        <img src={t.imageUrl} alt={t.name} width={40} height={40} loading="lazy" decoding="async" className="w-10 h-10 rounded-full object-cover border border-border shrink-0" />
                       ) : (
                         <div className="w-10 h-10 rounded-full border border-border bg-primary/10 text-primary flex items-center justify-center font-bold shrink-0">
                           {(language === "ar" ? t.nameAr || t.name : t.name).trim().charAt(0)}
@@ -702,8 +711,8 @@ export function TestimonialsSection({ onAdd, onEdit }: { onAdd: () => void; onEd
                       )}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <p className="font-semibold leading-none">{language === "ar" ? t.nameAr || t.name : t.name}</p>
-                          <div className="flex gap-0.5">
+                          <p className="font-semibold leading-tight truncate">{language === "ar" ? t.nameAr || t.name : t.name}</p>
+                          <div className="flex gap-0.5 shrink-0">
                             {Array(t.rating)
                               .fill(0)
                               .map((_, j) => (
@@ -711,7 +720,7 @@ export function TestimonialsSection({ onAdd, onEdit }: { onAdd: () => void; onEd
                               ))}
                           </div>
                         </div>
-                        <p className="text-sm text-muted-foreground mb-2">
+                        <p className="text-sm text-muted-foreground mb-2 truncate">
                           {language === "ar" ? t.roleAr || t.role : t.role}
                           {(language === "ar" ? t.companyAr || t.company : t.company) && ` · ${language === "ar" ? t.companyAr || t.company : t.company}`}
                         </p>

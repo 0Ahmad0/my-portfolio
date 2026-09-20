@@ -3,6 +3,7 @@ import { Switch, Route, Router as WouterRouter } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import { PortfolioProvider } from "@/contexts/PortfolioContext";
 import PrimaryColorController from "@/components/PrimaryColorController";
+import Loader from "@/components/Loader";
 import { ThemeProvider } from "next-themes";
 import NotFound from "@/pages/not-found";
 import Portfolio from "@/pages/Portfolio";
@@ -15,11 +16,8 @@ function Router() {
       <Route path="/dashboard">
         <Suspense
           fallback={
-            <main
-              className="min-h-screen grid place-items-center"
-              role="status"
-            >
-              Loading… / جارٍ التحميل…
+            <main className="min-h-[100dvh] grid place-content-center">
+              <Loader />
             </main>
           }
         >

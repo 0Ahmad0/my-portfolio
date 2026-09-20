@@ -53,6 +53,13 @@ import {
   type ContactMessage,
 } from "./dashboard/DashboardSections";
 
+/* Tabs stay 44px-tall thumb targets and never shrink inside the mobile scroll strip.
+   before:content-none drops .chamfer's cut-edge border redraw — a tab has no border
+   so it paints nothing, but its skewed box inflates the strip's scrollHeight to 177px
+   and lets focus/scrollIntoView shove the tabs out of view. */
+const TAB =
+  "shrink-0 snap-start chamfer [--cut:7px] before:content-none! gap-1.5 min-h-11 px-3 sm:min-h-9 data-[state=active]:shadow-sm";
+
 /* ─── Main Dashboard ─────────────────────────────────── */
 export default function Dashboard() {
   return (
@@ -209,7 +216,7 @@ function DashboardContent() {
   /* ── Login screen ── */
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-6 relative overflow-hidden">
+      <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent pointer-events-none" />
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-primary/5 rounded-full blur-[80px] pointer-events-none" />
@@ -219,8 +226,8 @@ function DashboardContent() {
           transition={{ duration: 0.5 }}
           className="w-full max-w-sm relative z-10"
         >
-          <Card className="glass border-border/60 shadow-2xl shadow-primary/10">
-            <CardHeader className="text-center pb-2">
+          <Card className="glass chamfer [--cut:16px] border-border/60 shadow-2xl shadow-primary/10">
+            <CardHeader className="text-center px-5 pt-6 pb-2 sm:px-6">
               <motion.div
                 animate={{ rotate: [0, 5, -5, 0] }}
                 transition={{
@@ -228,16 +235,19 @@ function DashboardContent() {
                   repeat: Infinity,
                   ease: "easeInOut",
                 }}
-                className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-4"
+                className="w-16 h-16 chamfer [--cut:12px] bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-4"
               >
                 <LayoutDashboard className="w-8 h-8 text-primary" />
               </motion.div>
               <CardTitle className="text-2xl font-bold">{d.login}</CardTitle>
               <CardDescription>{d.loginDescription}</CardDescription>
             </CardHeader>
-            <CardContent className="pt-4">
-              <form onSubmit={handleLogin} className="space-y-4">
-                <label htmlFor="login-email" className="text-sm font-medium">
+            <CardContent className="px-5 pt-4 pb-6 sm:px-6">
+              <form onSubmit={handleLogin} className="space-y-1.5">
+                <label
+                  htmlFor="login-email"
+                  className="block text-sm font-medium"
+                >
                   {t.dashboard.email}
                 </label>
                 <Input
@@ -248,9 +258,12 @@ function DashboardContent() {
                   placeholder={t.dashboard.email}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-12 text-base"
+                  className="h-12 text-base !mb-4"
                 />
-                <label htmlFor="login-password" className="text-sm font-medium">
+                <label
+                  htmlFor="login-password"
+                  className="block text-sm font-medium"
+                >
                   {t.dashboard.password}
                 </label>
                 <Input
@@ -271,7 +284,7 @@ function DashboardContent() {
                       initial={{ opacity: 0, y: -4 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      className="text-sm text-destructive text-center bg-destructive/10 py-2.5 rounded-xl border border-destructive/20"
+                      className="!mt-4 text-sm text-destructive text-center bg-destructive/10 py-2.5 chamfer [--cut:8px] border border-destructive/20"
                     >
                       {error}
                     </motion.p>
@@ -279,7 +292,7 @@ function DashboardContent() {
                 </AnimatePresence>
                 <Button
                   type="submit"
-                  className="w-full h-12 rounded-xl font-semibold text-base shadow-lg shadow-primary/25"
+                  className="w-full !mt-5 min-h-12 font-semibold text-base shadow-lg shadow-primary/25"
                   data-testid="button-login"
                 >
                   {d.enter}
@@ -290,7 +303,7 @@ function DashboardContent() {
                   asChild
                   variant="ghost"
                   size="sm"
-                  className="text-muted-foreground gap-2 hover:text-foreground"
+                  className="text-muted-foreground gap-2 min-h-11 hover:text-foreground"
                 >
                   <Link href="/">
                     <ArrowLeft className="h-4 w-4" /> {d.returnToPortfolio}
@@ -312,48 +325,52 @@ function DashboardContent() {
       transition={{ duration: 0.4 }}
       className="min-h-screen bg-background"
     >
-      {/* Top bar */}
-      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b border-border/50 px-6 py-3.5">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+      {/* Top bar — icon-only actions on mobile so the title never collides */}
+      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b border-border/50 px-4 py-2.5 sm:px-6 sm:py-3.5">
+        <div className="max-w-6xl mx-auto flex justify-between items-center gap-3">
+          <div className="flex items-center gap-2.5 min-w-0 sm:gap-3">
+            <div className="w-10 h-10 shrink-0 chamfer [--cut:8px] bg-primary/10 border border-primary/20 flex items-center justify-center">
               <LayoutDashboard className="w-4 h-4 text-primary" />
             </div>
-            <div>
-              <h1 className="text-base font-bold leading-none">
+            <div className="min-w-0">
+              <h1 className="text-sm font-bold leading-tight truncate sm:text-base">
                 {d.headerTitle}
               </h1>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="hidden text-xs text-muted-foreground mt-0.5 truncate sm:block">
                 {d.headerSubtitle}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 shrink-0 sm:gap-2">
             <Button
               asChild
               variant="outline"
               size="sm"
-              className="gap-2 rounded-xl"
+              className="gap-2 min-h-11 px-3 sm:min-h-9"
             >
-              <Link href="/">
-                <Eye className="h-3.5 w-3.5" /> {d.viewSite}
+              <Link href="/" aria-label={d.viewSite} title={d.viewSite}>
+                <Eye className="h-4 w-4" />
+                <span className="hidden sm:inline">{d.viewSite}</span>
               </Link>
             </Button>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleLogout}
-              className="gap-2 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+              aria-label={d.logout}
+              title={d.logout}
+              className="gap-2 min-h-11 px-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10 sm:min-h-9"
             >
-              <LogOut className="h-3.5 w-3.5" /> {d.logout}
+              <LogOut className="h-4 w-4" />
+              <span className="hidden sm:inline">{d.logout}</span>
             </Button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
-        {/* Stats row */}
-        <div className="flex flex-wrap gap-3 mb-8">
+      <div className="max-w-6xl mx-auto px-4 py-6 pb-[max(2rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-8">
+        {/* Stats — even 2-up grid on mobile instead of a ragged wrap */}
+        <div className="grid grid-cols-2 gap-2 mb-6 sm:flex sm:flex-wrap sm:gap-3 sm:mb-8">
           <StatBadge
             icon={Code2}
             label={d.stats.projects}
@@ -383,54 +400,63 @@ function DashboardContent() {
             label={d.stats.messages}
             value={messages.filter((m) => m.status === "new").length}
             color="#06B6D4"
+            className="col-span-2 sm:col-span-1"
           />
         </div>
 
-        <Tabs defaultValue="projects" className="w-full">
-          <TabsList className="flex flex-wrap h-auto gap-1 mb-8 bg-muted/40 border border-border/40 p-1 rounded-xl">
+        {/* Radix defaults Tabs to dir="ltr", which forced every panel below it
+            LTR on an Arabic page while the chamfers still cut RTL */}
+        <Tabs
+          defaultValue="projects"
+          dir={language === "ar" ? "rtl" : "ltr"}
+          className="w-full"
+        >
+          {/* Mobile: one scroll-snapping strip (7 tabs wrapped into a 4-row block
+              of 28px targets before). Desktop: wraps as usual. */}
+          {/* overflow-y-hidden matters: overflow-x-auto alone makes the strip
+              vertically scrollable too, which scrolls the tabs out of view */}
+          <TabsList className="flex h-auto w-full justify-start gap-1 mb-6 overflow-x-auto overflow-y-hidden overscroll-x-contain snap-x bg-muted/40 border border-border/40 p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:flex-wrap sm:overflow-visible sm:mb-8">
             <TabsTrigger
               value="projects"
-              className="rounded-lg gap-1.5 data-[state=active]:shadow-sm"
+              className={TAB}
             >
-              <Code2 className="w-3.5 h-3.5" /> {t.dashboard.projects}
+              <Code2 className="w-4 h-4" /> {t.dashboard.projects}
             </TabsTrigger>
             <TabsTrigger
               value="info"
-              className="rounded-lg gap-1.5 data-[state=active]:shadow-sm"
+              className={TAB}
             >
-              <User className="w-3.5 h-3.5" /> {t.dashboard.personalInfo}
+              <User className="w-4 h-4" /> {t.dashboard.personalInfo}
             </TabsTrigger>
             <TabsTrigger
               value="experience"
-              className="rounded-lg gap-1.5 data-[state=active]:shadow-sm"
+              className={TAB}
             >
-              <Briefcase className="w-3.5 h-3.5" /> {t.dashboard.experience}
+              <Briefcase className="w-4 h-4" /> {t.dashboard.experience}
             </TabsTrigger>
             <TabsTrigger
               value="education"
-              className="rounded-lg gap-1.5 data-[state=active]:shadow-sm"
+              className={TAB}
             >
-              <GraduationCap className="w-3.5 h-3.5" /> {t.dashboard.education}
+              <GraduationCap className="w-4 h-4" /> {t.dashboard.education}
             </TabsTrigger>
             <TabsTrigger
               value="certificates"
-              className="rounded-lg gap-1.5 data-[state=active]:shadow-sm"
+              className={TAB}
             >
-              <Award className="w-3.5 h-3.5" /> {t.dashboard.certificates}
+              <Award className="w-4 h-4" /> {t.dashboard.certificates}
             </TabsTrigger>
             <TabsTrigger
               value="testimonials"
-              className="rounded-lg gap-1.5 data-[state=active]:shadow-sm"
+              className={TAB}
             >
-              <MessageCircle className="w-3.5 h-3.5" /> {d.tabs.testimonials}
+              <MessageCircle className="w-4 h-4" /> {d.tabs.testimonials}
             </TabsTrigger>
-            <TabsTrigger
-              value="messages"
-              className="rounded-lg gap-1.5 data-[state=active]:shadow-sm relative"
-            >
-              <MessageCircle className="w-3.5 h-3.5" /> {d.tabs.messages}
+            <TabsTrigger value="messages" className={TAB}>
+              <MessageCircle className="w-4 h-4" /> {d.tabs.messages}
+              {/* inline, not absolute: an absolute badge is clipped by the scroll strip */}
               {messages.filter((m) => m.status === "new").length > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-[9px] text-white font-bold flex items-center justify-center">
+                <span className="min-w-4 h-4 px-1 rounded-full bg-primary text-[9px] text-primary-foreground font-bold flex items-center justify-center">
                   {messages.filter((m) => m.status === "new").length}
                 </span>
               )}
