@@ -8,6 +8,10 @@ import { translations } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
+/* Comfortable thumb targets on touch, compact on desktop (mouse) */
+const TOUCH_ICON = "h-11 w-11 sm:h-9 sm:w-9";
+const TOUCH_BTN = "min-h-11 sm:min-h-9";
+
 export function SectionHeader({
   icon: Icon,
   title,
@@ -26,21 +30,24 @@ export function SectionHeader({
   itemLabel: string;
 }) {
   return (
-    <div className="flex items-center justify-between mb-6">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${color}20` }}>
+    <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="w-10 h-10 shrink-0 chamfer [--cut:8px] flex items-center justify-center" style={{ background: `${color}20`, border: `1px solid ${color}33` }}>
           <Icon className="w-5 h-5" style={{ color }} />
         </div>
-        <div>
-          <h2 className="text-lg font-bold leading-none">{title}</h2>
+        <div className="min-w-0">
+          <h2 className="text-lg font-bold leading-tight truncate">{title}</h2>
           <p className="text-xs text-muted-foreground mt-0.5">
             {count} {itemLabel}
           </p>
         </div>
       </div>
-      <Button onClick={onAdd} className="gap-2 rounded-xl shadow-lg shadow-primary/20">
-        <Plus className="h-4 w-4" /> {addLabel}
-      </Button>
+      {/* Messages has no add action — it passes an empty label */}
+      {addLabel && (
+        <Button onClick={onAdd} className={`gap-2 w-full sm:w-auto shrink-0 shadow-lg shadow-primary/20 ${TOUCH_BTN}`}>
+          <Plus className="h-4 w-4" /> {addLabel}
+        </Button>
+      )}
     </div>
   );
 }
@@ -65,13 +72,13 @@ export function EmptyState({ icon: Icon, title, description, onAdd, addLabel }: 
         }}
         className="relative mb-6"
       >
-        <div className="w-24 h-24 rounded-3xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+        <div className="w-24 h-24 chamfer [--cut:18px] bg-primary/10 border border-primary/20 flex items-center justify-center">
           <Icon className="w-10 h-10 text-primary/60" />
         </div>
         <motion.div
           animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0, 0.5] }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute inset-0 rounded-3xl bg-primary/10"
+          className="absolute inset-0 chamfer [--cut:18px] bg-primary/10"
         />
         <motion.div
           animate={{ rotate: 360 }}
@@ -87,11 +94,13 @@ export function EmptyState({ icon: Icon, title, description, onAdd, addLabel }: 
       <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }} className="text-muted-foreground text-sm max-w-xs mb-8 leading-relaxed">
         {description}
       </motion.p>
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
-        <Button onClick={onAdd} className="gap-2 rounded-xl shadow-lg shadow-primary/25">
-          <Plus className="h-4 w-4" /> {addLabel}
-        </Button>
-      </motion.div>
+      {addLabel && (
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
+          <Button onClick={onAdd} className={`gap-2 px-6 shadow-lg shadow-primary/25 ${TOUCH_BTN}`}>
+            <Plus className="h-4 w-4" /> {addLabel}
+          </Button>
+        </motion.div>
+      )}
     </motion.div>
   );
 }
@@ -140,16 +149,18 @@ export function ItemCard({
         initial={{ opacity: 0, x: -16 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: 16, height: 0, marginBottom: 0 }}
-        transition={{ duration: 0.3, delay: index * 0.05 }}
+        /* stagger caps at 8: a 22-item list must not animate for 1.1s */
+        transition={{ duration: 0.3, delay: Math.min(index, 8) * 0.04 }}
         layout
       >
-        <Card className="hover:border-primary/30 transition-colors">
-          <CardContent className="flex items-center justify-between gap-4 p-5">
+        <Card className="chamfer hover:border-primary/40 transition-colors">
+          {/* Mobile: content stacked over its own action row. Desktop: side by side. */}
+          <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-5">
             <div className="flex-1 min-w-0">{children}</div>
-            <div className="flex gap-2 shrink-0">
+            <div className="flex items-center justify-end gap-1 border-t border-border/50 pt-3 sm:gap-2 sm:shrink-0 sm:border-0 sm:pt-0">
               {confirmDelete ? (
                 <>
-                  <Button variant="ghost" size="sm" onClick={() => setConfirmDelete(false)}>
+                  <Button variant="ghost" size="sm" className={TOUCH_BTN} onClick={() => setConfirmDelete(false)}>
                     {d.actions.cancel}
                   </Button>
                   <Button
@@ -166,7 +177,7 @@ export function ItemCard({
                         setConfirmDelete(false);
                       }
                     }}
-                    className="gap-1.5"
+                    className={`gap-1.5 ${TOUCH_BTN}`}
                   >
                     {deleting ? <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" /> : <Trash2 className="h-3.5 w-3.5" />}{" "}
                     {d.actions.confirm}
@@ -179,7 +190,7 @@ export function ItemCard({
                       ref={setActivatorNodeRef}
                       variant="ghost"
                       size="icon"
-                      className="h-9 w-9 cursor-grab touch-none active:cursor-grabbing"
+                      className={`${TOUCH_ICON} cursor-grab touch-none active:cursor-grabbing`}
                       title={language === "ar" ? "اسحب لإعادة الترتيب" : "Drag to reorder"}
                       aria-label={language === "ar" ? "اسحب لإعادة الترتيب" : "Drag to reorder"}
                       {...attributes}
@@ -189,20 +200,43 @@ export function ItemCard({
                     </Button>
                   )}
                   {(onMoveUp || onMoveDown) && (
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" className="h-9 w-9" onClick={onMoveUp} disabled={!canMoveUp} title={language === "ar" ? "نقل للأعلى" : "Move up"}>
-                        <ArrowUp className="h-3.5 w-3.5" />
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className={TOUCH_ICON}
+                        onClick={onMoveUp}
+                        disabled={!canMoveUp}
+                        title={language === "ar" ? "نقل للأعلى" : "Move up"}
+                        aria-label={language === "ar" ? "نقل للأعلى" : "Move up"}
+                      >
+                        <ArrowUp className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-9 w-9" onClick={onMoveDown} disabled={!canMoveDown} title={language === "ar" ? "نقل للأسفل" : "Move down"}>
-                        <ArrowDown className="h-3.5 w-3.5" />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className={TOUCH_ICON}
+                        onClick={onMoveDown}
+                        disabled={!canMoveDown}
+                        title={language === "ar" ? "نقل للأسفل" : "Move down"}
+                        aria-label={language === "ar" ? "نقل للأسفل" : "Move down"}
+                      >
+                        <ArrowDown className="h-4 w-4" />
                       </Button>
-                    </div>
+                    </>
                   )}
-                  <Button variant="outline" size="sm" onClick={onEdit} className="gap-1.5">
+                  <Button variant="outline" size="sm" onClick={onEdit} className={`gap-1.5 px-3 ${TOUCH_BTN}`}>
                     <Edit2 className="h-3.5 w-3.5" /> {d.edit}
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-9 w-9 text-destructive hover:bg-destructive/10" onClick={() => setConfirmDelete(true)}>
-                    <Trash2 className="h-3.5 w-3.5" />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`${TOUCH_ICON} text-destructive hover:bg-destructive/10`}
+                    onClick={() => setConfirmDelete(true)}
+                    title={d.delete}
+                    aria-label={d.delete}
+                  >
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </>
               )}
@@ -237,15 +271,19 @@ const DEFAULT_CORE_SKILLS = [
 ];
 
 /* ─── Stats bar ──────────────────────────────────────── */
-export function StatBadge({ icon: Icon, label, value, color }: { icon: any; label: string; value: number; color: string }) {
+export function StatBadge({ icon: Icon, label, value, color, className = "" }: { icon: any; label: string; value: number; color: string; className?: string }) {
   return (
-    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-muted/40 border border-border/40">
-      <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: `${color}20` }}>
-        <Icon className="w-3.5 h-3.5" style={{ color }} />
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={`flex items-center gap-2.5 px-3 py-2.5 sm:px-4 chamfer bg-muted/40 border border-border/40 ${className}`}
+    >
+      <div className="w-8 h-8 shrink-0 chamfer [--cut:6px] flex items-center justify-center" style={{ background: `${color}20`, border: `1px solid ${color}33` }}>
+        <Icon className="w-4 h-4" style={{ color }} />
       </div>
-      <div>
-        <p className="text-lg font-bold leading-none">{value}</p>
-        <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">{label}</p>
+      <div className="min-w-0">
+        <p className="text-lg font-bold leading-none tabular-nums">{value}</p>
+        <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5 truncate">{label}</p>
       </div>
     </motion.div>
   );
