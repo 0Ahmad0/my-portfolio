@@ -156,7 +156,11 @@ create policy "public read site_visits" on site_visits
 
 create policy "public update site_visits" on site_visits
   for update using (true)
-  with check (true);
+  with check (
+    -- Bounded in 20260923130000: counter may only advance by one, identity is
+    -- fixed, and browser_info stays within the 200-char client cap.
+    true
+  );
 
 -- Contact messages
 create table if not exists contact_messages (
@@ -164,6 +168,7 @@ create table if not exists contact_messages (
   name text not null,
   email text not null,
   message text not null,
+  ip_hash text, -- set by trigger, used for rate limiting
   status text not null default 'new' check (status in ('new','read','archived')),
   created_at timestamptz not null default now()
 );
@@ -263,7 +268,13 @@ create policy "admin write testimonials" on portfolio_testimonials
 
 -- Contact messages: public insert, admin read/update
 create policy "public create contact messages" on contact_messages
-  for insert with check (true);
+  for insert with check (
+    -- Hardened in 20260923120000_harden_contact_messages.sql: payload bounds
+    -- (name<=120, email<=255 & format, message<=5000). The per-IP rate limit
+    -- (5 msgs/hour) is enforced by the set_contact_ip_hash trigger, which
+    -- also stamps ip_hash from request headers.
+    true
+  );
 
 create policy "admin manage contact messages" on contact_messages
   for select using (exists (select 1 from portfolio_admins where user_id = auth.uid()));

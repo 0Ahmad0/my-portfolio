@@ -1,4 +1,5 @@
 import { logger } from "./logger";
+import { escapeHtml } from "./html";
 
 const RESEND_API = "https://api.resend.com/emails";
 
@@ -48,7 +49,8 @@ export async function sendEmailNotification(
       body: JSON.stringify({
         from,
         to: [to],
-        subject: `📬 New message from ${name}`,
+        // Strip newlines: an unvalidated name could otherwise carry CRLFs.
+        subject: `📬 New message from ${name.replace(/[\r\n]/g, " ")}`,
         html,
       }),
     });
@@ -65,11 +67,4 @@ export async function sendEmailNotification(
     logger.error({ err }, "Email send error");
     return false;
   }
-}
-
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
 }
