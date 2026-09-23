@@ -233,11 +233,14 @@
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
+  /* clip, not hidden: hidden turns html into a scroll container, which breaks
+     fixed-background compositing on mobile browsers — the aurora then
+     repaints during scroll and looks like it is painted twice. */
+  overflow-x: clip;
 }
 
 body {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 html[dir="rtl"] {
@@ -605,6 +608,18 @@ main[id] {
     linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px);
   background-size: 52px 52px;
 }
+/* Desaturate only on devices that can hover. On touch screens there is no
+   hover state, so a plain `grayscale hover:grayscale-0` leaves the photo
+   permanently gray with no way to reveal the color. */
+@media (hover: hover) {
+  .grayscale-until-hover {
+    filter: grayscale(1);
+    transition: filter 0.3s ease;
+  }
+  .grayscale-until-hover:hover {
+    filter: grayscale(0);
+  }
+}
 .typing-cursor {
   display: inline-block;
   margin-inline-start: 0.2em;
@@ -656,5 +671,19 @@ main[id] {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Mobile scroll perf: the particle layer is eight full-viewport stacked radial
+   gradients and both orbs animate forever. That repaint cost is what makes the
+   fixed background lag the scroll on phones, so drop the particles and let the
+   orbs sit still on small screens. Desktop keeps the full effect. */
+@media (max-width: 768px) {
+  .aurora-particles {
+    display: none;
+  }
+  .aurora-orb-one,
+  .aurora-orb-two {
+    animation: none;
   }
 }

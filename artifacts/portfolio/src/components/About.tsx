@@ -93,7 +93,7 @@ function HexAvatar({
           src={src}
           sizes="(min-width: 768px) 288px, 256px"
           alt={alt}
-          className="w-full h-full object-cover grayscale hover:grayscale-0 transition-[filter] duration-300 scale-110"
+          className="w-full h-full object-cover grayscale-until-hover scale-110"
           data-testid="img-avatar"
         />
       </div>
