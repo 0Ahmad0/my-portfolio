@@ -53,6 +53,9 @@ Thumbs.db
 artifacts/*/dist
 artifacts/*/.replit-artifact
 
+# Local holding area for files removed from the workspace
+.trash/
+
 # Environment
 .env
 .env.local
