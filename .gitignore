@@ -56,6 +56,9 @@ artifacts/*/.replit-artifact
 # Local holding area for files removed from the workspace
 .trash/
 
+# Claude Code preview-server config (local tooling)
+.claude/launch.json
+
 # Environment
 .env
 .env.local
