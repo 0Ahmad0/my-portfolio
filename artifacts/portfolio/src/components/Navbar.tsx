@@ -81,7 +81,7 @@ export default function Navbar() {
             : "bg-transparent py-5"
         }`}
       >
-        <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between gap-3">
+        <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between gap-1 sm:gap-3">
           <Dialog.Trigger asChild>
             <Button
               variant="outline"
@@ -96,7 +96,7 @@ export default function Navbar() {
           <a
             href="#"
             onClick={handleLogoTap}
-            className="inline-flex items-center me-auto lg:me-0 text-lg sm:text-xl font-bold tracking-tighter min-h-11 shrink-0 hover:opacity-80 transition-opacity"
+            className="inline-flex items-center me-auto lg:me-0 text-base min-[360px]:text-lg sm:text-xl font-bold tracking-tighter min-h-11 shrink-0 hover:opacity-80 transition-opacity"
             data-testid="link-home"
           >
             <span dir="ltr">
@@ -164,8 +164,17 @@ export default function Navbar() {
           </nav>
 
           {/* Mobile controls */}
-          <div className="flex items-center gap-2 lg:hidden">
+          <div className="flex items-center gap-0.5 lg:hidden">
             <VisitorCounter />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs font-bold tracking-wider w-11 h-11 px-0 shrink-0"
+              aria-label={isRtl ? "Switch to English" : "التبديل إلى العربية"}
+              onClick={() => setLanguage(language === "en" ? "ar" : "en")}
+            >
+              {language === "en" ? "ع" : "EN"}
+            </Button>
             <Button
               variant="ghost"
               size="icon"
