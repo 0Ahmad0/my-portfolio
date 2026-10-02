@@ -27,7 +27,6 @@
     "@supabase/supabase-js": "^2.105.3",
     "@tailwindcss/typography": "^0.5.15",
     "@tailwindcss/vite": "^4.1.14",
-    "@tanstack/react-query": "^5.90.21",
     "@vitejs/plugin-react": "^5.0.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
