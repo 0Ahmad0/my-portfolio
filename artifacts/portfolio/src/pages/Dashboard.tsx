@@ -23,6 +23,7 @@ import {
   Eye,
   MessageCircle,
 } from "lucide-react";
+import Loader from "@/components/Loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -70,7 +71,9 @@ export default function Dashboard() {
 }
 
 function DashboardContent() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // null = still restoring the session. Starting at false flashed the login form
+  // on every cold load of /dashboard before getSession() resolved.
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -176,15 +179,27 @@ function DashboardContent() {
       setIsAuthenticated(false);
       return;
     }
-    supabase.auth.getSession().then(({ data }) => {
-      setIsAuthenticated(!!data.session);
-    });
+    // getSession() hits the network when the access token has expired. If it
+    // hangs or rejects, fall back to the login form — never strand the admin on
+    // a loader with no way in.
+    const giveUp = setTimeout(
+      () => setIsAuthenticated((current) => current ?? false),
+      5000,
+    );
+    supabase.auth
+      .getSession()
+      .then(({ data }) => setIsAuthenticated(!!data.session))
+      .catch(() => setIsAuthenticated(false))
+      .finally(() => clearTimeout(giveUp));
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsAuthenticated(!!session);
     });
-    return () => subscription.unsubscribe();
+    return () => {
+      clearTimeout(giveUp);
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -212,6 +227,15 @@ function DashboardContent() {
     await supabase.auth.signOut();
     setIsAuthenticated(false);
   };
+
+  /* ── Restoring the session ── */
+  if (isAuthenticated === null) {
+    return (
+      <main className="min-h-[100dvh] grid place-content-center bg-background">
+        <Loader />
+      </main>
+    );
+  }
 
   /* ── Login screen ── */
   if (!isAuthenticated) {
