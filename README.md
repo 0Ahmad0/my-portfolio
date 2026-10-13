@@ -1,10 +1,33 @@
-# معرض أعمال أحمد الحريري
+<div align="center">
+
+<img src="artifacts/portfolio/public/images/ah-logo.svg" alt="Ahmad Al-Hariri logo" width="130" height="130" />
+
+# Ahmad Al-Hariri · أحمد الحريري
+
+**Portfolio website — bilingual AR/EN, with a protected Supabase-powered admin panel.**
+
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-build-646CFF?logo=vite&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Auth_%2B_RLS-3FCF8E?logo=supabase&logoColor=black)
+![Tailwind](https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&logoColor=white)
+![RTL](https://img.shields.io/badge/RTL-AR_%2F_EN-blueviolet?labelColor=white)
+
+[English](#features) · [العربية](#المميزات)
+
+</div>
+
+---
+
+معرض أعمال أحمد الحريري
 
 موقع شخصي ثنائي اللغة لعرض المشاريع والخبرات والتعليم والشهادات وآراء العملاء، مع لوحة تحكم محمية لإدارة المحتوى وإعدادات هوية الموقع.
 
 الموقع مبني باستخدام React وTypeScript وVite، ويستخدم Supabase للمحتوى والمصادقة ورسائل التواصل.
 
-## المميزات
+<a id="features"></a>
+
+## Features · المميزات
 
 - دعم كامل للغتين العربية والإنجليزية.
 - اتجاه `RTL` للعربية و`LTR` للإنجليزية.
