@@ -2,6 +2,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useState,
   ReactNode,
 } from "react";
@@ -12,6 +13,7 @@ import {
   type Experience,
   type PersonalInfo,
   type Project,
+  type SiteSettings,
   type Testimonial,
   certificatePayload,
   defaultCertificates,
@@ -19,6 +21,7 @@ import {
   defaultExperience,
   defaultPersonalInfo,
   defaultProjects,
+  defaultSiteSettings,
   defaultTestimonials,
   educationPayload,
   experiencePayload,
@@ -27,6 +30,7 @@ import {
   mapExperience,
   mapPersonalInfo,
   mapProject,
+  mapSiteSettings,
   mapTestimonial,
   personalInfoPayload,
   projectPayload,
@@ -39,6 +43,7 @@ export type {
   Experience,
   PersonalInfo,
   Project,
+  SiteSettings,
   Testimonial,
 } from "./portfolio-data";
 
@@ -73,6 +78,14 @@ type PortfolioContextType = {
   addTestimonial: (t: Omit<Testimonial, "id">) => Promise<void>;
   updateTestimonial: (id: string, t: Partial<Testimonial>) => Promise<void>;
   deleteTestimonial: (id: string) => Promise<void>;
+  /** Display order for the public site: pinned first, rest shuffled when enabled. */
+  siteSettings: SiteSettings;
+  setRandomOrderEnabled: (enabled: boolean) => Promise<void>;
+  siteProjects: Project[];
+  siteExperience: Experience[];
+  siteEducation: Education[];
+  siteCertificates: Certificate[];
+  siteTestimonials: Testimonial[];
 };
 
 type Row = Record<string, any>;
@@ -122,6 +135,28 @@ const PortfolioContext = createContext<PortfolioContextType | undefined>(
   undefined,
 );
 
+/** Fisher-Yates — unbiased shuffle that never mutates the source array. */
+function shuffle<T>(items: T[]): T[] {
+  const next = [...items];
+  for (let i = next.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [next[i], next[j]] = [next[j], next[i]];
+  }
+  return next;
+}
+
+/**
+ * Public display order: when random order is on, pinned items keep their
+ * saved order at the top and everything else is shuffled per page load.
+ */
+function displayOrder<T>(items: T[], randomOrderEnabled: boolean): T[] {
+  if (!randomOrderEnabled) return items;
+  const isPinned = (item: T) => Boolean((item as { isPinned?: boolean }).isPinned);
+  const pinned = items.filter(isPinned);
+  const rest = shuffle(items.filter((item) => !isPinned(item)));
+  return [...pinned, ...rest];
+}
+
 export function PortfolioProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [language, setLanguageState] = useState<"en" | "ar">(() => {
@@ -148,6 +183,9 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
   );
   const [testimonials, setTestimonials] = useState<Testimonial[]>(
     supabase ? [] : defaultTestimonials,
+  );
+  const [siteSettings, setSiteSettingsState] = useState<SiteSettings>(
+    defaultSiteSettings,
   );
 
   useEffect(() => {
@@ -241,6 +279,15 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
           .abortSignal(controller.signal),
         (rows) => setTestimonials(rows.map(mapTestimonial)),
       ),
+      load(
+        supabase
+          .from("portfolio_settings")
+          .select("*")
+          .eq("id", 1)
+          .limit(1)
+          .abortSignal(controller.signal),
+        (rows) => setSiteSettingsState(mapSiteSettings(rows[0])),
+      ),
     ]).finally(() => {
       window.clearTimeout(timer);
       if (active) setIsLoading(false);
@@ -253,6 +300,40 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setLanguage = (lang: "en" | "ar") => setLanguageState(lang);
+
+  const setRandomOrderEnabled = async (enabled: boolean) => {
+    const client = requireSupabase();
+    const { error } = await client
+      .from("portfolio_settings")
+      .upsert(
+        { id: 1, random_order_enabled: enabled, updated_at: new Date().toISOString() },
+        { onConflict: "id" },
+      );
+    if (error) throw new Error(error.message);
+    setSiteSettingsState({ randomOrderEnabled: enabled });
+  };
+
+  /* Public views: pinned first, rest shuffled on every page load. */
+  const siteProjects = useMemo(
+    () => displayOrder(projects, siteSettings.randomOrderEnabled),
+    [projects, siteSettings.randomOrderEnabled],
+  );
+  const siteExperience = useMemo(
+    () => displayOrder(experience, siteSettings.randomOrderEnabled),
+    [experience, siteSettings.randomOrderEnabled],
+  );
+  const siteEducation = useMemo(
+    () => displayOrder(education, siteSettings.randomOrderEnabled),
+    [education, siteSettings.randomOrderEnabled],
+  );
+  const siteCertificates = useMemo(
+    () => displayOrder(certificates, siteSettings.randomOrderEnabled),
+    [certificates, siteSettings.randomOrderEnabled],
+  );
+  const siteTestimonials = useMemo(
+    () => displayOrder(testimonials, siteSettings.randomOrderEnabled),
+    [testimonials, siteSettings.randomOrderEnabled],
+  );
 
   const setPersonalInfo = async (info: PersonalInfo) => {
     const client = requireSupabase();
@@ -431,6 +512,13 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
         addTestimonial,
         updateTestimonial,
         deleteTestimonial,
+        siteSettings,
+        setRandomOrderEnabled,
+        siteProjects,
+        siteExperience,
+        siteEducation,
+        siteCertificates,
+        siteTestimonials,
       }}
     >
       {children}

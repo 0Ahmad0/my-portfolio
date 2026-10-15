@@ -130,7 +130,7 @@ function ProjectLinks({
 }
 
 export default function Projects() {
-  const { language, projects } = usePortfolio();
+  const { language, siteProjects: projects } = usePortfolio();
   const t = translations[language];
   const [filter, setFilter] = useState("All");
   const [selected, setSelected] = useState<Project | null>(null);

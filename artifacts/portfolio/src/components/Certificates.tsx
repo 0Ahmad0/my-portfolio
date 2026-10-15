@@ -3,7 +3,7 @@ import { translations } from "@/lib/i18n";
 import { ExternalLink, ShieldCheck } from "lucide-react";
 
 export default function Certificates() {
-  const { language, certificates } = usePortfolio();
+  const { language, siteCertificates: certificates } = usePortfolio();
   const t = translations[language];
 
   return (

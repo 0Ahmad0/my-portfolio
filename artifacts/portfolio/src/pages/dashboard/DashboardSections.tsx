@@ -1,5 +1,6 @@
 import { useSensor, useSensors, MouseSensor, TouchSensor, DndContext, closestCenter, type DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Apple,
@@ -16,6 +17,8 @@ import {
   GraduationCap,
   Image,
   MessageCircle,
+  Pin,
+  Shuffle,
   Smartphone,
   Star,
   Trash2,
@@ -96,15 +99,31 @@ function useDashboardOrdering() {
 }
 
 export function ProjectsSection({ onAdd, onEdit }: { onAdd: () => void; onEdit: (item: Project) => void }) {
-  const { language, projects, setProjects, updateProject, deleteProject } = usePortfolio();
+  const { language, projects, setProjects, updateProject, deleteProject, siteSettings, setRandomOrderEnabled } = usePortfolio();
   const { toast } = useToast();
   const d = translations[language].dashboard;
+  const [togglingOrder, setTogglingOrder] = useState(false);
   const categoryLabels: Record<Project["category"], string> = {
     Web: d.categories.web,
     Mobile: d.categories.mobile,
     Design: d.categories.design,
   };
   const { dragSensors, handleOrderedDragEnd, moveOrderedItem } = useDashboardOrdering();
+  const handleToggleRandom = async () => {
+    setTogglingOrder(true);
+    try {
+      await setRandomOrderEnabled(!siteSettings.randomOrderEnabled);
+      toast({ title: d.actions.saved });
+    } catch (err: any) {
+      toast({
+        title: d.actions.error || "Error",
+        description: err.message,
+        variant: "destructive",
+      });
+    } finally {
+      setTogglingOrder(false);
+    }
+  };
   return (
     <TabsContent value="projects">
       <SectionHeader
@@ -116,6 +135,39 @@ export function ProjectsSection({ onAdd, onEdit }: { onAdd: () => void; onEdit: 
         addLabel={d.sections.projects.add}
         itemLabel={projects.length === 1 ? d.itemCount.one : d.itemCount.many}
       />
+
+      {/* Random display order master switch */}
+      <div className="flex items-start justify-between gap-4 mb-5 px-4 py-3 bg-muted/40 border border-border/40">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold flex items-center gap-1.5">
+            <Shuffle className="w-4 h-4 text-primary" />
+            {d.randomOrder.title}
+          </p>
+          <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{d.randomOrder.description}</p>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={siteSettings.randomOrderEnabled}
+          disabled={togglingOrder}
+          onClick={handleToggleRandom}
+          title={siteSettings.randomOrderEnabled ? d.randomOrder.off : d.randomOrder.on}
+          className={`shrink-0 relative w-14 h-8 rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 disabled:opacity-60 ${
+            siteSettings.randomOrderEnabled ? "bg-primary border-primary" : "bg-background border-border"
+          }`}
+        >
+          <span
+            className={`absolute top-0.5 w-6 h-6 rounded-full bg-white shadow transition-all ${
+              siteSettings.randomOrderEnabled ? "left-[calc(100%-1.625rem)]" : "left-0.5"
+            }`}
+          />
+        </button>
+      </div>
+      <p className="-mt-3 mb-5 text-[11px] text-muted-foreground flex items-center gap-1.5">
+        <Pin className="w-3.5 h-3.5 text-amber-500" />
+        {d.pin.hint}
+      </p>
+
       <AnimatePresence mode="popLayout">
         {projects.length === 0 ? (
           <EmptyState
@@ -190,6 +242,28 @@ export function ProjectsSection({ onAdd, onEdit }: { onAdd: () => void; onEdit: 
                           <Badge variant="secondary" className="text-[10px] shrink-0 ms-1">
                             {categoryLabels[p.category] ?? p.category}
                           </Badge>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className={`min-h-11 gap-1.5 px-2 text-[11px] sm:min-h-7 ${p.isPinned ? "text-amber-500 hover:text-amber-500" : ""}`}
+                            title={p.isPinned ? d.pin.unpin : d.pin.action}
+                            onClick={async () => {
+                              try {
+                                await updateProject(p.id, {
+                                  isPinned: !p.isPinned,
+                                });
+                              } catch (err: any) {
+                                toast({
+                                  title: d.actions.error || "Error",
+                                  description: err.message,
+                                  variant: "destructive",
+                                });
+                              }
+                            }}
+                          >
+                            <Pin className={`h-3.5 w-3.5 ${p.isPinned ? "fill-amber-400" : ""}`} />
+                            {p.isPinned ? d.pin.pinned : d.pin.action}
+                          </Button>
                           <Button
                             variant="ghost"
                             size="sm"

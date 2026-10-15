@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ImageManager } from "@/components/dashboard/ImageManager";
 
 /* ─── helpers ─────────────────────────────────────────── */
 export function FieldRow({ children }: { children: React.ReactNode }) {
@@ -40,6 +41,7 @@ const blankProject = (): Omit<Project, "id"> => ({
   androidUrl: "",
   iosUrl: "",
   isPublished: true,
+  isPinned: false,
 });
 export function ProjectDialog({ open, initial, onSave, onClose }: { open: boolean; initial?: Project; onSave: (p: Omit<Project, "id">) => Promise<void>; onClose: () => void }) {
   const { language } = usePortfolio();
@@ -47,27 +49,15 @@ export function ProjectDialog({ open, initial, onSave, onClose }: { open: boolea
   const labels = d.dialogs.project;
   const [local, setLocal] = useState<Omit<Project, "id">>(initial ?? blankProject());
   const [saving, setSaving] = useState(false);
-  const [imgText, setImgText] = useState((initial?.images?.length ? initial.images : initial?.imageUrl ? [initial.imageUrl] : []).join("\n"));
 
   useEffect(() => {
     setLocal(initial ?? blankProject());
-    setImgText((initial?.images?.length ? initial.images : initial?.imageUrl ? [initial.imageUrl] : []).join("\n"));
     setSaving(false);
   }, [open, initial]);
 
-  const handleImgChange = (val: string) => {
-    setImgText(val);
-    const imgs = val
-      .split("\n")
-      .map((s) => s.trim())
-      .filter(Boolean);
+  const handleImagesChange = (imgs: string[]) => {
     setLocal((l) => ({ ...l, images: imgs, imageUrl: imgs[0] || "" }));
   };
-
-  const previewImgs = imgText
-    .split("\n")
-    .map((s) => s.trim())
-    .filter(Boolean);
 
   const isValid = local.title.trim() && local.description.trim();
 
@@ -136,17 +126,13 @@ export function ProjectDialog({ open, initial, onSave, onClose }: { open: boolea
           </FieldRow>
 
           <Field label={labels.images}>
-            <Textarea value={imgText} onChange={(e) => handleImgChange(e.target.value)} className="resize-none font-mono text-xs h-20" placeholder={labels.placeholderImages} />
-            {previewImgs.length > 0 && (
-              <div className="flex gap-2 mt-2 flex-wrap">
-                {previewImgs.map((img, i) => (
-                  <div key={i} className="relative">
-                    <img src={img} alt="" className="w-14 h-10 rounded-lg object-cover border border-border" />
-                    {i === 0 && <span className="absolute -top-1.5 -right-1 bg-primary text-[9px] text-white px-1.5 py-0.5 rounded-full font-medium">{labels.cover}</span>}
-                  </div>
-                ))}
-              </div>
-            )}
+            <ImageManager
+              images={local.images?.length ? local.images : local.imageUrl ? [local.imageUrl] : []}
+              onChange={handleImagesChange}
+              mode="multiple"
+              folder="projects"
+              coverLabel={labels.cover}
+            />
           </Field>
 
           <FieldRow>
@@ -582,10 +568,12 @@ export function TestimonialDialog({
             </Field>
           </FieldRow>
           <Field label={labels.imageUrl}>
-            <div className="flex gap-2">
-              <Input value={local.imageUrl} onChange={(e) => setLocal((l) => ({ ...l, imageUrl: e.target.value }))} placeholder={labels.placeholderImageUrl} className="flex-1" />
-              {local.imageUrl && <img src={local.imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover border border-border shrink-0" />}
-            </div>
+            <ImageManager
+              images={local.imageUrl ? [local.imageUrl] : []}
+              onChange={(imgs) => setLocal((l) => ({ ...l, imageUrl: imgs[0] || "" }))}
+              mode="single"
+              folder="testimonials"
+            />
           </Field>
         </div>
         <DialogFooter className="gap-2">

@@ -125,7 +125,7 @@ function ExperienceItem({
 }
 
 export default function Experience() {
-  const { language, experience } = usePortfolio();
+  const { language, siteExperience: experience } = usePortfolio();
   const t = translations[language];
 
   return (

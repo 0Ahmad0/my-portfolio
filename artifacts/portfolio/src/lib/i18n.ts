@@ -209,6 +209,32 @@ export const translations = {
                 android: "Android",
                 ios: "iOS"
             },
+            upload: {
+                tabUpload: "Upload file",
+                tabUrl: "Paste URL",
+                dropHint: "or drop images here",
+                compressing: "Compressing…",
+                uploading: "Uploading…",
+                compressed: "{from} → {to}",
+                cover: "Cover",
+                deleteImage: "Delete image",
+                errorUpload: "Upload failed — check your connection or admin access",
+                hint: "Auto-compressed: WebP · 1600px · 80% — maximum quality at minimum size",
+                singleTitle: "Image",
+                progress: "Processing…"
+            },
+            pin: {
+                action: "Pin to top",
+                unpin: "Unpin",
+                pinned: "Pinned",
+                hint: "Pinned projects always appear first on the site"
+            },
+            randomOrder: {
+                title: "Shuffle order on every visit",
+                description: "Randomizes the public order on each page load — pinned projects always stay first.",
+                on: "Enabled",
+                off: "Disabled"
+            },
             dialogs: {
                 project: {
                     titleAdd: "Add New Project",
@@ -218,7 +244,7 @@ export const translations = {
                     titleAr: "Title (Arabic)",
                     category: "Category",
                     tags: "Tags (comma separated)",
-                    images: "Project Images — one URL per line (first = cover)",
+                    images: "Project Images (first = cover)",
                     cover: "Cover",
                     liveUrl: "Live URL",
                     githubUrl: "GitHub URL",
@@ -585,6 +611,32 @@ export const translations = {
                 android: "أندرويد",
                 ios: "آيفون"
             },
+            upload: {
+                tabUpload: "رفع من الجهاز",
+                tabUrl: "لصق رابط",
+                dropHint: "أو اسحب الصور وأفلتها هنا",
+                compressing: "جاري الضغط…",
+                uploading: "جاري الرفع…",
+                compressed: "{from} ← {to}",
+                cover: "غلاف",
+                deleteImage: "حذف الصورة",
+                errorUpload: "فشل الرفع — تحقق من الاتصال أو صلاحية الأدمن",
+                hint: "ضغط تلقائي: WebP · 1600px · 80% — أعلى دقة بأقل حجم",
+                singleTitle: "الصورة",
+                progress: "جاري المعالجة…"
+            },
+            pin: {
+                action: "تثبيت في الأعلى",
+                unpin: "إلغاء التثبيت",
+                pinned: "مثبّت",
+                hint: "المشاريع المثبتة تظهر دائماً أولاً في الموقع"
+            },
+            randomOrder: {
+                title: "الترتيب العشوائي عند كل زيارة",
+                description: "يخلط ترتيب الظهور في الموقع العام مع كل تحميل — المشاريع المثبتة تبقى أولاً.",
+                on: "مفعّل",
+                off: "مطفأ"
+            },
             dialogs: {
                 project: {
                     titleAdd: "إضافة مشروع جديد",
@@ -594,7 +646,7 @@ export const translations = {
                     titleAr: "العنوان (عربي)",
                     category: "التصنيف",
                     tags: "الوسوم (مفصولة بفواصل)",
-                    images: "صور المشروع — رابط لكل سطر (الأول غلاف)",
+                    images: "صور المشروع (الأول غلاف)",
                     cover: "غلاف",
                     liveUrl: "رابط العرض",
                     githubUrl: "رابط GitHub",

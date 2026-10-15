@@ -15,6 +15,7 @@ import {
   normalizeThemeColor,
 } from "@/lib/theme-colors";
 import { Field, FieldRow } from "./DashboardEditors";
+import { ImageManager } from "@/components/dashboard/ImageManager";
 
 /* ─── Personal Info editor (inline, saves in place) ─── */
 export function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSave: (i: PersonalInfo) => Promise<void> }) {
@@ -124,10 +125,12 @@ export function PersonalInfoEditor({ info, onSave }: { info: PersonalInfo; onSav
             <Input value={local.locationAr} onChange={(e) => setLocal((l) => ({ ...l, locationAr: e.target.value }))} dir="rtl" />
           </Field>
           <Field label={labels.avatarUrl}>
-            <div className="flex gap-2">
-              <Input value={local.avatarUrl} onChange={(e) => setLocal((l) => ({ ...l, avatarUrl: e.target.value }))} placeholder={labels.placeholderAvatar} className="flex-1" />
-              {local.avatarUrl && <img src={local.avatarUrl} alt="" className="w-10 h-10 rounded-xl object-cover border border-border shrink-0" />}
-            </div>
+            <ImageManager
+              images={local.avatarUrl ? [local.avatarUrl] : []}
+              onChange={(imgs) => setLocal((l) => ({ ...l, avatarUrl: imgs[0] || "" }))}
+              mode="single"
+              folder="avatars"
+            />
           </Field>
         </FieldRow>
         <Field label={labels.bioEn} required>

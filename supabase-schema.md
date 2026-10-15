@@ -58,12 +58,29 @@ create table if not exists portfolio_projects (
   ios_url text,
   sort_order integer not null default 0,
   is_published boolean not null default true,
+  is_pinned boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
 create index if not exists portfolio_projects_sort
   on portfolio_projects (sort_order, created_at desc);
+
+-- Site settings (single row: random display order master switch)
+create table if not exists portfolio_settings (
+  id integer primary key default 1 check (id = 1),
+  random_order_enabled boolean not null default true,
+  updated_at timestamptz not null default now()
+);
+
+insert into portfolio_settings (id, random_order_enabled)
+values (1, true)
+on conflict (id) do nothing;
+
+-- Image storage bucket (public read, admin-only writes)
+insert into storage.buckets (id, name, public)
+values ('portfolio-images', 'portfolio-images', true)
+on conflict (id) do nothing;
 
 -- Experience
 create table if not exists portfolio_experience (
@@ -265,6 +282,33 @@ create policy "admin write certificates" on portfolio_certificates
 create policy "admin write testimonials" on portfolio_testimonials
   for all using (exists (select 1 from portfolio_admins where user_id = auth.uid()))
   with check (exists (select 1 from portfolio_admins where user_id = auth.uid()));
+
+-- Site settings: public read, admin write
+alter table portfolio_settings enable row level security;
+create policy "public read settings" on portfolio_settings
+  for select using (true);
+create policy "admins write settings" on portfolio_settings
+  for all using (exists (select 1 from portfolio_admins where user_id = auth.uid()))
+  with check (exists (select 1 from portfolio_admins where user_id = auth.uid()));
+
+-- Storage: public read, admin-only upload/update/delete
+create policy "public read portfolio images" on storage.objects
+  for select using (bucket_id = 'portfolio-images');
+create policy "admins upload portfolio images" on storage.objects
+  for insert with check (
+    bucket_id = 'portfolio-images'
+    and exists (select 1 from portfolio_admins where user_id = auth.uid())
+  );
+create policy "admins update portfolio images" on storage.objects
+  for update using (
+    bucket_id = 'portfolio-images'
+    and exists (select 1 from portfolio_admins where user_id = auth.uid())
+  );
+create policy "admins delete portfolio images" on storage.objects
+  for delete using (
+    bucket_id = 'portfolio-images'
+    and exists (select 1 from portfolio_admins where user_id = auth.uid())
+  );
 
 -- Contact messages: public insert, admin read/update
 create policy "public create contact messages" on contact_messages

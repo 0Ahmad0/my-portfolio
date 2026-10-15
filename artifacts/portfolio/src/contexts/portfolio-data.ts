@@ -2,6 +2,7 @@ export type Project = {
   id: string;
   sortOrder?: number;
   isPublished: boolean;
+  isPinned?: boolean;
   title: string;
   titleAr: string;
   description: string;
@@ -270,7 +271,19 @@ export const defaultCertificates: Certificate[] = [
 
 export const defaultTestimonials: Testimonial[] = [];
 
+export type SiteSettings = {
+  randomOrderEnabled: boolean;
+};
+
+export const defaultSiteSettings: SiteSettings = {
+  randomOrderEnabled: true,
+};
+
 type Row = Record<string, any>;
+
+export const mapSiteSettings = (row: Row | null | undefined): SiteSettings => ({
+  randomOrderEnabled: row?.random_order_enabled ?? defaultSiteSettings.randomOrderEnabled,
+});
 
 export const mapPersonalInfo = (row: Row): PersonalInfo => ({
   name: row.name ?? "",
@@ -324,6 +337,7 @@ export const mapProject = (row: Row): Project => ({
   id: row.id,
   sortOrder: row.sort_order ?? 0,
   isPublished: row.is_published ?? true,
+  isPinned: row.is_pinned ?? false,
   title: row.title ?? "",
   titleAr: row.title_ar ?? "",
   description: row.description ?? "",
@@ -352,6 +366,7 @@ export const projectPayload = (project: Partial<Project>) => ({
   android_url: project.androidUrl,
   ios_url: project.iosUrl,
   is_published: project.isPublished,
+  is_pinned: project.isPinned,
   sort_order: project.sortOrder,
 });
 

@@ -3,7 +3,7 @@ import { translations } from "@/lib/i18n";
 import { GraduationCap, Calendar, Award } from "lucide-react";
 
 export default function Education() {
-  const { language, education } = usePortfolio();
+  const { language, siteEducation: education } = usePortfolio();
   const t = translations[language];
 
   return (

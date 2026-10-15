@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function Testimonials() {
-  const { language, testimonials, isLoading } = usePortfolio();
+  const { language, siteTestimonials: testimonials, isLoading } = usePortfolio();
   const [selected, setSelected] = useState<Testimonial | null>(null);
   const [current, setCurrent] = useState(0);
   const reviewTrigger = useRef<HTMLButtonElement | null>(null);
