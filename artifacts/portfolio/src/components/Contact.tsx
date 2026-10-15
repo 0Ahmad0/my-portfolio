@@ -62,23 +62,6 @@ const formSchema = (language: "ar" | "en") =>
 type ContactFormValues = z.infer<ReturnType<typeof formSchema>>;
 
 async function sendContactMessage(values: ContactFormValues) {
-  const apiUrl = import.meta.env.VITE_API_URL as string | undefined;
-
-  if (apiUrl) {
-    try {
-      const response = await fetch(`${apiUrl}/api/contact`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      if (response.ok) return null;
-      const data = await response.json().catch(() => ({}));
-      return data.error || "Failed to send message";
-    } catch {
-      return "Network error. Please try again.";
-    }
-  }
-
   if (!supabase)
     return "Contact service is unavailable. Please use the email link.";
   const { error } = await supabase.from("contact_messages").insert(values);

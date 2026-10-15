@@ -13,7 +13,6 @@ export const translations = {
         hero: {
             title: "Software Engineer", //
             name: "Ahmad Alhariri", //
-            profileImage: "my-portfolio/images/ahmadalhariri.jpg",
             viewWork: "Explore My Work",
             roles: ["Software Engineer", "Mobile Application Developer", "Flutter Expert", "Problem Solver"] //
         },
@@ -255,7 +254,6 @@ export const translations = {
                     placeholderTitleEn: "My Awesome Project",
                     placeholderTitleAr: "مشروعي الرائع",
                     placeholderTags: "React, TypeScript, Node.js",
-                    placeholderImages: "https://images.unsplash.com/photo-xxx?w=800\nhttps://images.unsplash.com/photo-yyy?w=800",
                     placeholderLiveUrl: "https://myapp.com",
                     placeholderGithubUrl: "https://github.com/...",
                     placeholderAndroidUrl: "https://play.google.com/store/apps/details?id=...",
@@ -350,8 +348,7 @@ export const translations = {
                     placeholderTextEn: "Share what you loved about working together...",
                     placeholderTextAr: "شارك ما أعجبك...",
                     placeholderHighlightEn: "Communication · Quality",
-                    placeholderHighlightAr: "التعاون · جودة العمل",
-                    placeholderImageUrl: "https://..."
+                    placeholderHighlightAr: "التعاون · جودة العمل"
                 },
                 personalInfo: {
                     title: "Personal Information",
@@ -380,7 +377,6 @@ export const translations = {
                     coreSkillsHelp: "Add, remove, or reorder skills here. Unknown names appear with a generic code icon.",
                     cvResume: "CV & Resume",
                     cvUrl: "CV Download URL",
-                    placeholderAvatar: "https://...",
                     placeholderFloating: "React, Flutter, TypeScript, Node.js, Figma, Next.js",
                     placeholderCoreSkills: "React, Flutter, Next.js, TypeScript, Node.js, Python, C++, Dart",
                     placeholderCv: "https://example.com/cv.pdf",
@@ -415,7 +411,6 @@ export const translations = {
         hero: {
             title: "مهندس برمجيات", //[cite: 1]
             name: "أحمد الحريري", //[cite: 1]
-            profileImage: "my-portfolio/images/ahmadalhariri.jpg",
             viewWork: "استكشف أعمالي",
             roles: ["مهندس برمجيات", "مطور تطبيقات موبايل", "خبير فلاتر", "حل المشكلات"] //[cite: 1]
         },
@@ -657,7 +652,6 @@ export const translations = {
                     placeholderTitleEn: "مشروعي الرائع",
                     placeholderTitleAr: "مشروعي الرائع",
                     placeholderTags: "React, TypeScript, Node.js",
-                    placeholderImages: "https://images.unsplash.com/photo-xxx?w=800\nhttps://images.unsplash.com/photo-yyy?w=800",
                     placeholderLiveUrl: "https://myapp.com",
                     placeholderGithubUrl: "https://github.com/...",
                     placeholderAndroidUrl: "https://play.google.com/store/apps/details?id=...",
@@ -752,8 +746,7 @@ export const translations = {
                     placeholderTextEn: "شارك ما أعجبك أثناء العمل معاً...",
                     placeholderTextAr: "شارك ما أعجبك...",
                     placeholderHighlightEn: "Communication · Quality",
-                    placeholderHighlightAr: "التعاون · جودة العمل",
-                    placeholderImageUrl: "https://..."
+                    placeholderHighlightAr: "التعاون · جودة العمل"
                 },
                 personalInfo: {
                     title: "المعلومات الشخصية",
@@ -782,7 +775,6 @@ export const translations = {
                     coreSkillsHelp: "يمكنك الإضافة والحذف وإعادة الترتيب من هنا. الأسماء غير المعروفة تظهر بأيقونة عامة.",
                     cvResume: "السيرة الذاتية",
                     cvUrl: "رابط تحميل السيرة",
-                    placeholderAvatar: "https://...",
                     placeholderFloating: "React, Flutter, TypeScript, Node.js, Figma, Next.js",
                     placeholderCoreSkills: "React, Flutter, Next.js, TypeScript, Node.js, Python, C++, Dart",
                     placeholderCv: "https://example.com/cv.pdf",

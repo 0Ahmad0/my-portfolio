@@ -631,5 +631,75 @@
       "width": 800,
       "height": 565
     }
+  ],
+  "https://tzdgurwxymnwsfbrnnjm.supabase.co/storage/v1/object/public/portfolio-images/projects/mv9bsenx-6ykv08.webp": [
+    {
+      "src": "/images/2027291e36bf-480.webp",
+      "width": 480,
+      "height": 234
+    },
+    {
+      "src": "/images/2027291e36bf-960.webp",
+      "width": 960,
+      "height": 467
+    }
+  ],
+  "https://tzdgurwxymnwsfbrnnjm.supabase.co/storage/v1/object/public/portfolio-images/projects/mv9bsjxu-522qvg.webp": [
+    {
+      "src": "/images/e0d49f46e6ea-480.webp",
+      "width": 480,
+      "height": 232
+    },
+    {
+      "src": "/images/e0d49f46e6ea-960.webp",
+      "width": 960,
+      "height": 463
+    }
+  ],
+  "https://tzdgurwxymnwsfbrnnjm.supabase.co/storage/v1/object/public/portfolio-images/projects/mv9bs81w-c5dpdf.webp": [
+    {
+      "src": "/images/dcc7fe1a68f2-480.webp",
+      "width": 480,
+      "height": 232
+    },
+    {
+      "src": "/images/dcc7fe1a68f2-640.webp",
+      "width": 640,
+      "height": 310
+    },
+    {
+      "src": "/images/dcc7fe1a68f2-960.webp",
+      "width": 960,
+      "height": 465
+    }
+  ],
+  "https://tzdgurwxymnwsfbrnnjm.supabase.co/storage/v1/object/public/portfolio-images/projects/mv9bso0i-s2ipfm.webp": [
+    {
+      "src": "/images/17aff57aba7b-480.webp",
+      "width": 480,
+      "height": 232
+    },
+    {
+      "src": "/images/17aff57aba7b-960.webp",
+      "width": 960,
+      "height": 464
+    }
+  ],
+  "https://tzdgurwxymnwsfbrnnjm.supabase.co/storage/v1/object/public/portfolio-images/projects/mv9c6bvp-6r103x.webp": [
+    {
+      "src": "/images/0938a598d412-480.webp",
+      "width": 480,
+      "height": 480
+    },
+    {
+      "src": "/images/0938a598d412-640.webp",
+      "width": 640,
+      "height": 640
+    },
+    {
+      "src": "/images/0938a598d412-960.webp",
+      "width": 960,
+      "height": 960
+    }
   ]
 }

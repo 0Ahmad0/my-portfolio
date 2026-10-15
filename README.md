@@ -112,8 +112,6 @@ my-portfolio/
 │   │       ├── hooks/             React hooks
 │   │       ├── lib/               الترجمة والأدوات ونظام الألوان
 │   │       └── pages/             الموقع ولوحة التحكم
-│   └── api-server/                خادم API اختياري
-├── lib/                           حزم مشتركة وقاعدة بيانات الخادم
 ├── supabase/
 │   ├── migrations/               تغييرات مخطط Supabase
 │   ├── config.toml               إعداد Supabase المحلي
@@ -157,14 +155,6 @@ artifacts/portfolio/.env.local
 VITE_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 VITE_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_OR_ANON_KEY
 ```
-
-متغير اختياري عند استخدام خادم منفصل لنموذج التواصل:
-
-```env
-VITE_API_URL=https://api.example.com
-```
-
-إذا لم يوجد `VITE_API_URL` يرسل نموذج التواصل مباشرة إلى جدول `contact_messages` في Supabase.
 
 > لا تضع `service_role` أو أي مفتاح سري داخل متغير يبدأ بـ `VITE_`، لأن متغيرات Vite تصبح متاحة داخل المتصفح.
 
@@ -335,14 +325,6 @@ git status --short
 - تجربة قائمة الهاتف ونموذج التواصل.
 - التأكد من أن حفظ اللون يعمل بعد تطبيق migration.
 - مراجعة أي صور محسنة أضافها `build:deploy`.
-
-يوجد دليل محلي مؤقت أكثر تفصيلًا في:
-
-```text
-tmp/README_BEFORE_GITHUB_AR.md
-```
-
-هذا الملف داخل `tmp`، لذلك لن يُرفع إلى GitHub.
 
 ## الأمان
 
